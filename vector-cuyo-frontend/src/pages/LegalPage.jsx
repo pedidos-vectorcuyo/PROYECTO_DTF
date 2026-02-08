@@ -12,7 +12,7 @@ const LegalPage = () => {
                 </div>
             </div>
 
-            <div className="sticky top-[80px] z-30 mb-12 bg-off-white py-4 shadow-sm">
+            <div className="sticky top-16 z-30 mb-8 bg-off-white py-4 shadow-sm w-full">
                 <nav className="flex flex-wrap justify-center gap-2 md:gap-4 p-1.5 bg-surface border border-gray-border rounded-lg shadow-sm w-fit mx-auto">
                     <a className="px-4 py-2 text-sm font-medium text-text-main rounded-md hover:bg-blue-tint hover:text-primary transition-colors" href="#terminos">Términos de Servicio</a>
                     <a className="px-4 py-2 text-sm font-medium text-text-main rounded-md hover:bg-blue-tint hover:text-primary transition-colors" href="#privacidad">Privacidad</a>

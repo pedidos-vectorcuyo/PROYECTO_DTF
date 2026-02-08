@@ -55,12 +55,14 @@ const OrderPanelPage = () => {
 
     const handleFiles = async (fileList) => {
         setLoading(true);
-        const newFiles = [];
-        for (let i = 0; i < fileList.length; i++) {
-            const processed = await processFile(fileList[i]);
-            newFiles.push({
+
+        // Process files in parallel
+        const fileArray = Array.from(fileList);
+        const processedFiles = await Promise.all(fileArray.map(async (file) => {
+            const processed = await processFile(file);
+            return {
                 id: Date.now() + Math.random(),
-                file: fileList[i],
+                file: file,
                 ...processed,
                 copies: 1,
                 options: {
@@ -69,9 +71,10 @@ const OrderPanelPage = () => {
                     colors: false,
                     halftones: false
                 }
-            });
-        }
-        setFiles(prev => [...prev, ...newFiles]);
+            };
+        }));
+
+        setFiles(prev => [...prev, ...processedFiles]);
         setLoading(false);
     };
 
@@ -140,12 +143,8 @@ const OrderPanelPage = () => {
         const shortDate = new Date().toISOString().slice(2, 10).replace(/-/g, '.');
         const clientName = user.nombre || 'Cliente';
 
-        let successCount = 0;
-        let failCount = 0;
-
-        // Process each file upload individually as per original logic to avoid huge payloads
-        for (let i = 0; i < validFiles.length; i++) {
-            const item = validFiles[i];
+        // Upload files in parallel
+        const uploadPromises = validFiles.map(async (item, i) => {
             const fd = new FormData();
 
             // Construct filename
@@ -177,10 +176,13 @@ const OrderPanelPage = () => {
             fd.append("indiceArchivo", i + 1);
             if (user.id) fd.append("id_cliente", user.id);
 
-            const result = await submitOrder(fd);
-            if (result) successCount++;
-            else failCount++;
-        }
+            return await submitOrder(fd);
+        });
+
+        const results = await Promise.all(uploadPromises);
+
+        const successCount = results.filter(r => r).length;
+        const failCount = results.length - successCount;
 
         setSubmitting(false);
 
