@@ -1,0 +1,28 @@
+<script>
+    // 1. SEGURIDAD: VERIFICAR SESIÓN
+    const userSession = localStorage.getItem('dtf_user');
+    if (!userSession) {
+        window.location.href = '/log-in'; // Redirige si no hay usuario
+    }
+
+    // Convertimos el texto guardado a objeto real para usarlo
+    const currentUser = JSON.parse(userSession || '{}');
+
+    // 2. FUNCIÓN CERRAR SESIÓN
+    function logout() {
+        localStorage.removeItem('dtf_user');
+        window.location.href = '/log-in';
+    }
+
+    // 3. RESALTAR PÁGINA ACTIVA
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('panel-de-pedidos')) document.querySelector('a[href*="panel-de-pedidos"]').classList.add('active');
+    if (currentPath.includes('pedidos')) document.querySelector('a[href*="pedidos"]').classList.add('active');
+    if (currentPath.includes('profile')) document.querySelector('a[href*="profile"]').classList.add('active');
+</script>
+<div class="vc-container" style="max-width:900px; margin:0 auto;">
+    <h2 style="color:#111827;">Mis Pedidos</h2>
+    <div id="lista-pedidos" style="margin-top:20px;">
+        <p>Cargando historial...</p>
+    </div>
+</div>

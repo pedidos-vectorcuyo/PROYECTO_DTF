@@ -1,0 +1,91 @@
+{
+  "name": "Actualizador Notion",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "event": "pagedUpdatedInDatabase",
+        "databaseId": {
+          "__rl": true,
+          "value": "9d30880f-927e-4771-9d4c-9331675b592e",
+          "mode": "list",
+          "cachedResultName": "Lista de Precios",
+          "cachedResultUrl": "https://www.notion.so/9d30880f927e47719d4c9331675b592e"
+        }
+      },
+      "type": "n8n-nodes-base.notionTrigger",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "92419316-4257-4411-99d1-83080b51a38b",
+      "name": "Notion Trigger",
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE configuracion_precios \nSET \n    precio_metro = {{ $json['Precio por Metro'] }},\n    precio_mayorista_10 = {{ $json['Precio Mayorista 10'] }},\n    precio_mayorista_30 = {{ $json['Precio Mayorista 30'] }},\n    ultima_actualizacion = DATE_SUB(NOW(), INTERVAL 3 HOUR)\nWHERE material = 'dtf_textil';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        -64
+      ],
+      "id": "dad14f28-6ce3-4b12-8b4d-4c5d4319f053",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Notion Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2e8fa507-5631-49ad-8113-756249bbc821",
+  "meta": {
+    "instanceId": "e81149c8d3d3ce37891014898fb23730686517fa2ac66b7b07c2b65e452990e0"
+  },
+  "id": "5xY9X2HJzOLKekiZ6hN0J",
+  "tags": [
+    {
+      "updatedAt": "2026-01-06T23:26:08.733Z",
+      "createdAt": "2026-01-06T23:26:08.733Z",
+      "id": "2Hy2qRWJzCyhb6qf",
+      "name": "Notion"
+    }
+  ]
+}

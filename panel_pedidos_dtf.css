@@ -1,0 +1,310 @@
+/* =========================================
+   1. EFECTO DRAG  DROP (CORREGIDO)
+   ========================================= */
+/* Ahora apunta a la clase correcta: .vc-dropzone-area */
+.vc-dropzone-area.dragover {
+    background-color: #dbeafe !important;
+    /* Azul más intenso para que se note */
+    border-color: #2563eb !important;
+    /* Borde azul fuerte */
+    transform: scale(1.02);
+    /* Efecto de rebote */
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+    /* Sombra resplandor */
+}
+
+/* =========================================
+   2. ESTRUCTURA Y LAYOUT
+   ========================================= */
+.vc-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.vc-left-panel {
+    flex: 2;
+    min-width: 300px;
+}
+
+.vc-right-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Tarjetas contenedoras */
+.vc-upload-card,
+.vc-summary-card,
+.vc-temp-form {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   3. FORMULARIOS E INPUTS
+   ========================================= */
+.vc-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.vc-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.vc-input[readonly] {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   4. ZONA DE CARGA (DROPZONE BASE)
+   ========================================= */
+.vc-dropzone-area {
+    border: 2px dashed #3b82f6;
+    background: #eff6ff;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    /* Suaviza la animación */
+    color: #1e40af;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.vc-dropzone-area:hover {
+    background: #dbeafe;
+    transform: scale(1.01);
+}
+
+/* =========================================
+   5. LISTA DE ARCHIVOS Y TARJETAS
+   ========================================= */
+.vc-file-card {
+    background: white;
+    border: 1px solid #eee;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.vc-file-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.vc-btn-remove {
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.vc-metrics-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.vc-metric-box {
+    background: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* Botones de Cantidad (+/-) */
+.vc-qty-stepper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.vc-qty-btn {
+    border: none;
+    background: #eee;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.vc-qty-btn:hover {
+    background: #ddd;
+}
+
+.vc-qty-val {
+    padding: 0 10px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Botones de Propiedades (Blancas, Negras...) */
+.vc-tag-options {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.vc-option-btn {
+    border: 1px solid #d1d5db;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.vc-option-btn.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* =========================================
+   6. TICKET Y RESUMEN
+   ========================================= */
+.vc-summary-list {
+    margin-bottom: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.vc-summary-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    padding: 4px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+.vc-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vc-summary-row.total {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #111827;
+    margin-top: 15px;
+}
+
+.vc-summary-row.discount {
+    color: #16a34a;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* Badges de Precio (Tier 1, Tier 2) */
+.vc-price-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.vc-badge-tier1 {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.vc-badge-tier2 {
+    background: #fef08a;
+    color: #854d0e;
+    border: 1px solid #fde047;
+}
+
+/* =========================================
+   7. BOTÓN PRINCIPAL
+   ========================================= */
+.vc-btn-main {
+    width: 100%;
+    padding: 15px;
+    background: #9ca3af;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: not-allowed;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.vc-btn-main.ready {
+    background: #2563eb;
+    cursor: pointer;
+}
+
+.vc-btn-main.ready:hover {
+    background: #1d4ed8;
+}
+
+/* =========================================
+   8. MODAL DE ADVERTENCIA
+   ========================================= */
+.vc-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.vc-modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.vc-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.vc-btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}

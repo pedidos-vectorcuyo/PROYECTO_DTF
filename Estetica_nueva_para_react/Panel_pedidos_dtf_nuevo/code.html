@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>B2B Minimal Workstation - Vector Cuyo</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2D47B1",
+                        "off-white": "#F7F8FA",
+                        "surface": "#FFFFFF",
+                        "gray-border": "#E6E8EC",
+                        "text-main": "#0F172A",
+                        "text-secondary": "#64748B",
+                        "blue-tint": "#EFF6FF",
+                        "accent-blue-bg": "#EBF0FF",
+                        "accent-blue-text": "#2D47B1",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "card": "12px",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-sans antialiased text-text-main bg-off-white;
+            }
+            h1 { @apply text-[32px] font-bold leading-tight text-text-main; }
+            h2 { @apply text-[20px] font-bold text-text-main; }
+            p, div { @apply text-[15px]; }
+        }
+        .mega-menu-trigger:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .mega-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease-in-out;
+        }
+        .custom-radio {
+            @apply appearance-none w-5 h-5 border border-gray-border rounded-full checked:border-primary checked:border-[6px] transition-all cursor-pointer;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        .chip-selectable {
+            @apply px-3 py-1.5 rounded-full border border-gray-border text-[12px] font-medium text-text-secondary cursor-pointer transition-all hover:bg-off-white;
+        }
+        .chip-selectable.active {
+            @apply border-primary bg-accent-blue-bg text-primary;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 bg-surface border-b border-gray-border flex flex-col">
+<div class="h-[64px] flex items-center border-b border-gray-border">
+<div class="max-w-7xl mx-auto px-8 w-full flex items-center justify-between">
+<div class="flex items-center gap-2 shrink-0">
+<div class="w-8 h-8 bg-text-main rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">precision_manufacturing</span>
+</div>
+<span class="font-bold text-lg tracking-tight">Vector<span class="text-primary">Cuyo</span></span>
+</div>
+<nav class="hidden md:flex items-center gap-8 h-[64px]">
+<a class="text-[14px] font-medium text-text-secondary hover:text-primary transition-colors" href="#">Home</a>
+<div class="mega-menu-trigger relative h-full flex items-center">
+<button class="flex items-center gap-1 text-[14px] font-medium text-text-secondary hover:text-primary transition-colors relative h-full">
+                            Servicios
+                            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<div class="mega-menu absolute top-full left-1/2 -translate-x-1/2 w-[720px] bg-surface border border-gray-border rounded-card shadow-xl p-0 flex overflow-hidden z-50">
+<div class="flex-1 p-8 border-r border-gray-border bg-white">
+<h3 class="text-[12px] font-bold text-text-secondary uppercase tracking-widest mb-6">Categorías Industriales</h3>
+<div class="space-y-6">
+<a class="flex gap-4 group" href="#">
+<div class="w-12 h-12 bg-off-white rounded-lg flex items-center justify-center border border-gray-border shrink-0">
+<span class="material-symbols-outlined text-text-main">factory</span>
+</div>
+<div>
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors flex items-center gap-1">Impresión Industrial <span class="material-symbols-outlined text-sm">arrow_forward</span></h4>
+<p class="text-text-secondary text-[13px] leading-snug mt-1">Producción de alto volumen con estándares de precisión técnica.</p>
+</div>
+</a>
+<a class="flex gap-4 group" href="#">
+<div class="w-12 h-12 bg-off-white rounded-lg flex items-center justify-center border border-gray-border shrink-0">
+<span class="material-symbols-outlined text-text-main">layers</span>
+</div>
+<div>
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors flex items-center gap-1">Soluciones Especiales <span class="material-symbols-outlined text-sm">arrow_forward</span></h4>
+<p class="text-text-secondary text-[13px] leading-snug mt-1">Desarrollos a medida para sustratos y acabados complejos.</p>
+</div>
+</a>
+</div>
+</div>
+<div class="w-64 bg-off-white/50 p-8">
+<h3 class="text-[12px] font-bold text-text-secondary uppercase tracking-widest mb-6">Línea de Servicios</h3>
+<div class="space-y-4">
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Gran Formato</h4>
+<p class="text-text-secondary text-[13px] mt-0.5">Vía pública y cartelería.</p>
+</a>
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Offset</h4>
+<p class="text-text-secondary text-[13px] mt-0.5">Papelería corporativa masiva.</p>
+</a>
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Etiquetas</h4>
+<p class="text-text-secondary text-[13px] mt-0.5">Rollos y terminaciones UV.</p>
+</a>
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Packaging</h4>
+<p class="text-text-secondary text-[13px] mt-0.5">Cajas y contenedores rígidos.</p>
+</a>
+</div>
+</div>
+</div>
+</div>
+<div class="mega-menu-trigger relative h-full flex items-center">
+<button class="flex items-center gap-1 text-[14px] font-medium text-text-secondary hover:text-primary transition-colors relative h-full">
+                            Tutoriales
+                            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<div class="mega-menu absolute top-full left-1/2 -translate-x-1/2 w-[700px] bg-surface border border-gray-border rounded-card shadow-xl p-0 flex overflow-hidden z-50">
+<div class="flex-1 p-8 border-r border-gray-border bg-white">
+<h3 class="text-[12px] font-bold text-text-secondary uppercase tracking-widest mb-6">Contáctanos</h3>
+<div class="space-y-8">
+<a class="flex gap-4 group" href="#">
+<div class="w-12 h-12 bg-off-white rounded-lg flex items-center justify-center border border-gray-border shrink-0">
+<span class="material-symbols-outlined text-text-main">chat_bubble</span>
+</div>
+<div>
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors flex items-center gap-1">Chat Online <span class="material-symbols-outlined text-sm">arrow_forward</span></h4>
+<p class="text-text-secondary text-[13px] leading-snug mt-1">Lun-Vie: 24 horas<br/>Sáb: 9am-6pm</p>
+</div>
+</a>
+<a class="flex gap-4 group" href="#">
+<div class="w-12 h-12 bg-off-white rounded-lg flex items-center justify-center border border-gray-border shrink-0">
+<span class="material-symbols-outlined text-text-main">mail</span>
+</div>
+<div>
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors flex items-center gap-1">Envíanos un Email <span class="material-symbols-outlined text-sm">arrow_forward</span></h4>
+<p class="text-text-secondary text-[13px] leading-snug mt-1">Respuesta en menos de 2 horas en horario comercial.</p>
+</div>
+</a>
+</div>
+</div>
+<div class="w-64 bg-off-white/50 p-8">
+<h3 class="text-[12px] font-bold text-text-secondary uppercase tracking-widest mb-6">Soporte</h3>
+<div class="space-y-6">
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Help Center</h4>
+<p class="text-text-secondary text-[13px] mt-1">Respuestas instantáneas y documentación.</p>
+</a>
+<a class="block group" href="#">
+<h4 class="text-[14px] font-semibold text-text-main group-hover:text-primary transition-colors">Blog</h4>
+<p class="text-text-secondary text-[13px] mt-1">Tips técnicos y noticias del sector.</p>
+</a>
+</div>
+</div>
+</div>
+</div>
+<a class="text-[14px] font-medium text-text-secondary hover:text-primary transition-colors" href="#">Nosotros</a>
+</nav>
+<div class="flex items-center gap-6 shrink-0">
+<a class="text-[14px] font-medium text-text-secondary hover:text-primary transition-colors" href="#">Usuario</a>
+<button class="relative flex items-center justify-center text-text-main hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+<span class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">2</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-surface h-[40px] flex items-center justify-center border-b border-gray-border">
+<div class="flex items-center gap-8 text-[12px] font-semibold uppercase tracking-widest text-text-secondary">
+<div class="flex items-center gap-2 text-primary">
+<span class="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px]">1</span>
+                     Carga
+                 </div>
+<div class="w-8 h-[1px] bg-gray-border"></div>
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full border border-gray-border flex items-center justify-center text-[10px]">2</span>
+                     Configura
+                 </div>
+<div class="w-8 h-[1px] bg-gray-border"></div>
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full border border-gray-border flex items-center justify-center text-[10px]">3</span>
+                     Revisa
+                 </div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-8 py-10 flex-grow w-full">
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="flex-grow space-y-8">
+<section class="space-y-6">
+<div class="max-w-xl">
+<h1 class="text-text-main">Impresión Industrial B2B</h1>
+<p class="text-text-secondary mt-2 text-[15px]">Workstation profesional para la gestión de archivos técnicos y pedidos de impresión a gran escala.</p>
+</div>
+<div class="bg-surface border border-gray-border rounded-card p-5 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-[16px] font-bold text-text-main">Especificaciones Técnicas</h2>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-accent-blue-bg text-[10px] font-bold uppercase tracking-widest rounded text-accent-blue-text">CMYK</span>
+<span class="px-2 py-1 bg-accent-blue-bg text-[10px] font-bold uppercase tracking-widest rounded text-accent-blue-text">300 DPI</span>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-[12px] text-text-main flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[14px] filled">check_circle</span> Gestión de Color</h4>
+<p class="text-[11px] text-text-secondary leading-snug pl-5">Perfiles ISO Coated v2.</p>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-[12px] text-text-main flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[14px] filled">check_circle</span> Fuentes</h4>
+<p class="text-[11px] text-text-secondary leading-snug pl-5">Vectorizadas o incrustadas.</p>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-[12px] text-text-main flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[14px] filled">check_circle</span> Sangrado</h4>
+<p class="text-[11px] text-text-secondary leading-snug pl-5">Margen 3mm requerido.</p>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-[12px] text-text-main flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[14px] filled">check_circle</span> Transparencias</h4>
+<p class="text-[11px] text-text-secondary leading-snug pl-5">PDF/X-4 alta resolución.</p>
+</div>
+</div>
+</div>
+<div class="w-full bg-blue-tint border-2 border-dashed border-primary/20 rounded-card flex flex-col items-center justify-center py-10 px-8 transition-colors hover:border-primary/40 group relative">
+<div class="w-14 h-14 bg-surface rounded-full flex items-center justify-center border border-gray-border mb-4 group-hover:scale-110 transition-transform shadow-sm">
+<span class="material-symbols-outlined text-primary text-2xl">cloud_upload</span>
+</div>
+<h3 class="text-lg font-bold text-text-main mb-1">Arrastra tus archivos o haz clic para subir</h3>
+<p class="text-[13px] text-text-secondary mb-6">PDF, SVG, AI (Máx 250MB)</p>
+<div class="flex items-center gap-4">
+<button class="bg-primary hover:bg-[#253991] text-white px-6 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 shadow-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Subir Archivo
+                            </button>
+<a class="text-[13px] font-medium text-primary hover:underline" href="#">Ver requisitos</a>
+</div>
+</div>
+<div class="space-y-5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-secondary text-[24px]">settings_applications</span>
+<h2 class="text-lg font-bold text-text-main">Configuración de Archivos</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-surface border border-gray-border rounded-card p-4 flex flex-col md:flex-row md:items-center gap-5 shadow-sm">
+<div class="flex items-center gap-4 flex-1 min-w-0">
+<div class="w-10 h-10 bg-accent-blue-bg rounded-lg flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-xl filled">image</span>
+</div>
+<div class="min-w-0 flex flex-col">
+<h4 class="font-bold text-sm text-text-main truncate">brand-identity.pdf</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-bold text-text-secondary bg-off-white px-1.5 py-0.5 rounded border border-gray-border tracking-wider">VECTOR</span>
+<span class="text-[10px] font-bold text-text-secondary bg-off-white px-1.5 py-0.5 rounded border border-gray-border tracking-wider">CMYK</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1 w-full md:w-auto">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Largo (m)</span>
+<div class="relative w-full md:w-32">
+<input class="w-full h-9 bg-off-white border border-gray-border rounded-lg px-3 text-sm font-semibold focus:ring-1 focus:ring-primary focus:border-primary outline-none" step="0.1" type="number" value="2.5"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-text-secondary pointer-events-none">m</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-[1.5]">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Marcaciones</span>
+<div class="flex flex-wrap gap-2">
+<div class="chip-selectable active border-primary ring-1 ring-primary/20">Troquelado</div>
+<div class="chip-selectable">Laminado</div>
+<div class="chip-selectable">Ojales</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-text-secondary hover:text-red-500 transition-colors ml-auto md:ml-0 shrink-0">
+<span class="material-symbols-outlined text-[18px]">delete_outline</span>
+</button>
+</div>
+<div class="bg-surface border border-gray-border rounded-card p-4 flex flex-col md:flex-row md:items-center gap-5 shadow-sm">
+<div class="flex items-center gap-4 flex-1 min-w-0">
+<div class="w-10 h-10 bg-off-white rounded-lg flex items-center justify-center text-text-secondary shrink-0">
+<span class="material-symbols-outlined text-xl filled">picture_as_pdf</span>
+</div>
+<div class="min-w-0 flex flex-col">
+<h4 class="font-bold text-sm text-text-main truncate">catalogo_v3.pdf</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-[10px] font-bold text-text-secondary bg-off-white px-1.5 py-0.5 rounded border border-gray-border tracking-wider">OFFSET</span>
+<span class="text-[10px] font-bold text-text-secondary bg-off-white px-1.5 py-0.5 rounded border border-gray-border tracking-wider">GRAY</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1 w-full md:w-auto">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Largo (m)</span>
+<div class="relative w-full md:w-32">
+<input class="w-full h-9 bg-off-white border border-gray-border rounded-lg px-3 text-sm font-semibold focus:ring-1 focus:ring-primary focus:border-primary outline-none" step="0.1" type="number" value="5.0"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-text-secondary pointer-events-none">m</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-[1.5]">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Marcaciones</span>
+<div class="flex flex-wrap gap-2">
+<div class="chip-selectable">Troquelado</div>
+<div class="chip-selectable active border-primary ring-1 ring-primary/20">Laminado</div>
+<div class="chip-selectable">Ojales</div>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-text-secondary hover:text-red-500 transition-colors ml-auto md:ml-0 shrink-0">
+<span class="material-symbols-outlined text-[18px]">delete_outline</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+<div class="px-5 py-4 bg-surface border border-gray-border rounded-card flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-[16px] filled">description</span>
+</div>
+<div>
+<h3 class="font-bold text-[12px] uppercase tracking-wider text-text-main">1. Prepara</h3>
+<p class="text-[11px] text-text-secondary leading-tight mt-0.5">Normas técnicas ISO.</p>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface border border-gray-border rounded-card flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-[16px] filled">settings_suggest</span>
+</div>
+<div>
+<h3 class="font-bold text-[12px] uppercase tracking-wider text-text-main">2. Configura</h3>
+<p class="text-[11px] text-text-secondary leading-tight mt-0.5">Materiales y volumen.</p>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface border border-gray-border rounded-card flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-[16px] filled">local_shipping</span>
+</div>
+<div>
+<h3 class="font-bold text-[12px] uppercase tracking-wider text-text-main">3. Recibe</h3>
+<p class="text-[11px] text-text-secondary leading-tight mt-0.5">Trazabilidad en tiempo real.</p>
+</div>
+</div>
+</section>
+</div>
+<aside class="w-full lg:w-[360px] shrink-0">
+<div class="sticky top-[100px] bg-surface border border-gray-border rounded-card overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-gray-border bg-off-white">
+<h3 class="text-xs font-bold uppercase tracking-[0.15em] text-text-secondary">Resumen de Operación</h3>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 mt-0.5 bg-accent-blue-bg rounded border border-accent-blue-bg flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[16px] filled">image</span>
+</div>
+<div class="min-w-0">
+<p class="text-[13px] font-bold truncate w-32 text-text-main leading-tight">brand-identity.pdf</p>
+<p class="text-[11px] text-text-secondary uppercase mt-0.5">2.5m • Troquelado</p>
+</div>
+</div>
+<span class="text-[13px] font-bold text-text-main">$12.50</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 mt-0.5 bg-off-white rounded border border-gray-border flex items-center justify-center text-text-secondary shrink-0">
+<span class="material-symbols-outlined text-[16px] filled">picture_as_pdf</span>
+</div>
+<div class="min-w-0">
+<p class="text-[13px] font-bold truncate w-32 text-text-main leading-tight">catalogo_v3.pdf</p>
+<p class="text-[11px] text-text-secondary uppercase mt-0.5">5.0m • Laminado</p>
+</div>
+</div>
+<span class="text-[13px] font-bold text-text-main">$45.00</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<p class="text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-1">Logística de Entrega</p>
+<label class="flex items-center justify-between p-3 border border-primary/40 bg-blue-tint/30 rounded-lg cursor-pointer transition-all group">
+<div class="flex items-center gap-3">
+<input checked="" class="custom-radio w-4 h-4 border-[5px]" name="logistics" type="radio"/>
+<span class="text-[13px] font-bold text-text-main uppercase">Estándar 24h</span>
+</div>
+<span class="text-[9px] font-bold text-accent-blue-text bg-white px-2 py-0.5 rounded shadow-sm border border-gray-border/50">GRATIS</span>
+</label>
+<label class="flex items-center justify-between p-3 border border-gray-border rounded-lg cursor-pointer hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-3">
+<input class="custom-radio w-4 h-4" name="logistics" type="radio"/>
+<span class="text-[13px] font-bold text-text-main uppercase">Express 4h</span>
+</div>
+<span class="text-[12px] font-bold text-text-main">+$15.00</span>
+</label>
+</div>
+<div class="pt-5 border-t border-gray-border space-y-3">
+<div class="flex justify-between items-center text-[13px]">
+<span class="text-text-secondary">Subtotal</span>
+<span class="font-medium text-text-main">$57.50</span>
+</div>
+<div class="flex justify-between items-center text-[13px]">
+<span class="text-text-secondary flex items-center gap-1.5">
+                                    Descuento B2B
+                                    <span class="material-symbols-outlined text-[14px] text-text-secondary cursor-help">info</span>
+</span>
+<span class="text-primary font-bold">-$5.75</span>
+</div>
+<div class="flex justify-between items-end pt-3">
+<span class="font-bold text-[11px] uppercase tracking-widest text-text-secondary mb-1">Total Final</span>
+<span class="text-[28px] font-bold text-text-main leading-none">$51.75</span>
+</div>
+</div>
+<div class="space-y-2">
+<button class="w-full bg-primary hover:bg-[#253991] text-white py-3.5 rounded-full font-bold text-[13px] uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-primary/10">
+                                Confirmar e Iniciar
+                            </button>
+<p class="text-[11px] text-center text-text-secondary">Revisarás un resumen antes de enviar</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-surface border-t border-gray-border mt-12">
+<div class="max-w-7xl mx-auto px-8 py-16">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 border-b border-gray-border pb-16">
+<div class="space-y-4">
+<h4 class="text-xs font-bold uppercase tracking-widest text-text-main">Servicios</h4>
+<ul class="space-y-3 text-sm text-text-secondary">
+<li><a class="hover:text-primary transition-colors" href="#">Impresión DTF Textil</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Impresión DTF UV</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Corte Laser</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-xs font-bold uppercase tracking-widest text-text-main">Soporte</h4>
+<ul class="space-y-3 text-sm text-text-secondary">
+<li><a class="hover:text-primary transition-colors" href="#">Tutoriales</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-xs font-bold uppercase tracking-widest text-text-main">Compañía</h4>
+<ul class="space-y-3 text-sm text-text-secondary">
+<li><a class="hover:text-primary transition-colors" href="#">Nosotros</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">¿Por qué elegirnos?</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-xs font-bold uppercase tracking-widest text-text-main">Legal</h4>
+<ul class="space-y-3 text-sm text-text-secondary">
+<li><a class="hover:text-primary transition-colors" href="#">Términos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Privacidad</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Botón Arrepentimiento</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-text-main rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[18px]">precision_manufacturing</span>
+</div>
+<span class="font-bold text-lg text-text-main">VectorCuyo</span>
+</div>
+<div class="flex gap-4">
+<a class="w-8 h-8 flex items-center justify-center border border-gray-border rounded hover:border-primary hover:text-primary transition-all" href="#">
+<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+</a>
+<a class="w-8 h-8 flex items-center justify-center border border-gray-border rounded hover:border-primary hover:text-primary transition-all" href="#">
+<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+</a>
+</div>
+</div>
+</div>
+<div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-[11px] font-medium text-text-secondary">© 2025 Vector Cuyo. Industrial Printing Workstation.</p>
+<div class="flex items-center gap-3 px-4 py-2 border border-gray-border rounded-lg bg-surface">
+<span class="material-symbols-outlined text-text-main text-lg">qr_code_2</span>
+<div class="text-[8px] font-bold text-text-secondary uppercase leading-none">
+                        Data Fiscal<br/>Formulario 960/D
+                    </div>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

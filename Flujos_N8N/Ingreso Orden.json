@@ -1,0 +1,737 @@
+{
+  "name": "Ingreso Orden",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pedido-dtf-test",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -496,
+        48
+      ],
+      "id": "8a546f3f-f59b-4298-8856-106feb0fe721",
+      "name": "Webhook",
+      "webhookId": "4c5db20e-fc10-426b-999d-7e5382a555dc"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa8bbbad-e2c4-44f8-819e-b15c4bed8659",
+              "leftValue": "={{ $json[\"modo\"] }}",
+              "rightValue": "update",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -176,
+        48
+      ],
+      "id": "e99c7bc6-83a6-4580-ab1f-ad3fe18d7778",
+      "name": "If modo = update"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recorremos todos los elementos de entrada\nfor (const item of $input.all()) {\n  \n  // 1. Lógica para desempaquetar el 'body' si n8n lo agrupó\n  // (Mantenemos tu lógica original para que no se rompan los datos del formulario)\n  if (item.json.body && typeof item.json.body === 'object') {\n    Object.assign(item.json, item.json.body);\n    delete item.json.body;\n  }\n\n  // 2. Tu lógica de fechas (si la necesitas para algo posterior)\n  const now = new Date();\n  const year = now.getFullYear();\n  const month = String(now.getMonth() + 1).padStart(2, '0');\n  const day = String(now.getDate()).padStart(2, '0');\n  \n  // Si necesitas usar estas fechas luego, guárdalas en el json:\n  // item.json.anio = year;\n  // item.json.mes = month;\n}\n\n// 3. ¡ESTA ES LA CLAVE!\n// Devolvemos $input.all(). Esto retorna los items modificados PERO\n// mantiene la propiedad 'binary' donde viaja tu archivo 'data'.\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        48
+      ],
+      "id": "ccb41401-d9fc-45a2-a664-3b6f63730def",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ordenes_trabajo\nSET\n  nombre       = {{ $json[\"cliente\"] }},\n  metros       = {{ $json[\"largoM\"] }},\n  estado       = 'Ingresada',          -- o lo que quieras fijar al editar\n  ganancia     = NULL,                 -- o cálculo si ya lo tenés\n  producido    = NULL,\n  entrega      = NULL\nWHERE id_pedido_externo = {{ $json[\"idPedido\"] }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fbd06498-4491-478e-a228-912f7479b94e",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Webhook').item.binary.data.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1MJ6O6XA75nnZIOdSERGJvUiJqlRtaHbI",
+          "mode": "list",
+          "cachedResultName": "Imagenes_Clientes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1MJ6O6XA75nnZIOdSERGJvUiJqlRtaHbI"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        128
+      ],
+      "id": "a86b51db-1944-4fd8-9e53-a7f4efb562c4",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "RnRXikIKTLzjSnRN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "2b78804c-1a61-80d9-975a-eb109baeb936",
+          "mode": "list",
+          "cachedResultName": "Registro de Clientes",
+          "cachedResultUrl": "https://www.notion.so/2b78804c1a6180d9975aeb109baeb936"
+        },
+        "limit": 1,
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Correo |email",
+              "condition": "equals",
+              "emailValue": "={{ $('Code in JavaScript').item.json[\"email\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        128
+      ],
+      "id": "b07b7a3e-44b1-4dcc-ac51-c0e09fb0c648",
+      "name": "Verificar si existe el cliente",
+      "alwaysOutputData": true,
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "32d432a4-5110-42be-b9b2-95bdccfabdd3",
+              "leftValue": "={{ $json.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        128
+      ],
+      "id": "7aa519a0-f8bd-419b-9623-15badeb269d5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "/* 1. Insertamos o actualizamos el cliente con los datos nuevos de la web */\nINSERT INTO clientes (\n    nombre,\n    correo,\n    whatsapp,\n    fecha_creacion,\n    activo\n) VALUES (\n    '{{ $('Code in JavaScript').item.json[\"cliente\"] }}',\n    '{{ $('Code in JavaScript').item.json[\"email\"] }}',\n    '{{ $('Code in JavaScript').item.json[\"telefono\"] }}',\n    \n    DATE_SUB(NOW(), INTERVAL 3 HOUR), /* Hora corregida a Argentina */\n    \n    1\n)\nON DUPLICATE KEY UPDATE\n    nombre = VALUES(nombre),\n    whatsapp = VALUES(whatsapp);\n\n/* 2. MAGIA: Recuperamos el ID y TAMBIÉN el Chat ID de Telegram (si ya lo tiene) */\nSELECT id, telegram_chat_id \nFROM clientes \nWHERE correo = '{{ $('Code in JavaScript').item.json[\"email\"] }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        144,
+        128
+      ],
+      "id": "16479a4e-c55d-4322-8177-b1ff014b8afe",
+      "name": "Crear Cliente SQL",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT IGNORE INTO ordenes_trabajo (\n    id_pedido_externo,\n    nombre,\n    cliente_id,\n    id_cliente, /* <--- IMPORTANTE: Guardamos el ID del usuario registrado */\n    apertura,\n    estado,\n    tipo,\n    metros,\n    creado_en,\n    observaciones,\n    cantidad_archivos,\n    propiedades_visuales,\n    precio_final /* <--- NUEVA COLUMNA */\n) VALUES (\n    '{{ $('Code in JavaScript').item.json[\"idPedido\"] }}',\n    'Pedido Web - {{ $('Code in JavaScript').item.json[\"cliente\"] }}',\n    {{ $json[\"id\"] }},\n    '{{ $('Webhook').item.json.body.id_cliente }}', /* <--- Asegúrate de recibir esto desde el JS */\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    'Ingresada',\n    'DTF Textil',\n    {{ parseFloat($('Code in JavaScript').item.json[\"largoM\"]) }},\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    '{{ $('Code in JavaScript').item.json[\"observaciones\"] }}',\n    {{ $('Code in JavaScript').item.json[\"totalArchivos\"] }},\n    '{{ $('Code in JavaScript').item.json[\"propiedades\"] }}',\n    {{ parseFloat($('Webhook').item.json.body.precioCotizado.replace(/[$.]/g, '').replace(',', '.')) }} /* <--- Limpieza de precio */\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        288,
+        128
+      ],
+      "id": "16b7a639-b515-4588-8121-a981b1515f4d",
+      "name": "Crear Orden Trabajo SQL",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2b78804c-1a61-80d9-975a-eb109baeb936",
+          "mode": "list",
+          "cachedResultName": "Registro de Clientes",
+          "cachedResultUrl": "https://www.notion.so/2b78804c1a6180d9975aeb109baeb936"
+        },
+        "title": "={{ $('Code in JavaScript').item.json[\"cliente\"] }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Correo |email",
+              "emailValue": "={{ $('Code in JavaScript').item.json[\"email\"] }}"
+            },
+            {
+              "key": "WhastApps|phone_number",
+              "phoneValue": "={{ $('Code in JavaScript').item.json[\"telefono\"] }}"
+            },
+            {
+              "key": "Estado|status",
+              "statusValue": "=A Captar"
+            },
+            {
+              "key": "Nombre|title",
+              "title": "={{ $('Code in JavaScript').item.json[\"cliente\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        224
+      ],
+      "id": "f24a3902-cf8e-48ae-a407-91788d85bde2",
+      "name": "Crear Cliente",
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2b78804c-1a61-81d0-a2df-d140f1dd1ec9",
+          "mode": "list",
+          "cachedResultName": "Registro Ordenes de Trabajo",
+          "cachedResultUrl": "https://www.notion.so/2b78804c1a6181d0a2dfd140f1dd1ec9"
+        },
+        "title": "={{ $('Code in JavaScript').item.json[\"idPedido\"] }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "ID|title",
+              "title": "={{ $('Code in JavaScript').item.json[\"idPedido\"] }}"
+            },
+            {
+              "key": "Ingreso|date",
+              "date": "={{ $now }}",
+              "timezone": "America/Argentina/Mendoza"
+            },
+            {
+              "key": "metros|number",
+              "numberValue": "={{ parseFloat($('Code in JavaScript').item.json[\"largoM\"]) }}"
+            },
+            {
+              "key": "Tipo|select",
+              "selectValue": "=\"DTF Textil\""
+            },
+            {
+              "key": "Estado|status",
+              "statusValue": "=Ingresada"
+            },
+            {
+              "key": "Nombre de Archivo|rich_text",
+              "textContent": "={{ $('Upload file').item.json[\"webViewLink\"] }}"
+            },
+            {
+              "key": "Observaciones|rich_text",
+              "textContent": "={{ $('Code in JavaScript').item.json[\"observaciones\"] }}"
+            },
+            {
+              "key": "Nro de Imagenes|number",
+              "numberValue": "={{ parseFloat($('Code in JavaScript').item.json[\"totalArchivos\"]) }}"
+            },
+            {
+              "key": "Detalle BNCS|rich_text",
+              "textContent": "={{ $('Webhook').item.json.body.propiedades }}"
+            },
+            {
+              "key": "Precio Final|number",
+              "numberValue": "={{ parseFloat($('Webhook').item.json.body.precio_final) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        224
+      ],
+      "id": "69492ff6-aa2d-43a6-bb0d-90a1e417aeaa",
+      "name": "Crear Orden de Trabajo",
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7ae06445-7c8c-4b91-8c9a-84a2836a4456",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        128
+      ],
+      "id": "8435c754-db09-4aa0-9efa-df3d3d8291f5",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('Verificar si existe Orden').item.json.id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "=📎 Archivo ({{ $json[\"indiceArchivo\"] }}): {{ $json[\"fileName\"] }}\n📝 Nota: {{ $('Code in JavaScript').item.json[\"observaciones\"] }}\n🔗 Link: {{ $json[\"webViewLink\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        32
+      ],
+      "id": "69ce1418-189b-4239-8ee1-059725275c8b",
+      "name": "Agregar Archivos Extra",
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "2b78804c-1a61-81d0-a2df-d140f1dd1ec9",
+          "mode": "list",
+          "cachedResultName": "Registro Ordenes de Trabajo",
+          "cachedResultUrl": "https://www.notion.so/2b78804c1a6181d0a2dfd140f1dd1ec9"
+        },
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "ID|title",
+              "condition": "equals",
+              "titleValue": "={{ $('Code in JavaScript').item.json[\"idPedido\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        128
+      ],
+      "id": "db9247ef-16fa-4849-a7ba-a5830a32449c",
+      "name": "Verificar si existe Orden",
+      "alwaysOutputData": true,
+      "credentials": {
+        "notionApi": {
+          "id": "kAincbcxU7viYjs8",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT telegram_chat_id \nFROM clientes \nWHERE id = {{ $('Webhook').item.json.body.id_cliente }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1296,
+        224
+      ],
+      "id": "00fc06fc-2e2b-4d6c-8159-a7f8cbca2a60",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f4247264-f4b8-4c5d-b3b2-5860452edca9",
+              "leftValue": "telegram_chat_id",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        224
+      ],
+      "id": "f37291e1-604b-48f1-8ce5-a6d22b7cd392",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram_chat_id }}",
+        "text": "={{ \n`Hola ${$('Code in JavaScript').item.json[\"cliente\"]} 👋\n\nTu pedido ${$('Code in JavaScript').item.json[\"idPedido\"]} fue recibido correctamente.\n\n📏 Medidas: ${$('Code in JavaScript').item.json[\"anchoCm\"]} cm x ${$('Code in JavaScript').item.json[\"largoM\"]} m\n📦 Tipo: ${$('Code in JavaScript').item.json[\"tipoPedido\"] || \"Estándar\"}\n\nEn breve revisaremos tus archivos.\n¡Gracias por elegirnos!` \n}}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        224
+      ],
+      "id": "b56b699c-3438-48f9-a601-2f1a3db6bd03",
+      "name": "Send a text message1",
+      "webhookId": "ec09e23c-b08a-45ae-88e9-59201f2f67f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "AGndVGFeG84kWihj",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If modo = update": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If modo = update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Crear Cliente SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si existe el cliente": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Verificar si existe Orden",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Orden Trabajo SQL": {
+      "main": [
+        [
+          {
+            "node": "Verificar si existe el cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Cliente SQL": {
+      "main": [
+        [
+          {
+            "node": "Crear Orden Trabajo SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Cliente": {
+      "main": [
+        [
+          {
+            "node": "Verificar si existe Orden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Orden de Trabajo": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Agregar Archivos Extra",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear Orden de Trabajo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si existe Orden": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "fc2764b0-b4c7-4c62-8700-1f7e64eab51c",
+  "meta": {
+    "instanceId": "e81149c8d3d3ce37891014898fb23730686517fa2ac66b7b07c2b65e452990e0"
+  },
+  "id": "sIwPak-MdLdKAvGccoTmJ",
+  "tags": [
+    {
+      "updatedAt": "2026-01-06T23:26:08.733Z",
+      "createdAt": "2026-01-06T23:26:08.733Z",
+      "id": "2Hy2qRWJzCyhb6qf",
+      "name": "Notion"
+    }
+  ]
+}

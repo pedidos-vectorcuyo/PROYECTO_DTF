@@ -1,0 +1,134 @@
+{
+  "name": "Historial Pedidos Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/get-orders",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "08e337e6-8e13-4a9b-831c-1da3bc028b27",
+      "name": "Webhook",
+      "webhookId": "4ef5eeb1-4666-4b32-9f21-f3ad7f8ab152"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    id,\n    DATE_FORMAT(creado_en, '%d/%m/%Y %H:%i') as fecha_formateada,\n    metros,\n    precio_final,\n    estado,\n    cantidad_archivos\nFROM ordenes_trabajo\nWHERE id_cliente = '{{ $json.body.id_cliente }}'  /* <--- CORREGIDO: Agregado .body */\nORDER BY creado_en DESC\nLIMIT 50;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        144,
+        0
+      ],
+      "id": "3c202b1a-ac78-45f1-8f07-45a59da04aee",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ JSON.stringify($json.mis_pedidos) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        432,
+        0
+      ],
+      "id": "ada5f6be-0e1e-4c7a-b352-06f98a3a79f5",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convertimos las 5 filas de MySQL en una sola lista limpia\nconst lista = $input.all().map(item => item.json);\n\n// Devolvemos un solo paquete con la lista adentro\nreturn {\n  json: {\n    mis_pedidos: lista\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ],
+      "id": "cb8d81ae-3abd-43c7-8625-8d947c03c055",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "1dc37e1f-3a4d-402b-bf6f-9cc226ef94e4",
+  "meta": {
+    "instanceId": "e81149c8d3d3ce37891014898fb23730686517fa2ac66b7b07c2b65e452990e0"
+  },
+  "id": "9H5yIQAHs_PkFd2FRCkEY",
+  "tags": [
+    {
+      "updatedAt": "2026-01-06T23:26:39.141Z",
+      "createdAt": "2026-01-06T23:26:39.141Z",
+      "id": "wfD4fzLFbPdfB5Fq",
+      "name": "Web"
+    }
+  ]
+}
