@@ -2,6 +2,10 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
+import Footer from './Footer';
+import Button from '../ui/Button';
+
+
 
 const Layout = () => {
     const { user, logout } = useAuth();
@@ -10,50 +14,90 @@ const Layout = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+        <div className="min-h-screen flex flex-col bg-off-white font-sans text-text-main">
             {/* Navbar */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center">
+            <header className="bg-white border-b border-gray-border sticky top-0 z-50 h-[64px]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+                    <div className="grid grid-cols-3 h-full items-center">
+                        {/* 1. Logo (Left) */}
+                        <div className="flex items-center justify-start">
                             <Link to="/" className="flex-shrink-0 flex items-center">
-                                <span className="text-2xl font-extrabold text-[#2563eb]">VectorCuyo</span>
+                                <img className="h-12 w-auto" src="/logo.png" alt="VectorCuyo" />
                             </Link>
-                            <nav className="hidden md:ml-8 md:flex space-x-4">
-                                <Link to="/" className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/') ? 'bg-blue-50 text-[#2563eb]' : 'text-gray-500 hover:text-gray-900'}`}>
+                        </div>
+
+                        {/* 2. Navigation (Center) */}
+                        <div className="hidden md:flex justify-center h-full">
+                            <nav className="flex items-center gap-1">
+                                <Link to="/" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-blue-50' : 'text-text-secondary hover:text-text-main hover:bg-gray-50'}`}>
                                     Inicio
                                 </Link>
+
+                                {/* Servicios Dropdown */}
+                                <div className="relative group h-full flex items-center">
+                                    <button className={`flex items-center px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/nuevo-pedido') ? 'text-primary bg-blue-50' : 'text-text-secondary hover:text-text-main hover:bg-gray-50'}`}>
+                                        Servicios
+                                        <span className="material-symbols-outlined text-[20px] ml-1">expand_more</span>
+                                    </button>
+                                    <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-56 bg-white border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
+                                        <div className="flex flex-col gap-1">
+                                            <Link to="/nuevo-pedido" className="block px-4 py-2.5 rounded-lg text-[14px] text-text-main hover:bg-gray-50 hover:text-primary transition-colors">
+                                                Lámina DTF Textil
+                                            </Link>
+                                            <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
+                                                Lámina DTF UV (Próx.)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Tutoriales Dropdown */}
+                                <div className="relative group h-full flex items-center">
+                                    <button className="flex items-center px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
+                                        Tutoriales
+                                        <span className="material-symbols-outlined text-[20px] ml-1">expand_more</span>
+                                    </button>
+                                    <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-48 bg-white border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
+                                                Próximamente...
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Link to="/" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
+                                    Nosotros
+                                </Link>
+
                                 {user && (
-                                    <>
-                                        <Link to="/nuevo-pedido" className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/nuevo-pedido') ? 'bg-blue-50 text-[#2563eb]' : 'text-gray-500 hover:text-gray-900'}`}>
-                                            Nuevo Pedido
-                                        </Link>
-                                        <Link to="/dashboard" className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/dashboard') ? 'bg-blue-50 text-[#2563eb]' : 'text-gray-500 hover:text-gray-900'}`}>
-                                            Historial
-                                        </Link>
-                                    </>
+                                    <Link to="/dashboard" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/dashboard') ? 'text-primary bg-blue-50' : 'text-text-secondary hover:text-text-main hover:bg-gray-50'}`}>
+                                        Historial
+                                    </Link>
                                 )}
                             </nav>
                         </div>
-                        <div className="flex items-center">
+
+                        {/* 3. User Area (Right) */}
+                        <div className="flex items-center justify-end">
                             {user ? (
                                 <div className="flex items-center space-x-4">
-                                    <span className="text-sm text-gray-700 hidden sm:block">Hola, <strong>{user.nombre}</strong></span>
+                                    <span className="text-[14px] text-text-main hidden sm:block">Hola, <strong>{user.nombre}</strong></span>
                                     <button
                                         onClick={logout}
-                                        className="text-sm font-medium text-red-600 hover:text-red-800"
+                                        className="text-[14px] font-medium text-danger hover:text-red-700 transition-colors"
                                     >
                                         Salir
                                     </button>
                                 </div>
                             ) : (
-                                <div className="space-x-4">
-                                    <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900">
+                                <div className="space-x-3 flex items-center">
+                                    <Button to="/login" variant="ghost" size="sm">
                                         Ingresar
-                                    </Link>
-                                    <Link to="/register" className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#2563eb] hover:bg-blue-700">
+                                    </Button>
+                                    <Button to="/register" size="sm">
                                         Registrarse
-                                    </Link>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -67,16 +111,7 @@ const Layout = () => {
             </main>
 
             {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 mt-auto">
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <p className="text-center text-sm text-gray-500">
-                        &copy; {new Date().getFullYear()} Vector Cuyo. Todos los derechos reservados.
-                    </p>
-                    <div className="mt-2 text-center text-xs text-gray-400">
-                        <Link to="/legal" className="hover:underline">Términos y Condiciones</Link>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 };

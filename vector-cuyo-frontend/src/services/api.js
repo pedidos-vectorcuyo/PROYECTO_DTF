@@ -11,7 +11,45 @@ const ENDPOINTS = {
     UPLOAD_ORDER: "/pedido-dtf-test",
     // These might be needed later, simplified for now based on original JS
     LOGIN: "/auth-login",
-    REGISTER: "/auth-register"
+    REGISTER: "/auth-register",
+    GET_ORDERS: "/get-orders"
+};
+
+/**
+ * Fetches order history for a specific client.
+ * @param {string|number} clientId - The ID of the client
+ * @returns {Promise<Array>} - List of orders
+ */
+export const fetchOrders = async (clientId) => {
+    try {
+        const formData = new FormData();
+        formData.append('id_cliente', clientId);
+
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ORDERS}`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch orders");
+
+        let data = await response.json();
+
+        // Normalize n8n response structure (similar to legacy logic)
+        if (data.json) data = data.json;
+        else if (data.data) data = data.data;
+
+        if (!Array.isArray(data)) {
+            if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+                return [data];
+            }
+            return [];
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return [];
+    }
 };
 
 /**

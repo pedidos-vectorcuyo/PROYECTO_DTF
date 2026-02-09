@@ -1,63 +1,12 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-const MOCK_ORDERS = [
-    {
-        id: "VC-8291",
-        date: "24 Oct, 2023",
-        files: "brand-identity.pdf + 1 más",
-        price: 51.75,
-        status: "en_curso",
-        shipping: "Estándar (24h)",
-        details: [
-            { name: "brand-identity.pdf", size: "1.2m x 55cm" }
-        ]
-    },
-    {
-        id: "VC-8288",
-        date: "22 Oct, 2023",
-        files: "catalogo_v3.pdf",
-        price: 128.00,
-        status: "pausado",
-        statusMsg: "Esperando archivos",
-        shipping: "Estándar (24h)"
-    },
-    {
-        id: "VC-8105",
-        date: "19 Oct, 2023",
-        files: "poster-event.pdf + 2 más",
-        price: 340.50,
-        status: "en_revision",
-        shipping: "Express (4h)"
-    },
-    {
-        id: "VC-7992",
-        date: "15 Oct, 2023",
-        files: "etiquetas-vinos.ai",
-        price: 890.00,
-        status: "entregado",
-        shipping: "Estándar (24h)"
-    },
-    {
-        id: "VC-7850",
-        date: "10 Oct, 2023",
-        files: "flyers-a5.pdf",
-        price: 45.00,
-        status: "pagado",
-        shipping: "Estándar (24h)"
-    },
-    {
-        id: "VC-DRAFT-1",
-        date: "Hoy",
-        files: "proyecto_borrador.png",
-        price: 0.00,
-        status: "borrador",
-        shipping: "Pendiente"
-    }
-];
+import { useAuth } from '../components/auth/AuthProvider';
+import { fetchOrders } from '../services/api';
+import Button from '../components/ui/Button';
 
 const STATUS_CONFIG = {
+    // API returns 'Ingresado' as default, mapping to 'en_curso' style or adding new ones
+    Ingresado: { color: "text-primary", bg: "bg-blue-tint", border: "border-primary/20", dot: "bg-primary", label: "Ingresado" },
     en_curso: { color: "text-primary", bg: "bg-blue-tint", border: "border-primary/20", dot: "bg-primary", label: "En curso" },
     pausado: { color: "text-status-amber", bg: "bg-amber-50", border: "border-status-amber/20", dot: "bg-status-amber", label: "Pausado" },
     en_revision: { color: "text-status-slate", bg: "bg-slate-50", border: "border-status-slate/20", dot: "bg-status-slate", label: "En revisión" },
@@ -67,26 +16,58 @@ const STATUS_CONFIG = {
 };
 
 const DashboardPage = () => {
+    const { user } = useAuth();
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('todos'); // Sidebar filter
     const [searchTerm, setSearchTerm] = useState(''); // Text search
     const [statusFilter, setStatusFilter] = useState(''); // Dropdown filter
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Standard pagination size
 
+    useEffect(() => {
+        const loadOrders = async () => {
+            if (user?.id) {
+                setLoading(true);
+                const data = await fetchOrders(user.id);
+                // Transform API data to Component state format if necessary
+                // API keys: id, creado_en, estado, precio_final, nombre_archivo (?)
+                const formatted = data.map(o => ({
+                    id: o.id ? o.id.toString() : 'N/A',
+                    date: o.creado_en ? o.creado_en.split('T')[0] : '-',
+                    files: o.nombre_archivo || 'Sin archivo', // Adjust based on actual API response
+                    price: parseFloat(o.precio_final || 0),
+                    status: o.estado || 'Ingresado',
+                    shipping: "Estándar (24h)", // Default for now
+                    // Store original object too if needed
+                    ...o
+                }));
+                // Sort by ID descending (newest first)
+                formatted.sort((a, b) => b.id - a.id);
+                setOrders(formatted);
+                setLoading(false);
+            }
+        };
+
+        loadOrders();
+    }, [user]);
+
     // Counts for sidebar badges
-    const vigentesCount = MOCK_ORDERS.filter(o => ['en_curso', 'pausado', 'en_revision'].includes(o.status)).length;
+    const vigentesCount = orders.filter(o => ['Ingresado', 'en_curso', 'pausado', 'en_revision'].includes(o.status)).length;
 
     // Filter Logic
-    const filteredOrders = MOCK_ORDERS.filter(order => {
+    const filteredOrders = orders.filter(order => {
         // 1. Sidebar Filter
-        if (filter === 'vigentes' && !['en_curso', 'pausado', 'en_revision'].includes(order.status)) return false;
+        if (filter === 'vigentes' && !['Ingresado', 'en_curso', 'pausado', 'en_revision'].includes(order.status)) return false;
         if (filter === 'historial' && !['entregado', 'pagado'].includes(order.status)) return false;
         if (filter === 'borradores' && order.status !== 'borrador') return false;
 
         // 2. Text Search (ID or Files)
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
-            if (!order.id.toLowerCase().includes(term) && !order.files.toLowerCase().includes(term)) return false;
+            const idMatch = order.id && order.id.toString().toLowerCase().includes(term);
+            const fileMatch = order.files && order.files.toLowerCase().includes(term);
+            if (!idMatch && !fileMatch) return false;
         }
 
         // 3. Status Dropdown
@@ -105,6 +86,14 @@ const DashboardPage = () => {
     const handleNotImplemented = (feature) => {
         alert(`La sección de ${feature} estará disponible próximamente.`);
     };
+
+    if (loading) {
+        return (
+            <div className="w-full h-96 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col lg:flex-row gap-8">
@@ -177,7 +166,7 @@ const DashboardPage = () => {
                         <div className="relative w-full sm:w-64">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px]">search</span>
                             <input
-                                className="w-full h-10 pl-10 pr-4 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-shadow"
+                                className="w-full h-[44px] pl-10 pr-4 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-shadow"
                                 placeholder="Buscar por ID o archivo..."
                                 type="text"
                                 value={searchTerm}
@@ -186,11 +175,12 @@ const DashboardPage = () => {
                         </div>
                         <div className="relative w-full sm:w-48">
                             <select
-                                className="w-full h-10 pl-3 pr-8 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer text-text-main font-medium"
+                                className="w-full h-[44px] pl-3 pr-8 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer text-text-main font-medium"
                                 value={statusFilter}
                                 onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                             >
                                 <option value="">Filtrar por estado</option>
+                                <option value="Ingresado">Ingresado</option>
                                 <option value="en_curso">En curso</option>
                                 <option value="pausado">Pausado</option>
                                 <option value="en_revision">En revisión</option>
@@ -205,7 +195,7 @@ const DashboardPage = () => {
                 <div className="space-y-4">
                     {paginatedOrders.length > 0 ? (
                         paginatedOrders.map((order) => {
-                            const style = STATUS_CONFIG[order.status] || STATUS_CONFIG.en_curso;
+                            const style = STATUS_CONFIG[order.status] || STATUS_CONFIG.Ingresado;
                             return (
                                 <div key={order.id} className="bg-surface border border-gray-border rounded-card p-5 hover:shadow-sm transition-shadow">
                                     <div className="flex flex-col md:flex-row gap-6">
@@ -238,16 +228,16 @@ const DashboardPage = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-row md:flex-col justify-between items-end gap-4 border-t md:border-t-0 border-gray-border pt-4 md:pt-0 mt-2 md:mt-0">
+                                        <div className="flex flex-row md:flex-col justify-between items-end gap-4 border-t border-gray-border md:border-none pt-4 md:pt-0">
                                             <div className="text-right hidden md:block">
                                                 <p className="text-[12px] text-text-secondary mb-0.5">Total</p>
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
                                             <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                                                <button className="text-[13px] font-medium text-text-secondary hover:text-primary transition-colors">Ver detalles</button>
-                                                <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-border hover:border-primary hover:text-primary text-text-secondary transition-all" title="Descargar Factura">
+                                                <Button variant="ghost" size="sm" className="text-xs">Ver detalles</Button>
+                                                <Button size="icon" variant="secondary" title="Descargar Factura">
                                                     <span className="material-symbols-outlined text-[18px]">receipt_long</span>
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
@@ -267,20 +257,22 @@ const DashboardPage = () => {
                         Mostrando {Math.min((currentPage - 1) * itemsPerPage + 1, filteredOrders.length)} - {Math.min(currentPage * itemsPerPage, filteredOrders.length)} de {filteredOrders.length} pedidos
                     </p>
                     <div className="flex gap-2">
-                        <button
+                        <Button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-1.5 rounded border border-gray-border text-text-secondary text-[12px] font-medium hover:border-primary hover:text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="secondary"
+                            size="sm"
                         >
                             Anterior
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages || totalPages === 0}
-                            className="px-3 py-1.5 rounded border border-gray-border text-text-secondary text-[12px] font-medium hover:border-primary hover:text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="secondary"
+                            size="sm"
                         >
                             Siguiente
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </section>

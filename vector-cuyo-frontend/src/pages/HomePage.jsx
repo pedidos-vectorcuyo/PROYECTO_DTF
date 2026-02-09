@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button';
 
 const HomePage = () => {
     return (
@@ -17,12 +18,12 @@ const HomePage = () => {
                         Obtenga precisión incomparable en transferencias textiles y UV. Nuestra tecnología de impresión directa sobre film garantiza durabilidad, colores vibrantes y adherencia superior para aplicaciones B2B exigentes.
                     </p>
                     <div className="flex flex-wrap gap-4 pt-2">
-                        <Link to="/nuevo-pedido" className="bg-primary hover:bg-[#253991] text-white px-8 py-3.5 rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 shadow-lg shadow-primary/20">
+                        <Button to="/nuevo-pedido" size="lg" className="shadow-lg shadow-primary/20">
                             Comenzar Pedido
-                        </Link>
-                        <button className="bg-surface hover:bg-gray-50 text-text-main border border-gray-border px-8 py-3.5 rounded-full font-bold text-sm tracking-wide transition-all">
+                        </Button>
+                        <Button variant="secondary" size="lg">
                             Ver Especificaciones
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 <div className="relative group">
@@ -35,9 +36,9 @@ const HomePage = () => {
                                 <h3 className="font-bold text-lg">Muestra de Calidad DTF</h3>
                                 <p className="text-sm text-white/80">Textura Premium y Acabado Mate</p>
                             </div>
-                            <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-full font-medium text-xs tracking-wide transition-colors">
+                            <Button variant="ghost" size="sm" className="bg-white/10 hover:bg-white/20 text-white hover:text-white border border-white/30 backdrop-blur-md">
                                 Solicitar Muestra
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -87,9 +88,9 @@ const HomePage = () => {
                             </li>
                         ))}
                     </ul>
-                    <button className="w-full bg-primary hover:bg-[#253991] text-white py-3 rounded-card font-bold text-sm tracking-wide transition-colors flex items-center justify-center gap-2">
+                    <Button className="w-full gap-2" size="lg">
                         Cotizar Ahora <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="bg-surface border border-gray-border rounded-card p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow group">

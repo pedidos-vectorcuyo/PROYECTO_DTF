@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from '../components/ui/Button';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -85,6 +86,7 @@ const RegisterPage = () => {
                                 className="w-full h-[44px] bg-white border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
+
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
@@ -94,9 +96,9 @@ const RegisterPage = () => {
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="w-full h-[48px] bg-primary hover:bg-[#1e40af] text-white rounded-full font-bold text-[14px] tracking-wide transition-all active:scale-[0.98] shadow-sm mt-4">
+                    <Button type="submit" className="w-full mt-4" size="lg">
                         Registrar Empresa
-                    </button>
+                    </Button>
                 </form>
                 <div className="mt-8 pt-6 border-t border-gray-border text-center">
                     <span className="text-[13px] text-text-secondary">¿Ya tienes una cuenta?</span>

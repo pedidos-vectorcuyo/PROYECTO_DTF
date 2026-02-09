@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/auth/AuthProvider';
 import { processFile } from '../utils/fileProcessor';
 import { fetchPrices, submitOrder } from '../services/api';
+import Button from '../components/ui/Button';
 
 const OrderPanelPage = () => {
     const { user } = useAuth();
@@ -114,16 +115,16 @@ const OrderPanelPage = () => {
 
     let currentPrice = prices.base;
     let tierName = "Precio Base";
-    let tierColor = "bg-blue-100 text-blue-800";
+    let tierColor = "bg-blue-100/50 text-blue-700 border-blue-200";
 
     if (effectiveMeters > 30) {
         currentPrice = prices.p30;
         tierName = "GOLD (>30m)";
-        tierColor = "bg-yellow-100 text-yellow-800";
+        tierColor = "bg-yellow-100/50 text-yellow-700 border-yellow-200";
     } else if (effectiveMeters > 10) {
         currentPrice = prices.p10;
         tierName = "MAYORISTA (>10m)";
-        tierColor = "bg-green-100 text-green-800";
+        tierColor = "bg-green-100/50 text-green-700 border-green-200";
     }
 
     const subtotal = effectiveMeters * prices.base;
@@ -196,14 +197,19 @@ const OrderPanelPage = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left Panel: Upload & List */}
-            <div className="w-full lg:w-2/3 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Panel: Upload & List (8 cols ~ 66%) */}
+            <div className="lg:col-span-8 space-y-6">
                 <div className="bg-surface border border-gray-border rounded-card p-6">
-                    <h2 className="text-[20px] font-bold text-text-main mb-4">Cargar Archivos</h2>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-[20px] font-bold text-text-main">Lámina DTF Textil</h2>
+                        <span className="px-3 py-1 bg-blue-50 text-primary text-xs font-bold rounded-full uppercase tracking-wide">
+                            Producción 24hs
+                        </span>
+                    </div>
 
                     <div
-                        className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${dragActive ? 'border-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}`}
+                        className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${dragActive ? 'border-primary bg-blue-50' : 'border-gray-200 hover:border-primary hover:bg-gray-50'}`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
                         onDragOver={handleDrag}
@@ -218,16 +224,22 @@ const OrderPanelPage = () => {
                             accept="image/png"
                             onChange={handleChange}
                         />
-                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                        <div className="w-16 h-16 bg-white border border-gray-border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-primary">
                             <span className="material-symbols-outlined text-[32px]">cloud_upload</span>
                         </div>
-                        <p className="text-text-main font-medium">Arrastra tus archivos PNG aquí</p>
-                        <p className="text-text-secondary text-sm mt-1">o haz click para explorar</p>
-                        <p className="text-xs text-text-secondary mt-4">Solo archivos PNG a 300 DPI con fondo transparente</p>
+                        <p className="text-text-main font-medium text-lg">Arrastra tus archivos PNG aquí</p>
+                        <p className="text-text-secondary text-sm mt-1">o haz click para explorar tu dispositivo</p>
+
+                        <div className="flex items-center justify-center gap-4 mt-6 text-xs text-text-secondary">
+                            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Fondo transparente</span>
+                            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> 300 DPI</span>
+                            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Modo RGB</span>
+                        </div>
                     </div>
 
                     {loading && (
-                        <div className="mt-4 text-center text-primary text-sm font-medium animate-pulse">
+                        <div className="mt-6 flex items-center justify-center gap-2 text-primary text-sm font-medium">
+                            <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></span>
                             Procesando archivos...
                         </div>
                     )}
@@ -236,150 +248,218 @@ const OrderPanelPage = () => {
                 {/* File List */}
                 <div className="space-y-4">
                     {files.map((file) => (
-                        <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-300 bg-red-50'} rounded-card p-4 transition-all hover:shadow-sm`}>
-                            <div className="flex flex-col sm:flex-row justify-between gap-4">
-                                <div className="flex items-start gap-4">
-                                    <div className="w-16 h-16 bg-off-white rounded-lg border border-gray-border flex items-center justify-center shrink-0 overflow-hidden">
-                                        {file.previewUrl ? (
-                                            <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-gray-400">image</span>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-text-main text-sm truncate max-w-[200px]">{file.file.name}</h3>
-
-                                        {file.valid ? (
-                                            <div className="flex items-center gap-3 mt-1 text-xs text-text-secondary">
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">aspect_ratio</span> {file.meta.anchoCm.toFixed(1)} cm</span>
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">straighten</span> {file.meta.largoM.toFixed(2)} m</span>
-                                                <span className={`px-1.5 py-0.5 rounded ${file.meta.dpi < 300 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>{file.meta.dpi} DPI</span>
-                                            </div>
-                                        ) : (
-                                            <div className="mt-1 text-xs text-red-600 font-medium">
-                                                {file.errors.join(', ')}
-                                            </div>
-                                        )}
-
-                                        {file.warnings.length > 0 && (
-                                            <div className="mt-1 text-xs text-yellow-600">
-                                                ⚠️ {file.warnings.join(', ')}
-                                            </div>
-                                        )}
-                                    </div>
+                        <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md`}>
+                            <div className="flex flex-col sm:flex-row gap-5">
+                                {/* Preview */}
+                                <div className="w-20 h-20 bg-gray-50 border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
+                                    <div className="absolute inset-0 bg-dtf-texture opacity-10"></div>
+                                    {file.previewUrl ? (
+                                        <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain relative z-10" />
+                                    ) : (
+                                        <span className="material-symbols-outlined text-gray-300">image</span>
+                                    )}
                                 </div>
 
-                                {file.valid && (
-                                    <div className="flex flex-col items-end gap-3">
-                                        <button
-                                            onClick={() => removeFile(file.id)}
-                                            className="text-gray-400 hover:text-red-500"
-                                        >
-                                            <span className="material-symbols-outlined text-[20px]">delete</span>
-                                        </button>
-
-                                        <div className="flex items-center border border-gray-border rounded-lg h-8">
-                                            <button onClick={() => updateCopies(file.id, -1)} className="px-2 hover:bg-gray-50 text-gray-600">-</button>
-                                            <span className="px-2 text-sm font-medium w-8 text-center">{file.copies}</span>
-                                            <button onClick={() => updateCopies(file.id, 1)} className="px-2 hover:bg-gray-50 text-gray-600">+</button>
-                                        </div>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="font-semibold text-text-main text-[15px] truncate pr-4" title={file.file.name}>{file.file.name}</h3>
+                                        {file.valid && (
+                                            <button
+                                                onClick={() => removeFile(file.id)}
+                                                className="text-text-secondary hover:text-danger transition-colors p-1 -mr-2"
+                                                title="Eliminar archivo"
+                                            >
+                                                <span className="material-symbols-outlined text-[20px]">delete</span>
+                                            </button>
+                                        )}
                                     </div>
-                                )}
+
+                                    {file.valid ? (
+                                        <>
+                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-[13px] text-text-secondary">
+                                                <span className="flex items-center gap-1.5" title="Ancho">
+                                                    <span className="material-symbols-outlined text-[16px]">aspect_ratio</span>
+                                                    {file.meta.anchoCm.toFixed(1)} cm
+                                                </span>
+                                                <span className="flex items-center gap-1.5" title="Largo estimado">
+                                                    <span className="material-symbols-outlined text-[16px]">straighten</span>
+                                                    {file.meta.largoM.toFixed(2)} m
+                                                </span>
+                                                <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}`}>
+                                                    {file.meta.dpi} DPI
+                                                </span>
+                                            </div>
+
+                                            {/* Quantity Control */}
+                                            <div className="flex items-center mt-4 gap-3">
+                                                <span className="text-[13px] font-medium text-text-main">Copias:</span>
+                                                <div className="flex items-center bg-white border border-gray-border rounded-lg h-[32px]">
+                                                    <button
+                                                        onClick={() => updateCopies(file.id, -1)}
+                                                        className="w-8 h-full flex items-center justify-center hover:bg-gray-50 text-text-secondary border-r border-gray-border"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <input
+                                                        type="text"
+                                                        readOnly
+                                                        value={file.copies}
+                                                        className="w-10 text-center text-sm font-semibold text-text-main outline-none"
+                                                    />
+                                                    <button
+                                                        onClick={() => updateCopies(file.id, 1)}
+                                                        className="w-8 h-full flex items-center justify-center hover:bg-gray-50 text-text-secondary border-l border-gray-border"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="mt-2 text-sm text-danger font-medium flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-[18px]">error</span>
+                                            {file.errors.join(', ')}
+                                        </div>
+                                    )}
+
+                                    {file.warnings.length > 0 && (
+                                        <div className="mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded flex items-start gap-2">
+                                            <span className="material-symbols-outlined text-[14px] mt-0.5">warning</span>
+                                            <span>{file.warnings.join(', ')}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {file.valid && (
-                                <div className="mt-4 pt-3 border-t border-gray-border flex gap-2 overflow-x-auto">
-                                    <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide py-1.5">Opciones:</span>
-                                    <button
-                                        onClick={() => toggleOption(file.id, 'whites')}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${file.options.whites ? 'bg-primary text-white border-primary' : 'bg-white text-gray-500 border-gray-200 hover:border-primary'}`}
-                                    >BLANCAS</button>
-                                    <button
-                                        onClick={() => toggleOption(file.id, 'blacks')}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${file.options.blacks ? 'bg-primary text-white border-primary' : 'bg-white text-gray-500 border-gray-200 hover:border-primary'}`}
-                                    >NEGRAS</button>
-                                    <button
-                                        onClick={() => toggleOption(file.id, 'colors')}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${file.options.colors ? 'bg-primary text-white border-primary' : 'bg-white text-gray-500 border-gray-200 hover:border-primary'}`}
-                                    >COLORES</button>
-                                    <button
-                                        onClick={() => toggleOption(file.id, 'halftones')}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${file.options.halftones ? 'bg-primary text-white border-primary' : 'bg-white text-gray-500 border-gray-200 hover:border-primary'}`}
-                                    >SEMITONOS</button>
+                                <div className="mt-4 pt-4 border-t border-gray-border">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                                        <span className="text-[12px] font-bold text-text-secondary uppercase tracking-widest shrink-0">Tratamientos:</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {[
+                                                { id: 'whites', label: 'Base Blanca' },
+                                                { id: 'blacks', label: 'Base Negra' },
+                                                { id: 'colors', label: 'Potenciar Color' },
+                                                { id: 'halftones', label: 'Semitonos' }
+                                            ].map(opt => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => toggleOption(file.id, opt.id)}
+                                                    className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${file.options[opt.id]
+                                                            ? 'bg-primary text-white border-primary shadow-sm'
+                                                            : 'bg-white text-text-secondary border-gray-200 hover:border-gray-300'
+                                                        }`}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
                     ))}
 
                     {files.length === 0 && (
-                        <div className="text-center py-12 text-gray-400">
-                            No has cargado archivos todavía.
+                        <div className="flex flex-col items-center justify-center py-16 bg-surface border border-dashed border-gray-200 rounded-card text-text-secondary">
+                            <span className="material-symbols-outlined text-[48px] opacity-20 mb-2">inventory_2</span>
+                            <p className="text-sm">Tu lista de archivos está vacía</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Right Panel: Summary */}
-            <div className="w-full lg:w-1/3 shrink-0">
-                <div className="sticky top-24 bg-surface border border-gray-border rounded-card p-6 shadow-sm">
-                    <h3 className="text-lg font-bold text-text-main mb-4">Resumen del Pedido</h3>
+            {/* Right Panel: Summary (4 cols ~ 33%) */}
+            <div className="lg:col-span-4 relative">
+                <div className="sticky top-[88px] space-y-4">
+                    <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
+                        <div className="flex items-center gap-2 mb-6 text-text-main">
+                            <span className="material-symbols-outlined">receipt_long</span>
+                            <h3 className="text-lg font-bold">Resumen del Pedido</h3>
+                        </div>
 
-                    <div className="space-y-3 mb-6">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-text-secondary">Metros Totales</span>
-                            <span className="font-medium text-text-main">{effectiveMeters.toFixed(2)} m</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                            <span className="text-text-secondary">Precio por metro</span>
-                            <span className="font-medium text-text-main">${currentPrice.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between text-sm pt-2 border-t border-gray-border">
-                            <span className="text-text-secondary">Subtotal</span>
-                            <span className="font-medium text-text-main">${subtotal.toLocaleString()}</span>
-                        </div>
-                        {discount > 0 && (
-                            <div className="flex justify-between text-sm text-green-600">
-                                <span>Descuento Volumen</span>
-                                <span>-${discount.toLocaleString()}</span>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex justify-between items-center text-sm">
+                                <span className="text-text-secondary">Metros Lineales</span>
+                                <span className="font-semibold text-text-main text-[15px]">{effectiveMeters.toFixed(2)} m</span>
                             </div>
-                        )}
-                        <div className="flex justify-between items-end pt-4 border-t border-gray-border">
-                            <span className="font-bold text-lg text-text-main">Total</span>
-                            <span className="font-bold text-2xl text-primary">${total.toLocaleString()}</span>
+
+                            <div className="h-px bg-gray-border"></div>
+
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-text-secondary">Precio base</span>
+                                    <span className="text-text-main">${prices.base.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-text-secondary">Nivel de precio</span>
+                                    <span className={`font-bold border px-1.5 rounded text-xs ${tierColor}`}>
+                                        {tierName}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="h-px bg-gray-border"></div>
+
+                            <div className="flex justify-between items-end">
+                                <span className="text-sm font-medium text-text-secondary">Total Estimado</span>
+                                <div className="text-right">
+                                    <span className="block text-2xl font-bold text-text-main tracking-tight">${total.toLocaleString()}</span>
+                                    {discount > 0 && (
+                                        <span className="text-xs text-success font-medium">Ahorraste ${discount.toLocaleString()}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-[12px] font-bold text-text-secondary uppercase tracking-wider mb-2" htmlFor="obs">
+                                Observaciones
+                            </label>
+                            <textarea
+                                id="obs"
+                                className="w-full border border-gray-border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-shadow resize-none bg-off-white focus:bg-white"
+                                rows="3"
+                                placeholder="Detalles de entrega, especificaciones..."
+                                value={clientData.observaciones}
+                                onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
+                            ></textarea>
+                        </div>
+
+                        <Button
+                            onClick={handleSubmitOrder}
+                            className="w-full shadow-lg shadow-primary/20"
+                            size="lg"
+                            disabled={files.length === 0 || files.some(f => !f.valid) || submitting}
+                        >
+                            {submitting ? (
+                                <>
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                    Procesando...
+                                </>
+                            ) : "Confirmar Pedido"}
+                        </Button>
+
+                        <div className="mt-4 text-center">
+                            <p className="text-[11px] text-text-secondary">
+                                Tiempos de producción sujetos a disponibilidad.
+                            </p>
                         </div>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="block text-xs font-medium text-text-secondary mb-1">Observaciones</label>
-                        <textarea
-                            className="w-full border border-gray-border rounded-lg p-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none"
-                            rows="2"
-                            placeholder="Instrucciones especiales..."
-                            value={clientData.observaciones}
-                            onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
-                        ></textarea>
+                    {/* Support Card */}
+                    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-card p-5 text-white shadow-sm">
+                        <div className="flex gap-3 mb-2">
+                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                <span className="material-symbols-outlined text-sm">support_agent</span>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-sm">¿Necesitas ayuda?</h4>
+                                <p className="text-xs text-slate-300 mt-1">Contacta a soporte técnico si tienes dudas con tus archivos.</p>
+                            </div>
+                        </div>
                     </div>
-
-                    <div className={`mb-6 p-2 rounded text-center text-xs font-bold uppercase tracking-wide ${tierColor}`}>
-                        {tierName}
-                    </div>
-
-                    <button
-                        onClick={handleSubmitOrder}
-                        className="w-full bg-primary hover:bg-[#1e40af] text-white py-3.5 rounded-card font-bold text-sm tracking-wide transition-colors shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        disabled={files.length === 0 || files.some(f => !f.valid) || submitting}
-                    >
-                        {submitting ? (
-                            <>
-                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                Enviando...
-                            </>
-                        ) : "Confirmar Pedido"}
-                    </button>
-
-                    <p className="text-xs text-center text-text-secondary mt-4">
-                        Al confirmar, aceptas nuestros <a href="/legal" className="underline hover:text-primary">términos de servicio</a>.
-                    </p>
                 </div>
             </div>
         </div>

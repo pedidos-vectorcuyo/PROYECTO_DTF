@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/auth/AuthProvider';
+import Button from '../components/ui/Button';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -73,9 +74,10 @@ const LoginPage = () => {
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="w-full h-[48px] bg-primary hover:bg-[#1e40af] text-white rounded-full font-bold text-[14px] tracking-wide transition-all active:scale-[0.98] shadow-sm mt-2">
+
+                    <Button type="submit" className="w-full mt-2" size="lg">
                         Acceder al Workstation
-                    </button>
+                    </Button>
                 </form>
                 <div className="mt-8 pt-6 border-t border-gray-border text-center">
                     <span className="text-[13px] text-text-secondary">¿No tienes cuenta?</span>
