@@ -21,7 +21,7 @@ const HomePage = () => {
                         <Button to="/nuevo-pedido" size="lg" className="shadow-lg shadow-primary/20">
                             Comenzar Pedido
                         </Button>
-                        <Button variant="secondary" size="lg">
+                        <Button to="/especificaciones" variant="secondary" size="lg">
                             Ver Especificaciones
                         </Button>
                     </div>
@@ -88,7 +88,7 @@ const HomePage = () => {
                             </li>
                         ))}
                     </ul>
-                    <Button className="w-full gap-2" size="lg">
+                    <Button to="/nuevo-pedido" className="w-full gap-2" size="lg">
                         Cotizar Ahora <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </Button>
                 </div>
@@ -113,9 +113,9 @@ const HomePage = () => {
                             </li>
                         ))}
                     </ul>
-                    <button className="w-full bg-primary hover:bg-[#253991] text-white py-3 rounded-card font-bold text-sm tracking-wide transition-colors flex items-center justify-center gap-2">
+                    <Button to="/nuevo-pedido" className="w-full gap-2" size="lg">
                         Cotizar Ahora <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                    </button>
+                    </Button>
                 </div>
             </section>
         </div>

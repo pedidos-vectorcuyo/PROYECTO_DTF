@@ -14,23 +14,21 @@ const Footer = () => {
                             <h4 className="text-xs font-bold uppercase tracking-widest text-text-main">Servicios</h4>
                             <ul className="space-y-3 text-sm text-text-secondary">
                                 <li><Link className="hover:text-primary transition-colors" to="/nuevo-pedido">DTF Textil</Link></li>
-                                <li><a className="hover:text-primary transition-colors" href="#">DTF UV</a></li>
-                                <li><a className="hover:text-primary transition-colors" href="#">Corte Laser</a></li>
                             </ul>
                         </div>
                         {/* Soporte */}
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold uppercase tracking-widest text-text-main">Soporte</h4>
                             <ul className="space-y-3 text-sm text-text-secondary">
-                                <li><a className="hover:text-primary transition-colors" href="#">Tutoriales</a></li>
+                                <li><Link className="hover:text-primary transition-colors" to="/tutoriales">Tutoriales</Link></li>
                             </ul>
                         </div>
                         {/* Compañía */}
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold uppercase tracking-widest text-text-main">Compañía</h4>
                             <ul className="space-y-3 text-sm text-text-secondary">
-                                <li><Link className="hover:text-primary transition-colors" to="/">Nosotros</Link></li>
-                                <li><Link className="hover:text-primary transition-colors" to="/">Elígenos...</Link></li>
+                                <li><Link className="hover:text-primary transition-colors" to="/nosotros">Nosotros</Link></li>
+                                <li><Link className="hover:text-primary transition-colors" to="/nosotros">Elígenos...</Link></li>
                                 <li><Link className="hover:text-primary transition-colors" to="/legal#terminos">Legales</Link></li>
                             </ul>
                         </div>
@@ -56,9 +54,6 @@ const Footer = () => {
                             </a>
                             <a className="w-8 h-8 flex items-center justify-center border border-gray-border rounded hover:border-primary hover:text-primary transition-all" href="#">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
-                            </a>
-                            <a className="w-8 h-8 flex items-center justify-center border border-gray-border rounded hover:border-primary hover:text-primary transition-all" href="#">
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.03 5.91-.05 8.81-.47 9.91-17.76 11.85-22.33 3.8-1.93-3.41-1.35-8.24 2.16-10.83 2.52-1.92 6.14-2.13 8.94-.7v4.29c-1.55-1.07-3.69-.88-5.07.16-1.39 1.05-1.69 3.09-.69 4.47 1.05 1.48 3.19 1.68 4.67.63.85-.6 1.34-1.57 1.35-2.61V.02z"></path></svg>
                             </a>
                         </div>
 

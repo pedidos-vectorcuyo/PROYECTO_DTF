@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/auth/AuthProvider';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/layout/Layout';
 
 // Pages (Placeholder imports for now)
@@ -12,6 +13,9 @@ import DashboardPage from './pages/DashboardPage';
 import OrderPanelPage from './pages/OrderPanelPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import LegalPage from './pages/LegalPage';
+import AboutPage from './pages/AboutPage';
+import SpecificationsPage from './pages/SpecificationsPage';
+import TutorialPage from './pages/TutorialPage';
 
 function App() {
     return (
@@ -25,10 +29,13 @@ function App() {
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/legal" element={<LegalPage />} />
+                        <Route path="/nosotros" element={<AboutPage />} />
+                        <Route path="/especificaciones" element={<SpecificationsPage />} />
+                        <Route path="/tutoriales" element={<TutorialPage />} />
 
-                        {/* Protected Routes (We'll add checks later) */}
-                        <Route path="/dashboard" element={<DashboardPage />} />
-                        <Route path="/nuevo-pedido" element={<OrderPanelPage />} />
+                        {/* Protected Routes */}
+                        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+                        <Route path="/nuevo-pedido" element={<ProtectedRoute><OrderPanelPage /></ProtectedRoute>} />
                     </Route>
 
                     {/* Fallback */}

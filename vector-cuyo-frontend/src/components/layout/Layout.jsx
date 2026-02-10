@@ -41,7 +41,7 @@ const Layout = () => {
                                     </button>
                                     <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-56 bg-white border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
                                         <div className="flex flex-col gap-1">
-                                            <Link to="/nuevo-pedido" className="block px-4 py-2.5 rounded-lg text-[14px] text-text-main hover:bg-gray-50 hover:text-primary transition-colors">
+                                            <Link to="/especificaciones" className="block px-4 py-2.5 rounded-lg text-[14px] text-text-main hover:bg-gray-50 hover:text-primary transition-colors">
                                                 Lámina DTF Textil
                                             </Link>
                                             <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
@@ -51,28 +51,19 @@ const Layout = () => {
                                     </div>
                                 </div>
 
-                                {/* Tutoriales Dropdown */}
-                                <div className="relative group h-full flex items-center">
-                                    <button className="flex items-center px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
-                                        Tutoriales
-                                        <span className="material-symbols-outlined text-[20px] ml-1">expand_more</span>
-                                    </button>
-                                    <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-48 bg-white border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
-                                                Próximamente...
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <Link to="/" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
+                                {/* Tutoriales Dropdown */}
+                                <Link to="/tutoriales" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
+                                    Tutoriales
+                                </Link>
+
+                                <Link to="/nosotros" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-gray-50 transition-colors">
                                     Nosotros
                                 </Link>
 
                                 {user && (
                                     <Link to="/dashboard" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/dashboard') ? 'text-primary bg-blue-50' : 'text-text-secondary hover:text-text-main hover:bg-gray-50'}`}>
-                                        Historial
+                                        Perfil
                                     </Link>
                                 )}
                             </nav>

@@ -32,7 +32,7 @@ export default {
                 'header': '64px', // Standard header height
             },
             backgroundImage: {
-                'dtf-texture': "url('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop')",
+                'dtf-texture': "url('https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=2070&auto=format&fit=crop')",
             }
         },
     },

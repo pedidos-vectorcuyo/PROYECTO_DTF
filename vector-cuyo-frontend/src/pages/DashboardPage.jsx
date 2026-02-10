@@ -162,33 +162,39 @@ const DashboardPage = () => {
             <section className="w-full lg:w-3/4 space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <h1 className="text-2xl font-bold text-text-main">Mis Pedidos</h1>
-                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <div className="relative w-full sm:w-64">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px]">search</span>
-                            <input
-                                className="w-full h-[44px] pl-10 pr-4 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-shadow"
-                                placeholder="Buscar por ID o archivo..."
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                            />
-                        </div>
-                        <div className="relative w-full sm:w-48">
-                            <select
-                                className="w-full h-[44px] pl-3 pr-8 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer text-text-main font-medium"
-                                value={statusFilter}
-                                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                            >
-                                <option value="">Filtrar por estado</option>
-                                <option value="Ingresado">Ingresado</option>
-                                <option value="en_curso">En curso</option>
-                                <option value="pausado">Pausado</option>
-                                <option value="en_revision">En revisión</option>
-                                <option value="entregado">Entregado</option>
-                                <option value="pagado">Pagado</option>
-                            </select>
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
-                        </div>
+                    <Link to="/nuevo-pedido">
+                        <Button className="w-full md:w-auto" size="lg">
+                            <span className="material-symbols-outlined text-[20px] mr-2">add_circle</span>
+                            Nuevo Pedido
+                        </Button>
+                    </Link>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
+                    <div className="relative w-full sm:w-64">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px]">search</span>
+                        <input
+                            className="w-full h-[44px] pl-10 pr-4 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-shadow"
+                            placeholder="Buscar por ID o archivo..."
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        />
+                    </div>
+                    <div className="relative w-full sm:w-48">
+                        <select
+                            className="w-full h-[44px] pl-3 pr-8 bg-surface border border-gray-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer text-text-main font-medium"
+                            value={statusFilter}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                        >
+                            <option value="">Filtrar por estado</option>
+                            <option value="Ingresado">Ingresado</option>
+                            <option value="en_curso">En curso</option>
+                            <option value="pausado">Pausado</option>
+                            <option value="en_revision">En revisión</option>
+                            <option value="entregado">Entregado</option>
+                            <option value="pagado">Pagado</option>
+                        </select>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
                     </div>
                 </div>
 
@@ -275,8 +281,8 @@ const DashboardPage = () => {
                         </Button>
                     </div>
                 </div>
-            </section>
-        </div>
+            </section >
+        </div >
     );
 };
 
