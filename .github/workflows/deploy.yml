@@ -1,0 +1,41 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: vector-cuyo-frontend/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd vector-cuyo-frontend
+          npm ci
+      
+      - name: Build application
+        run: |
+          cd vector-cuyo-frontend
+          npm run build
+      
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./vector-cuyo-frontend/dist/
+          server-dir: /public_html/
+          dangerous-clean-slate: false
