@@ -38,4 +38,11 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
           server-dir: /public_html/
-          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/Estetica_nueva_para_react/**
+            **/Flujos_N8N/**
+            **/Inicio/**
+
