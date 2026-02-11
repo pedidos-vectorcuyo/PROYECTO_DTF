@@ -32,18 +32,15 @@ jobs:
           npm run build
       
       - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@4.3.3
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: /public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/Estetica_nueva_para_react/**
-            **/Flujos_N8N/**
-            **/Inicio/**
-
+        run: |
+          # Install lftp
+          sudo apt-get update
+          sudo apt-get install -y lftp
+          
+          # Deploy only dist contents to public_html
+          lftp -c "
+          set ssl:verify-certificate no;
+          open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }};
+          mirror --reverse --delete --verbose --exclude-glob .git* \
+                 vector-cuyo-frontend/dist/ /public_html/;
+          "
