@@ -1,0 +1,35 @@
+name: Deploy to Deploy Branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: vector-cuyo-frontend/package-lock.json
+      
+      - name: Install and Build
+        run: |
+          cd vector-cuyo-frontend
+          npm ci
+          npm run build
+      
+      - name: Deploy to deploy branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./vector-cuyo-frontend/dist
+          publish_branch: deploy
+          force_orphan: true
