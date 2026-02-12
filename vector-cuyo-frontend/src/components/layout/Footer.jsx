@@ -36,7 +36,7 @@ const Footer = () => {
 
                     {/* Part 2: Logo (Center) */}
                     <div className="flex h-full items-center justify-center">
-                        <img className="h-28 w-auto" src="/logo.png" alt="VectorCuyo" />
+                        <img className="h-28 w-auto" src={`${import.meta.env.BASE_URL}logo.png`} alt="VectorCuyo" />
                     </div>
 
                     {/* Part 3: Socials & Contact (Right) */}

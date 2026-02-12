@@ -22,7 +22,7 @@ const Layout = () => {
                         {/* 1. Logo (Left) */}
                         <div className="flex items-center justify-start">
                             <Link to="/" className="flex-shrink-0 flex items-center">
-                                <img className="h-12 w-auto" src="/logo.png" alt="VectorCuyo" />
+                                <img className="h-12 w-auto" src={`${import.meta.env.BASE_URL}logo.png`} alt="VectorCuyo" />
                             </Link>
                         </div>
 
