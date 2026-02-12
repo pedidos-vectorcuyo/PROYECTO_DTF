@@ -3,16 +3,15 @@
  * API Service for interacting with n8n Webhooks
  */
 
-const API_BASE_URL = "https://n8n.vectorcuyo.com/webhook";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Endpoints
 const ENDPOINTS = {
-    PRICES: "/precio-dtf",
-    UPLOAD_ORDER: "/pedido-dtf-test",
-    // These might be needed later, simplified for now based on original JS
-    LOGIN: "/auth-login",
-    REGISTER: "/auth-register",
-    GET_ORDERS: "/get-orders"
+    PRICES: import.meta.env.VITE_API_PRICES_ENDPOINT,
+    UPLOAD_ORDER: import.meta.env.VITE_API_UPLOAD_ORDER_ENDPOINT,
+    LOGIN: import.meta.env.VITE_API_LOGIN_ENDPOINT,
+    REGISTER: import.meta.env.VITE_API_REGISTER_ENDPOINT,
+    GET_ORDERS: import.meta.env.VITE_API_GET_ORDERS_ENDPOINT
 };
 
 /**
