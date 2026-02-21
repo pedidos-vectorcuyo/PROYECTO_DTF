@@ -14,6 +14,10 @@
     --color-text-secondary: #64748B;
     --color-muted: #EEF2F7;
     --color-blue-tint: #EFF6FF;
+    --color-hover-tint: rgba(0, 114, 250, 0.05);
+    /* Very light primary tint */
+    --color-active-tint: #EFF6FF;
+    --color-surface-raised: #FFFFFF;
     --color-success: #16A34A;
     --color-warning: #F59E0B;
     --color-danger: #DC2626;
@@ -28,6 +32,10 @@
     --color-text-secondary: #94A3B8;
     --color-muted: #334155;
     --color-blue-tint: #1E293B;
+    --color-hover-tint: rgba(59, 130, 246, 0.15);
+    /* Subtle primary tint in dark mode */
+    --color-active-tint: #1E293B;
+    --color-surface-raised: #334155;
 }
 
 @layer base {

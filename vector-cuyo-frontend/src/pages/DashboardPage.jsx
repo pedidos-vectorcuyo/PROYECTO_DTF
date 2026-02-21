@@ -103,14 +103,14 @@ const DashboardPage = () => {
                     <div className="space-y-1">
                         <button
                             onClick={() => { setFilter('todos'); setCurrentPage(1); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'todos' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-white hover:text-text-main'}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'todos' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">list_alt</span>
                             Todos los Pedidos
                         </button>
                         <button
                             onClick={() => { setFilter('vigentes'); setCurrentPage(1); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'vigentes' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-white hover:text-text-main'}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'vigentes' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">timelapse</span>
                             Vigentes
@@ -122,14 +122,14 @@ const DashboardPage = () => {
                         </button>
                         <button
                             onClick={() => { setFilter('historial'); setCurrentPage(1); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'historial' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-white hover:text-text-main'}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'historial' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">history</span>
                             Historial
                         </button>
                         <button
                             onClick={() => { setFilter('borradores'); setCurrentPage(1); }}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'borradores' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-white hover:text-text-main'}`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'borradores' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">edit_note</span>
                             Borradores
@@ -141,14 +141,14 @@ const DashboardPage = () => {
                         <div className="space-y-1">
                             <button
                                 onClick={() => handleNotImplemented('Facturación')}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-white hover:text-text-main transition-all"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
                             >
                                 <span className="material-symbols-outlined text-[20px]">receipt_long</span>
                                 Facturación
                             </button>
                             <button
                                 onClick={() => handleNotImplemented('Configuración')}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-white hover:text-text-main transition-all"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
                             >
                                 <span className="material-symbols-outlined text-[20px]">settings</span>
                                 Configuración
