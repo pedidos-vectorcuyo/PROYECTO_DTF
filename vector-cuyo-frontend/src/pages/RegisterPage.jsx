@@ -61,7 +61,7 @@ const RegisterPage = () => {
             <div className="w-full max-w-[450px] bg-surface border border-gray-border rounded-card p-8 shadow-sm">
                 <div className="flex flex-col items-center mb-8">
                     <div className="flex items-center gap-2 mb-6">
-                        <div className="w-6 h-6 bg-text-main rounded flex items-center justify-center">
+                        <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
                             <span className="material-symbols-outlined text-white text-[16px]">precision_manufacturing</span>
                         </div>
                         <span className="font-bold text-sm tracking-tight text-text-main">Vector<span className="text-primary">Cuyo</span></span>
@@ -85,7 +85,7 @@ const RegisterPage = () => {
                             placeholder="Ej. Juan Pérez / Impresiones S.A."
                             value={formData.nombre_completo}
                             onChange={handleChange}
-                            className="w-full h-[44px] bg-white border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full h-[44px] bg-surface border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                             required
                         />
                     </div>
@@ -101,7 +101,7 @@ const RegisterPage = () => {
                                 placeholder="Sin guiones"
                                 value={formData.cuit}
                                 onChange={handleChange}
-                                className="w-full h-[44px] bg-white border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                className="w-full h-[44px] bg-surface border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
                         </div>
@@ -113,7 +113,7 @@ const RegisterPage = () => {
                                 placeholder="Cod. Área + Núm"
                                 value={formData.telefono}
                                 onChange={handleChange}
-                                className="w-full h-[44px] bg-white border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                className="w-full h-[44px] bg-surface border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
                         </div>
@@ -127,7 +127,7 @@ const RegisterPage = () => {
                             placeholder="nombre@empresa.com"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full h-[44px] bg-white border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full h-[44px] bg-surface border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                             required
                         />
                     </div>
@@ -140,7 +140,7 @@ const RegisterPage = () => {
                                 placeholder="Mínimo 8 caracteres"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full h-[44px] bg-white border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                className="w-full h-[44px] bg-surface border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
 

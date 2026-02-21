@@ -34,7 +34,7 @@ const LoginPage = () => {
             <div className="w-full max-w-[400px] bg-surface border border-gray-border rounded-card p-8 shadow-sm">
                 <div className="flex flex-col items-center mb-8">
                     <div className="flex items-center gap-2 mb-6">
-                        <div className="w-6 h-6 bg-text-main rounded flex items-center justify-center">
+                        <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
                             <span className="material-symbols-outlined text-white text-[16px]">precision_manufacturing</span>
                         </div>
                         <span className="font-bold text-sm tracking-tight text-text-main">Vector<span className="text-primary">Cuyo</span></span>
@@ -58,7 +58,7 @@ const LoginPage = () => {
                             placeholder="nombre@empresa.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full h-[44px] bg-muted/30 border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full h-[44px] bg-surface border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                             required
                         />
                     </div>
@@ -73,7 +73,7 @@ const LoginPage = () => {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full h-[44px] bg-muted/30 border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                className="w-full h-[44px] bg-surface border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
                             <button
