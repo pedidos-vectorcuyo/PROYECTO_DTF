@@ -68,6 +68,12 @@ const Layout = () => {
                                     Nosotros
                                 </Link>
 
+                                {user?.role === 'admin' && (
+                                    <Link to="/admin" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/admin') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
+                                        Admin
+                                    </Link>
+                                )}
+
                                 {user && (
                                     <Link to="/dashboard" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/dashboard') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
                                         Perfil
@@ -159,6 +165,16 @@ const Layout = () => {
                             >
                                 Nosotros
                             </Link>
+
+                            {user?.role === 'admin' && (
+                                <Link
+                                    to="/admin"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors ${isActive('/admin') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:bg-hover-tint'}`}
+                                >
+                                    Panel Admin
+                                </Link>
+                            )}
 
                             {user && (
                                 <Link
