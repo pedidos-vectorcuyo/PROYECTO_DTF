@@ -22,15 +22,12 @@ const Layout = () => {
                     <div className="flex h-full items-center justify-between md:grid md:grid-cols-3">
                         {/* 1. Logo (Left) */}
                         <div className="flex items-center justify-start">
-                            <Link to="/" className="flex-shrink-0 flex items-center group">
+                            <Link to="/" className="flex-shrink-0 flex items-center">
                                 <img
                                     className="h-10 w-auto logo-invert"
                                     src={`${import.meta.env.BASE_URL}logo.png`}
                                     alt="VectorCuyo"
                                 />
-                                <span className="ml-3 font-bold text-xl tracking-tight text-text-main dark:text-white hidden sm:block">
-                                    Vector<span className="text-primary">Cuyo</span>
-                                </span>
                             </Link>
                         </div>
 
