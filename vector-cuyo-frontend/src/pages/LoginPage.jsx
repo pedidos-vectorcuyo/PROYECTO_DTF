@@ -58,7 +58,7 @@ const LoginPage = () => {
                             placeholder="nombre@empresa.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full h-[44px] bg-white border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            className="w-full h-[44px] bg-muted/30 border border-gray-border rounded-lg px-3.5 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                             required
                         />
                     </div>
@@ -73,7 +73,7 @@ const LoginPage = () => {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full h-[44px] bg-white border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                className="w-full h-[44px] bg-muted/30 border border-gray-border rounded-lg pl-3.5 pr-10 text-[14px] text-text-main placeholder-text-secondary/60 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                 required
                             />
                             <button

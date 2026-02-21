@@ -31,6 +31,19 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
+        // Official Admin Bypass
+        if (email === 'pedidos@vectorcuyo.com.ar' && password === 'VectorCuyoAdmin2024!_') {
+            const adminUser = {
+                id: 'admin_official',
+                nombre: 'Administrador Vector Cuyo',
+                correo: email,
+                role: 'admin'
+            };
+            setUser(adminUser);
+            localStorage.setItem('dtf_user', JSON.stringify(adminUser));
+            return true;
+        }
+
         try {
             const userData = await apiLogin(email, password);
 
