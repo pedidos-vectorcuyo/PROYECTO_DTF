@@ -1,5 +1,6 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
+import { login as apiLogin, register as apiRegister } from '../../services/api';
 
 const AuthContext = createContext(null);
 
@@ -26,14 +27,22 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        // Cleanup n8n structure if needed
-        let cleanUser = userData;
-        if (Array.isArray(userData)) cleanUser = userData[0];
-        if (cleanUser.json) cleanUser = cleanUser.json;
+    const login = async (email, password) => {
+        try {
+            const userData = await apiLogin(email, password);
 
-        setUser(cleanUser);
-        localStorage.setItem('dtf_user', JSON.stringify(cleanUser));
+            // Cleanup n8n structure if needed
+            let cleanUser = userData;
+            if (Array.isArray(userData)) cleanUser = userData[0];
+            if (cleanUser.json) cleanUser = cleanUser.json;
+
+            setUser(cleanUser);
+            localStorage.setItem('dtf_user', JSON.stringify(cleanUser));
+            return true;
+        } catch (error) {
+            console.error("Login failed:", error);
+            throw error;
+        }
     };
 
     const logout = () => {

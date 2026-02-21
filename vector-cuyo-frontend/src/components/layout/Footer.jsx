@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
-        <footer className="bg-white border-t border-gray-border mt-auto">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 border-b border-gray-border pb-16">
+        <footer className="bg-surface border-t border-gray-border mt-auto transition-colors duration-300">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-300">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 border-b border-gray-border pb-16 transition-colors duration-300">
 
                     {/* Part 1: Text Links (Left) */}
                     <div className="grid grid-cols-3 gap-8">

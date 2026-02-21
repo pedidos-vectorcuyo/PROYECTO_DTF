@@ -1,6 +1,7 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,17 +9,17 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#0072FA", // Updated to bright blue
-                "off-white": "#F7F8FA",
-                "surface": "#FFFFFF",
-                "gray-border": "#E6E8EC",
-                "text-main": "#0F172A",
-                "text-secondary": "#64748B",
-                "muted": "#EEF2F7", // Added for chips/labels
-                "blue-tint": "#EFF6FF",
-                "success": "#16A34A",
-                "warning": "#F59E0B",
-                "danger": "#DC2626",
+                primary: "var(--color-primary)",
+                "off-white": "var(--color-off-white)",
+                "surface": "var(--color-surface)",
+                "gray-border": "var(--color-gray-border)",
+                "text-main": "var(--color-text-main)",
+                "text-secondary": "var(--color-text-secondary)",
+                "muted": "var(--color-muted)",
+                "blue-tint": "var(--color-blue-tint)",
+                "success": "var(--color-success)",
+                "warning": "var(--color-warning)",
+                "danger": "var(--color-danger)",
             },
             fontFamily: {
                 sans: ["Inter", "sans-serif"],
@@ -28,8 +29,8 @@ export default {
                 "pill": "9999px",
             },
             spacing: {
-                '18': '4.5rem', // 72px if needed
-                'header': '64px', // Standard header height
+                '18': '4.5rem',
+                'header': '64px',
             },
             backgroundImage: {
                 'dtf-texture': "url('https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=2070&auto=format&fit=crop')",

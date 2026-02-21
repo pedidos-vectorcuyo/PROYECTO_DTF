@@ -114,7 +114,7 @@ const LegalPage = () => {
                             <p className="text-sm !mb-0 text-text-secondary">Nuestro equipo legal y de soporte está disponible para responder tus dudas.</p>
                         </div>
                     </div>
-                    <button className="shrink-0 bg-primary hover:bg-[#253991] text-white px-6 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all shadow-lg shadow-primary/10 hover:shadow-primary/20 whitespace-nowrap">
+                    <button className="shrink-0 bg-primary hover:opacity-90 text-white px-6 py-2.5 rounded-full font-bold text-sm tracking-wide transition-all shadow-lg shadow-primary/10 hover:shadow-primary/20 whitespace-nowrap">
                         Contactar Soporte
                     </button>
                 </div>

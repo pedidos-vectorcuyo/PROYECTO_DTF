@@ -8,21 +8,25 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // TODO: Implement actual login logic with n8n
-        // Mock login for now
-        const mockUser = {
-            id: 1,
-            nombre: "Usuario Demo",
-            correo: email,
-            whatsapp: "+549261000000"
-        };
-        login(mockUser);
-        navigate('/dashboard');
+        setError('');
+        setIsLoading(true);
+
+        try {
+            await login(email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            console.error(err);
+            setError('Credenciales inválidas. Por favor verifique sus datos.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -38,6 +42,13 @@ const LoginPage = () => {
                     <h1 className="text-[24px] font-bold text-text-main text-center leading-tight">Iniciar Sesión</h1>
                     <p className="text-[14px] text-text-secondary text-center mt-2 leading-relaxed">Ingresa a tu cuenta corporativa para gestionar pedidos</p>
                 </div>
+
+                {error && (
+                    <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 text-center">
+                        {error}
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-1.5">
                         <label className="block text-[13px] font-medium text-text-main" htmlFor="email">Email corporativo</label>
@@ -54,7 +65,7 @@ const LoginPage = () => {
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-center">
                             <label className="block text-[13px] font-medium text-text-main" htmlFor="password">Contraseña</label>
-                            <Link to="/reset-password" className="text-[12px] font-medium text-primary hover:text-[#1e40af] transition-colors">¿Olvidaste tu contraseña?</Link>
+                            <Link to="/reset-password" className="text-[12px] font-medium text-primary hover:opacity-80 transition-colors">¿Olvidaste tu contraseña?</Link>
                         </div>
                         <div className="relative">
                             <input
@@ -75,13 +86,13 @@ const LoginPage = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full mt-2" size="lg">
-                        Acceder al Workstation
+                    <Button type="submit" className="w-full mt-2" size="lg" disabled={isLoading}>
+                        {isLoading ? 'Iniciando sesión...' : 'Acceder al Workstation'}
                     </Button>
                 </form>
                 <div className="mt-8 pt-6 border-t border-gray-border text-center">
                     <span className="text-[13px] text-text-secondary">¿No tienes cuenta?</span>
-                    <Link to="/register" className="text-[13px] font-bold text-primary hover:text-[#1e40af] ml-1 transition-colors">Crear cuenta B2B</Link>
+                    <Link to="/register" className="text-[13px] font-bold text-primary hover:opacity-80 ml-1 transition-colors">Crear cuenta B2B</Link>
                 </div>
             </div>
         </div>

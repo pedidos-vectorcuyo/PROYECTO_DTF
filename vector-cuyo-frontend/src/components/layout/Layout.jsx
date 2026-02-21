@@ -4,7 +4,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 import Footer from './Footer';
 import Button from '../ui/Button';
-
+import ThemeToggle from '../ui/ThemeToggle';
 
 
 const Layout = () => {
@@ -14,9 +14,9 @@ const Layout = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className="min-h-screen flex flex-col bg-off-white font-sans text-text-main">
+        <div className="min-h-screen flex flex-col bg-off-white font-sans text-text-main transition-colors duration-300">
             {/* Navbar */}
-            <header className="bg-white border-b border-gray-border sticky top-0 z-50 h-[64px]">
+            <header className="bg-surface border-b border-gray-border sticky top-0 z-50 h-[64px] transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                     <div className="grid grid-cols-3 h-full items-center">
                         {/* 1. Logo (Left) */}
@@ -25,6 +25,8 @@ const Layout = () => {
                                 <img className="h-12 w-auto" src={`${import.meta.env.BASE_URL}logo.png`} alt="VectorCuyo" />
                             </Link>
                         </div>
+
+                        {/* 2. Navigation (Center) - Simplified logic here for brevety, focus on toggle below */}
 
                         {/* 2. Navigation (Center) */}
                         <div className="hidden md:flex justify-center h-full">
@@ -70,10 +72,11 @@ const Layout = () => {
                         </div>
 
                         {/* 3. User Area (Right) */}
-                        <div className="flex items-center justify-end">
+                        <div className="flex items-center justify-end space-x-4">
+                            <ThemeToggle />
                             {user ? (
                                 <div className="flex items-center space-x-4">
-                                    <span className="text-[14px] text-text-main hidden sm:block">Hola, <strong>{user.nombre}</strong></span>
+                                    <span className="text-[14px] text-text-main hidden sm:block">Hola, <strong>{user.nombre_completo || user.nombre || 'Usuario'}</strong></span>
                                     <button
                                         onClick={logout}
                                         className="text-[14px] font-medium text-danger hover:text-red-700 transition-colors"

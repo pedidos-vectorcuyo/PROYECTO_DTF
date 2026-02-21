@@ -4,7 +4,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE ordenes_trabajo\nSET estado = 'Pagado',\n    observaciones = CONCAT(IFNULL(observaciones, ''), ' | Pago MP: ', '{{ $json.pago_id }}')\nWHERE id = {{ $('Recibir Pedido Web').item.json.body.id_orden }};",
+        "query": "UPDATE ordenes_trabajo\nSET estado = 'Pagado',\n    observaciones = CONCAT(IFNULL(observaciones, ''), ' | Pago MP: ', '{{ $json.pago_id }}')\nWHERE id = {{ $('Recibir Pedido Web1').item.json.body.id_orden }};",
         "options": {}
       },
       "id": "6fd658bd-5ed9-4ef6-b3a2-0e20413153e4",
@@ -25,7 +25,7 @@
     {
       "parameters": {
         "chatId": "-1002341852579",
-        "text": "=✅ ¡Nuevo Pago Confirmado!\n\n🆔 Orden: {{ $('Recibir Pedido Web1').item.json.body.id_orden }}\n💰 Monto: ${{ $json.monto }}\n🧾 ID Pago MP: {{ $json.pago_id }}\n👤 CUIT Validado\n\nSu pedido pasa a estado \"Pagado\".",
+        "text": "=✅ ¡Nuevo Pago Confirmado!\n\n🆔 Orden: {{ $('Recibir Pedido Web1').item.json.body.id_orden ? $('Recibir Pedido Web1').item.json.body.id_orden : 'Nueva (Sin ID)' }}\n💰 Monto: ${{ $json.monto }}\n🧾 ID Pago MP: {{ $json.pago_id }}\n👤 CUIT Validado\n\nEl usuario procederá a cargar el pedido.",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -49,7 +49,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"Pago verificado correctamente. Tu orden se está procesando.\",\n  \"data\": {\n    \"pago_id\": {{ $json.pago_id }}\n  }\n}",
+        "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"Pago verificado correctamente. Tu orden se está procesando.\",\n  \"data\": {\n    \"pago_id\": \"{{ $('Validar CUIT Logica1').item.json.pago_id }}\"\n  }\n}",
         "options": {}
       },
       "id": "6f1b71ce-cb32-4f08-83d9-0b273022309f",
@@ -259,7 +259,7 @@
       "main": [
         [
           {
-            "node": "Registrar Pago en DB",
+            "node": "Aviso Staff",
             "type": "main",
             "index": 0
           }

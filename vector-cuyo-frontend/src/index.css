@@ -6,8 +6,35 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --color-primary: #0072FA;
+        --color-off-white: #F7F8FA;
+        --color-surface: #FFFFFF;
+        --color-gray-border: #E6E8EC;
+        --color-text-main: #0F172A;
+        --color-text-secondary: #64748B;
+        --color-muted: #EEF2F7;
+        --color-blue-tint: #EFF6FF;
+        --color-success: #16A34A;
+        --color-warning: #F59E0B;
+        --color-danger: #DC2626;
+    }
+
+    .dark {
+        --color-primary: #3B82F6;
+        --color-off-white: #0F172A;
+        --color-surface: #1E293B;
+        --color-gray-border: #334155;
+        --color-text-main: #F8FAFC;
+        --color-text-secondary: #94A3B8;
+        --color-muted: #334155;
+        --color-blue-tint: #1E293B;
+    }
+
     body {
-        @apply bg-off-white text-text-main font-sans;
+        @apply bg-off-white text-text-main font-sans transition-colors duration-300;
+        background-color: var(--color-off-white);
+        color: var(--color-text-main);
     }
 }
 
