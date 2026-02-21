@@ -24,11 +24,11 @@ const Layout = () => {
                         <div className="flex items-center justify-start">
                             <Link to="/" className="flex-shrink-0 flex items-center group">
                                 <img
-                                    className="h-10 w-auto transition-all duration-300 dark:invert"
+                                    className="h-10 w-auto logo-invert"
                                     src={`${import.meta.env.BASE_URL}logo.png`}
                                     alt="VectorCuyo"
                                 />
-                                <span className="ml-3 font-bold text-xl tracking-tight text-text-main hidden sm:block">
+                                <span className="ml-3 font-bold text-xl tracking-tight text-text-main dark:text-white hidden sm:block">
                                     Vector<span className="text-primary">Cuyo</span>
                                 </span>
                             </Link>

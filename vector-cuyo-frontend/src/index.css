@@ -38,6 +38,14 @@
     --color-surface-raised: #334155;
 }
 
+.logo-invert {
+    transition: filter 0.3s ease;
+}
+
+.dark .logo-invert {
+    filter: brightness(0) invert(1);
+}
+
 @layer base {
     body {
         @apply bg-off-white text-text-main font-sans transition-colors duration-300;
