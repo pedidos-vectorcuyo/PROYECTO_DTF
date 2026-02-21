@@ -117,16 +117,16 @@ const OrderPanelPage = () => {
 
     let currentPrice = prices.base;
     let tierName = "Precio Base";
-    let tierColor = "bg-blue-100/50 text-blue-700 border-blue-200";
+    let tierColor = "bg-blue-tint text-primary border-primary/20";
 
     if (effectiveMeters > 30) {
         currentPrice = prices.p30;
         tierName = "GOLD (>30m)";
-        tierColor = "bg-yellow-100/50 text-yellow-700 border-yellow-200";
+        tierColor = "bg-warning/10 text-warning border-warning/20";
     } else if (effectiveMeters > 10) {
         currentPrice = prices.p10;
         tierName = "MAYORISTA (>10m)";
-        tierColor = "bg-green-100/50 text-green-700 border-green-200";
+        tierColor = "bg-success/10 text-success border-success/20";
     }
 
     const subtotal = effectiveMeters * prices.base;
@@ -322,7 +322,7 @@ const OrderPanelPage = () => {
                                                             type="text"
                                                             readOnly
                                                             value={file.copies}
-                                                            className="w-10 text-center text-sm font-semibold text-text-main outline-none"
+                                                            className="w-10 text-center text-sm font-semibold text-text-main bg-transparent outline-none"
                                                         />
                                                         <button
                                                             onClick={() => updateCopies(file.id, 1)}
@@ -436,7 +436,7 @@ const OrderPanelPage = () => {
                                 </label>
                                 <textarea
                                     id="obs"
-                                    className="w-full border border-gray-border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-shadow resize-none bg-off-white focus:bg-white"
+                                    className="w-full border border-gray-border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-shadow resize-none bg-off-white focus:bg-surface"
                                     rows="3"
                                     placeholder="Detalles de entrega, especificaciones..."
                                     value={clientData.observaciones}
