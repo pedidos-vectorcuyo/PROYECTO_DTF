@@ -12,7 +12,11 @@ const ENDPOINTS = {
     LOGIN: import.meta.env.VITE_API_LOGIN_ENDPOINT || '/auth-login',
     REGISTER: import.meta.env.VITE_API_REGISTER_ENDPOINT || '/auth-register',
     GET_ORDERS: import.meta.env.VITE_API_GET_ORDERS_ENDPOINT,
-    VERIFY_PAYMENT: '/webhook/verificar-pago'
+    VERIFY_PAYMENT: '/webhook/verificar-pago',
+    // Admin Endpoints
+    GET_ALL_ORDERS: '/admin/get-all-orders',
+    UPDATE_ORDER_STATUS: '/admin/update-order-status',
+    UPDATE_PRICES: '/admin/update-prices'
 };
 
 /**
@@ -183,4 +187,70 @@ export const submitOrder = async (formData) => {
         console.error("Error submitting order:", error);
         return false;
     }
+};
+
+/**
+ * Admin: Fetches all orders from n8n.
+ * @returns {Promise<Array>}
+ */
+export const fetchAllOrders = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ALL_ORDERS}`);
+        if (!response.ok) throw new Error("Failed to fetch all orders");
+        const data = await response.json();
+        return Array.isArray(data) ? data : (data.json || []);
+    } catch (error) {
+        console.error("Error fetching all orders:", error);
+        return [];
+    }
+};
+
+/**
+ * Admin: Updates the status of an order.
+ * @param {string} orderId 
+ * @param {string} newStatus 
+ * @returns {Promise<boolean>}
+ */
+export const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.UPDATE_ORDER_STATUS}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId, status: newStatus })
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        return false;
+    }
+};
+
+/**
+ * Admin: Updates product prices.
+ * @param {Object} newPrices { precio_metro, precio_mayorista_10, precio_mayorista_30 }
+ * @returns {Promise<boolean>}
+ */
+export const updatePrices = async (newPrices) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.UPDATE_PRICES}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPrices)
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error updating prices:", error);
+        return false;
+    }
+};
+export default {
+    login,
+    register,
+    verifyPayment,
+    fetchOrders,
+    fetchPrices,
+    submitOrder,
+    fetchAllOrders,
+    updateOrderStatus,
+    updatePrices
 };

@@ -16,6 +16,7 @@ import LegalPage from './pages/LegalPage';
 import AboutPage from './pages/AboutPage';
 import SpecificationsPage from './pages/SpecificationsPage';
 import TutorialPage from './pages/TutorialPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                         {/* Protected Routes */}
                         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
                         <Route path="/nuevo-pedido" element={<ProtectedRoute><OrderPanelPage /></ProtectedRoute>} />
+                        <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboardPage /></ProtectedRoute>} />
                     </Route>
 
                     {/* Fallback */}

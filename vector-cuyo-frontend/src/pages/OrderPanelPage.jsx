@@ -60,13 +60,20 @@ const OrderPanelPage = () => {
         setLoading(true);
 
         // Process files in parallel
-        const fileArray = Array.from(fileList);
         const processedFiles = await Promise.all(fileArray.map(async (file) => {
             const processed = await processFile(file);
+
+            // Validation: Width check
+            const warnings = [...processed.warnings];
+            if (processed.meta.anchoCm < 50) {
+                warnings.push("El ancho es menor a 50cm (no es óptimo para aprovechamiento de impresión)");
+            }
+
             return {
                 id: Date.now() + Math.random(),
                 file: file,
                 ...processed,
+                warnings: warnings, // Use updated warnings
                 copies: 1,
                 options: {
                     whites: false,
@@ -248,6 +255,8 @@ const OrderPanelPage = () => {
                             <p className="text-text-secondary text-sm mt-1">o haz click para explorar tu dispositivo</p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mt-6 text-[11px] sm:text-xs text-text-secondary">
+                                <span className="flex items-center gap-1 font-bold text-primary"><span className="material-symbols-outlined text-[14px]">info</span> Ancho: 50 - 56cm</span>
+                                <span className="flex items-center gap-1 font-bold text-primary"><span className="material-symbols-outlined text-[14px]">info</span> Largo: 1 - 10m</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Fondo transparente</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> 300 DPI</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Modo RGB</span>

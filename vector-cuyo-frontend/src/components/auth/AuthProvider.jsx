@@ -18,7 +18,10 @@ export const AuthProvider = ({ children }) => {
                 if (Array.isArray(parsed)) parsed = parsed[0];
                 if (parsed.json) parsed = parsed.json;
 
-                setUser(parsed);
+                setUser({
+                    ...parsed,
+                    role: parsed.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                });
             } catch (e) {
                 console.error("Session parse error", e);
                 localStorage.removeItem('dtf_user');
@@ -36,8 +39,12 @@ export const AuthProvider = ({ children }) => {
             if (Array.isArray(userData)) cleanUser = userData[0];
             if (cleanUser.json) cleanUser = cleanUser.json;
 
-            setUser(cleanUser);
-            localStorage.setItem('dtf_user', JSON.stringify(cleanUser));
+            const userWithRole = {
+                ...cleanUser,
+                role: cleanUser.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+            };
+            setUser(userWithRole);
+            localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
             return true;
         } catch (error) {
             console.error("Login failed:", error);

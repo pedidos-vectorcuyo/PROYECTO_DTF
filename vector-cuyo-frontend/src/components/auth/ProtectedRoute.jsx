@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, adminOnly = false }) => {
     const { user, loading } = useAuth();
     const location = useLocation();
 
@@ -24,7 +24,12 @@ const ProtectedRoute = ({ children }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // User is authenticated, render the protected component
+    // If adminOnly is true, check for admin role
+    if (adminOnly && user.role !== 'admin') {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // User is authenticated (and admin if required), render the protected component
     return children;
 };
 
