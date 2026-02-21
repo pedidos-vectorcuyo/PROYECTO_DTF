@@ -218,15 +218,15 @@ const OrderPanelPage = () => {
                 {/* Left Panel: Upload & List (8 cols ~ 66%) */}
                 <div className="lg:col-span-8 space-y-6">
                     <div className="bg-surface border border-gray-border rounded-card p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-[20px] font-bold text-text-main">Lámina DTF Textil</h2>
-                            <span className="px-3 py-1 bg-blue-50 text-primary text-xs font-bold rounded-full uppercase tracking-wide">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <h2 className="text-[18px] sm:text-[20px] font-bold text-text-main">Lámina DTF Textil</h2>
+                            <span className="inline-block w-fit px-3 py-1 bg-blue-tint text-primary text-[11px] font-bold rounded-full uppercase tracking-wide">
                                 Producción 24hs
                             </span>
                         </div>
 
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${dragActive ? 'border-primary bg-blue-50' : 'border-gray-200 hover:border-primary hover:bg-gray-50'}`}
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${dragActive ? 'border-primary bg-blue-tint' : 'border-gray-border hover:border-primary hover:bg-muted'}`}
                             onDragEnter={handleDrag}
                             onDragLeave={handleDrag}
                             onDragOver={handleDrag}
@@ -241,13 +241,13 @@ const OrderPanelPage = () => {
                                 accept="image/png"
                                 onChange={handleChange}
                             />
-                            <div className="w-16 h-16 bg-white border border-gray-border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-primary">
+                            <div className="w-16 h-16 bg-surface border border-gray-border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-primary">
                                 <span className="material-symbols-outlined text-[32px]">cloud_upload</span>
                             </div>
                             <p className="text-text-main font-medium text-lg">Arrastra tus archivos PNG aquí</p>
                             <p className="text-text-secondary text-sm mt-1">o haz click para explorar tu dispositivo</p>
 
-                            <div className="flex items-center justify-center gap-4 mt-6 text-xs text-text-secondary">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mt-6 text-[11px] sm:text-xs text-text-secondary">
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Fondo transparente</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> 300 DPI</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Modo RGB</span>
@@ -268,7 +268,7 @@ const OrderPanelPage = () => {
                             <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md`}>
                                 <div className="flex flex-col sm:flex-row gap-5">
                                     {/* Preview */}
-                                    <div className="w-20 h-20 bg-gray-50 border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
+                                    <div className="w-full sm:w-20 h-40 sm:h-20 bg-muted border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
                                         <div className="absolute inset-0 bg-dtf-texture opacity-10"></div>
                                         {file.previewUrl ? (
                                             <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain relative z-10" />
@@ -303,7 +303,7 @@ const OrderPanelPage = () => {
                                                         <span className="material-symbols-outlined text-[16px]">straighten</span>
                                                         {file.meta.largoM.toFixed(2)} m
                                                     </span>
-                                                    <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}`}>
+                                                    <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
                                                         {file.meta.dpi} DPI
                                                     </span>
                                                 </div>
@@ -311,10 +311,10 @@ const OrderPanelPage = () => {
                                                 {/* Quantity Control */}
                                                 <div className="flex items-center mt-4 gap-3">
                                                     <span className="text-[13px] font-medium text-text-main">Copias:</span>
-                                                    <div className="flex items-center bg-white border border-gray-border rounded-lg h-[32px]">
+                                                    <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
                                                         <button
                                                             onClick={() => updateCopies(file.id, -1)}
-                                                            className="w-8 h-full flex items-center justify-center hover:bg-gray-50 text-text-secondary border-r border-gray-border"
+                                                            className="w-8 h-full flex items-center justify-center hover:bg-muted text-text-secondary border-r border-gray-border"
                                                         >
                                                             -
                                                         </button>
@@ -326,7 +326,7 @@ const OrderPanelPage = () => {
                                                         />
                                                         <button
                                                             onClick={() => updateCopies(file.id, 1)}
-                                                            className="w-8 h-full flex items-center justify-center hover:bg-gray-50 text-text-secondary border-l border-gray-border"
+                                                            className="w-8 h-full flex items-center justify-center hover:bg-muted text-text-secondary border-l border-gray-border"
                                                         >
                                                             +
                                                         </button>
@@ -341,7 +341,7 @@ const OrderPanelPage = () => {
                                         )}
 
                                         {file.warnings.length > 0 && (
-                                            <div className="mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded flex items-start gap-2">
+                                            <div className="mt-2 text-xs text-warning bg-warning/10 p-2 rounded flex items-start gap-2">
                                                 <span className="material-symbols-outlined text-[14px] mt-0.5">warning</span>
                                                 <span>{file.warnings.join(', ')}</span>
                                             </div>
@@ -365,7 +365,7 @@ const OrderPanelPage = () => {
                                                         onClick={() => toggleOption(file.id, opt.id)}
                                                         className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${file.options[opt.id]
                                                             ? 'bg-primary text-white border-primary shadow-sm'
-                                                            : 'bg-white text-text-secondary border-gray-200 hover:border-gray-300'
+                                                            : 'bg-surface text-text-secondary border-gray-border hover:border-gray-border/80'
                                                             }`}
                                                     >
                                                         {opt.label}
@@ -422,9 +422,9 @@ const OrderPanelPage = () => {
                                 <div className="flex justify-between items-end">
                                     <span className="text-sm font-medium text-text-secondary">Total Estimado</span>
                                     <div className="text-right">
-                                        <span className="block text-2xl font-bold text-text-main tracking-tight">${total.toLocaleString()}</span>
+                                        <span className="block text-xl sm:text-2xl font-bold text-text-main tracking-tight">${total.toLocaleString()}</span>
                                         {discount > 0 && (
-                                            <span className="text-xs text-success font-medium">Ahorraste ${discount.toLocaleString()}</span>
+                                            <span className="text-[11px] sm:text-xs text-success font-medium">Ahorraste ${discount.toLocaleString()}</span>
                                         )}
                                     </div>
                                 </div>

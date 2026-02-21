@@ -22,6 +22,7 @@ const DashboardPage = () => {
     const [filter, setFilter] = useState('todos'); // Sidebar filter
     const [searchTerm, setSearchTerm] = useState(''); // Text search
     const [statusFilter, setStatusFilter] = useState(''); // Dropdown filter
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false); // Mobile filters toggle
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Standard pagination size
 
@@ -97,19 +98,31 @@ const DashboardPage = () => {
 
     return (
         <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
+            {/* Sidebar / Filters */}
             <aside className="w-full lg:w-1/4 shrink-0">
-                <div className="sticky top-24 space-y-8">
+                {/* Mobile Toggle for Filters */}
+                <button
+                    onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                    className="lg:hidden w-full flex items-center justify-between px-4 py-3 bg-surface border border-gray-border rounded-xl text-[14px] font-bold text-text-main mb-4"
+                >
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px]">tune</span>
+                        Filtros y Categorías
+                    </div>
+                    <span className={`material-symbols-outlined transition-transform duration-200 ${isFiltersOpen ? 'rotate-180' : ''}`}>expand_more</span>
+                </button>
+
+                <div className={`${isFiltersOpen ? 'block' : 'hidden'} lg:block sticky top-24 space-y-8 animate-fade-in lg:animate-none`}>
                     <div className="space-y-1">
                         <button
-                            onClick={() => { setFilter('todos'); setCurrentPage(1); }}
+                            onClick={() => { setFilter('todos'); setCurrentPage(1); setIsFiltersOpen(false); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'todos' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">list_alt</span>
                             Todos los Pedidos
                         </button>
                         <button
-                            onClick={() => { setFilter('vigentes'); setCurrentPage(1); }}
+                            onClick={() => { setFilter('vigentes'); setCurrentPage(1); setIsFiltersOpen(false); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'vigentes' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">timelapse</span>
@@ -121,14 +134,14 @@ const DashboardPage = () => {
                             )}
                         </button>
                         <button
-                            onClick={() => { setFilter('historial'); setCurrentPage(1); }}
+                            onClick={() => { setFilter('historial'); setCurrentPage(1); setIsFiltersOpen(false); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'historial' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">history</span>
                             Historial
                         </button>
                         <button
-                            onClick={() => { setFilter('borradores'); setCurrentPage(1); }}
+                            onClick={() => { setFilter('borradores'); setCurrentPage(1); setIsFiltersOpen(false); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium transition-all ${filter === 'borradores' ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-text-secondary hover:bg-surface-raised hover:text-text-main'}`}
                         >
                             <span className="material-symbols-outlined text-[20px]">edit_note</span>
@@ -140,14 +153,14 @@ const DashboardPage = () => {
                         <h4 className="px-4 text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-3">Accesos Rápidos</h4>
                         <div className="space-y-1">
                             <button
-                                onClick={() => handleNotImplemented('Facturación')}
+                                onClick={() => { handleNotImplemented('Facturación'); setIsFiltersOpen(false); }}
                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
                             >
                                 <span className="material-symbols-outlined text-[20px]">receipt_long</span>
                                 Facturación
                             </button>
                             <button
-                                onClick={() => handleNotImplemented('Configuración')}
+                                onClick={() => { handleNotImplemented('Configuración'); setIsFiltersOpen(false); }}
                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
                             >
                                 <span className="material-symbols-outlined text-[20px]">settings</span>
@@ -208,40 +221,40 @@ const DashboardPage = () => {
                                         <div className="flex-1 space-y-4">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                                         <span className="text-[16px] font-bold text-text-main">#{order.id}</span>
                                                         <span className="text-[12px] text-text-secondary">{order.date}</span>
                                                     </div>
-                                                    <span className="text-[13px] font-medium text-text-secondary">{order.files}</span>
+                                                    <span className="text-[13px] font-medium text-text-secondary block truncate max-w-[200px] sm:max-w-none">{order.files}</span>
                                                 </div>
-                                                <div className="text-right block md:hidden">
-                                                    <p className="text-[16px] font-bold text-text-main">${order.price.toFixed(2)}</p>
+                                                <div className="text-right flex flex-col items-end md:hidden">
+                                                    <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
+                                            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                                                 <div className="relative group cursor-pointer">
                                                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${style.bg} border ${style.border}`}>
                                                         <span className={`w-2 h-2 rounded-full ${style.dot} ${order.status === 'en_curso' ? 'animate-pulse' : ''}`}></span>
-                                                        <span className={`text-[12px] font-bold uppercase tracking-wide ${style.color}`}>{style.label}</span>
+                                                        <span className={`text-[11px] font-bold uppercase tracking-wide ${style.color}`}>{style.label}</span>
                                                     </div>
                                                 </div>
-                                                <div className="h-4 w-[1px] bg-gray-border"></div>
+                                                <div className="hidden sm:block h-4 w-[1px] bg-gray-border"></div>
                                                 <div className="flex items-center gap-1 text-[12px] text-text-secondary">
                                                     <span className="material-symbols-outlined text-[16px]">local_shipping</span>
                                                     <span>{order.shipping}</span>
                                                 </div>
-                                                {order.statusMsg && <span className="text-[12px] text-status-amber font-medium hidden sm:block">{order.statusMsg}</span>}
+                                                {order.statusMsg && <span className="text-[12px] text-status-amber font-medium hidden lg:block">{order.statusMsg}</span>}
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-row md:flex-col justify-between items-end gap-4 border-t border-gray-border md:border-none pt-4 md:pt-0">
+                                        <div className="flex flex-col sm:flex-row md:flex-col justify-between items-stretch sm:items-center md:items-end gap-4 border-t border-gray-border md:border-none pt-4 md:pt-0">
                                             <div className="text-right hidden md:block">
                                                 <p className="text-[12px] text-text-secondary mb-0.5">Total</p>
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
-                                            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                                                <Button variant="ghost" size="sm" className="text-xs">Ver detalles</Button>
-                                                <Button size="icon" variant="secondary" title="Descargar Factura">
+                                            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                                                <Button variant="ghost" size="sm" className="text-xs flex-1 sm:flex-none justify-center">Ver detalles</Button>
+                                                <Button size="icon" variant="secondary" className="h-9 w-9 shrink-0" title="Descargar Factura">
                                                     <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                                                 </Button>
                                             </div>

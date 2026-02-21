@@ -41,9 +41,9 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
+            <div className="bg-surface rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
                 {/* Header */}
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <div className="bg-muted px-6 py-4 border-b border-gray-border flex justify-between items-center">
                     <h3 className="font-bold text-lg text-text-main">
                         {step === 1 ? 'Confirmar Pedido' : 'Realizar Pago'}
                     </h3>
@@ -56,13 +56,13 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
                 <div className="p-6">
                     {step === 1 ? (
                         <div className="space-y-4">
-                            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <div className="bg-blue-tint p-4 rounded-lg border border-primary/20">
                                 <p className="text-sm text-text-secondary mb-1">Total de Metros</p>
                                 <p className="text-xl font-bold text-text-main">{totalMeters.toFixed(2)} m</p>
                             </div>
-                            <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <div className="bg-success/10 p-4 rounded-lg border border-success/20">
                                 <p className="text-sm text-text-secondary mb-1">Total a Pagar</p>
-                                <p className="text-2xl font-bold text-green-700">${totalPrice.toLocaleString()}</p>
+                                <p className="text-2xl font-bold text-success">${totalPrice.toLocaleString()}</p>
                             </div>
                             <p className="text-xs text-text-secondary text-center mt-4">
                                 Por favor verifica que el total sea correcto antes de continuar.
@@ -72,11 +72,11 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
                         <div className="space-y-6">
                             <div className="text-center space-y-2">
                                 <p className="text-sm text-text-secondary">Transfiere el total al siguiente Alias:</p>
-                                <div className="bg-gray-100 p-3 rounded-lg border border-gray-200 inline-block px-8">
+                                <div className="bg-muted p-3 rounded-lg border border-gray-border inline-block px-8">
                                     <p className="text-lg font-mono font-bold text-text-main select-all">{ALIAS_CBU}</p>
                                 </div>
                                 <p className="text-xs text-text-secondary">Titular: Jose Gabriel Jesus Lopez</p>
-                                <p className="text-xs text-gray-500 mt-1">Monto Exacto: <span className="font-bold text-lg text-green-600">${totalPrice.toLocaleString()}</span></p>
+                                <p className="text-xs text-text-secondary mt-1">Monto Exacto: <span className="font-bold text-lg text-success">${totalPrice.toLocaleString()}</span></p>
                             </div>
 
                             {/* CUIT Input Field */}
@@ -88,7 +88,7 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
                                     id="cuitPayment"
                                     type="text"
                                     placeholder="Ej. 20123456789 (Sin guiones)"
-                                    className="w-full h-[40px] bg-white border border-gray-300 rounded-lg px-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                    className="w-full h-[40px] bg-surface border border-gray-border rounded-lg px-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                     value={cuitTitular}
                                     onChange={(e) => setCuitTitular(e.target.value)}
                                 />
@@ -101,7 +101,7 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
                                 </div>
                             )}
 
-                            <div className="bg-amber-50 p-3 rounded-lg border border-amber-100 text-amber-700 text-xs flex gap-2">
+                            <div className="bg-warning/10 p-3 rounded-lg border border-warning/20 text-warning text-xs flex gap-2">
                                 <span className="material-symbols-outlined text-sm mt-0.5">info</span>
                                 <p>Una vez realizada la transferencia, ingresa tu CUIT/DNI y presiona "Validar Pago".</p>
                             </div>
@@ -110,7 +110,7 @@ const PaymentModal = ({ isOpen, onClose, totalMeters, totalPrice, onPaymentVerif
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
+                <div className="px-6 py-4 border-t border-gray-border flex justify-end gap-3 bg-muted/50">
                     {step === 1 ? (
                         <>
                             <Button variant="secondary" onClick={onClose}>Cancelar</Button>

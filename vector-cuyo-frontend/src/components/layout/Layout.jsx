@@ -9,6 +9,7 @@ import ThemeToggle from '../ui/ThemeToggle';
 
 const Layout = () => {
     const { user, logout } = useAuth();
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const location = useLocation();
 
     const isActive = (path) => location.pathname === path;
@@ -18,11 +19,18 @@ const Layout = () => {
             {/* Navbar */}
             <header className="bg-surface border-b border-gray-border sticky top-0 z-50 h-[64px] transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-                    <div className="grid grid-cols-3 h-full items-center">
+                    <div className="flex h-full items-center justify-between md:grid md:grid-cols-3">
                         {/* 1. Logo (Left) */}
                         <div className="flex items-center justify-start">
-                            <Link to="/" className="flex-shrink-0 flex items-center">
-                                <img className="h-12 w-auto" src={`${import.meta.env.BASE_URL}logo.png`} alt="VectorCuyo" />
+                            <Link to="/" className="flex-shrink-0 flex items-center group">
+                                <img
+                                    className="h-10 w-auto transition-all duration-300 dark:invert"
+                                    src={`${import.meta.env.BASE_URL}logo.png`}
+                                    alt="VectorCuyo"
+                                />
+                                <span className="ml-3 font-bold text-xl tracking-tight text-text-main hidden sm:block">
+                                    Vector<span className="text-primary">Cuyo</span>
+                                </span>
                             </Link>
                         </div>
 
@@ -72,26 +80,119 @@ const Layout = () => {
                         </div>
 
                         {/* 3. User Area (Right) */}
-                        <div className="flex items-center justify-end space-x-4">
+                        <div className="flex items-center justify-end space-x-2 sm:space-x-4">
                             <ThemeToggle />
+                            <div className="hidden md:flex items-center space-x-4">
+                                {user ? (
+                                    <>
+                                        <span className="text-[14px] text-text-main hidden lg:block">Hola, <strong>{user.nombre_completo || user.nombre || 'Usuario'}</strong></span>
+                                        <button
+                                            onClick={logout}
+                                            className="text-[14px] font-medium text-danger hover:text-red-700 transition-colors"
+                                        >
+                                            Salir
+                                        </button>
+                                    </>
+                                ) : (
+                                    <div className="space-x-3 flex items-center">
+                                        <Button to="/login" variant="ghost" size="sm">
+                                            Ingresar
+                                        </Button>
+                                        <Button to="/register" size="sm">
+                                            Registrarse
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="md:hidden p-2 text-text-secondary hover:text-text-main hover:bg-hover-tint rounded-lg transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-[24px]">
+                                    {isMenuOpen ? 'close' : 'menu'}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Navigation Drawer */}
+                <div className={`md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`} onClick={() => setIsMenuOpen(false)}>
+                    <div
+                        className={`absolute top-[64px] left-0 right-0 bg-surface border-b border-gray-border p-6 space-y-6 transform transition-transform duration-300 ease-out ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <nav className="flex flex-col gap-2">
+                            <Link
+                                to="/"
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:bg-hover-tint'}`}
+                            >
+                                Inicio
+                            </Link>
+
+                            <div className="space-y-1">
+                                <div className="px-4 py-2 text-[12px] font-bold text-text-secondary uppercase tracking-widest opacity-50">Servicios</div>
+                                <Link
+                                    to="/especificaciones"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="block px-4 py-3 rounded-xl text-[16px] text-text-main hover:bg-hover-tint transition-colors"
+                                >
+                                    Lámina DTF Textil
+                                </Link>
+                                <span className="block px-4 py-3 rounded-xl text-[16px] text-text-secondary opacity-50 cursor-not-allowed">
+                                    Lámina DTF UV (Próx.)
+                                </span>
+                            </div>
+
+                            <Link
+                                to="/tutoriales"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
+                            >
+                                Tutoriales
+                            </Link>
+
+                            <Link
+                                to="/nosotros"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
+                            >
+                                Nosotros
+                            </Link>
+
+                            {user && (
+                                <Link
+                                    to="/dashboard"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors ${isActive('/dashboard') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:bg-hover-tint'}`}
+                                >
+                                    Perfil
+                                </Link>
+                            )}
+                        </nav>
+
+                        <div className="pt-6 border-t border-gray-border flex flex-col gap-4">
                             {user ? (
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-[14px] text-text-main hidden sm:block">Hola, <strong>{user.nombre_completo || user.nombre || 'Usuario'}</strong></span>
-                                    <button
-                                        onClick={logout}
-                                        className="text-[14px] font-medium text-danger hover:text-red-700 transition-colors"
+                                <div className="flex flex-col gap-3">
+                                    <div className="px-4">
+                                        <p className="text-[14px] text-text-secondary">Conectado como:</p>
+                                        <p className="font-bold text-text-main">{user.nombre_completo || user.nombre}</p>
+                                    </div>
+                                    <Button
+                                        onClick={() => { logout(); setIsMenuOpen(false); }}
+                                        variant="secondary"
+                                        className="w-full text-danger border-danger/20 hover:bg-danger/5"
                                     >
-                                        Salir
-                                    </button>
+                                        Cerrar Sesión
+                                    </Button>
                                 </div>
                             ) : (
-                                <div className="space-x-3 flex items-center">
-                                    <Button to="/login" variant="ghost" size="sm">
-                                        Ingresar
-                                    </Button>
-                                    <Button to="/register" size="sm">
-                                        Registrarse
-                                    </Button>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Button to="/login" variant="ghost" onClick={() => setIsMenuOpen(false)}>Ingresar</Button>
+                                    <Button to="/register" onClick={() => setIsMenuOpen(false)}>Registrarse</Button>
                                 </div>
                             )}
                         </div>
