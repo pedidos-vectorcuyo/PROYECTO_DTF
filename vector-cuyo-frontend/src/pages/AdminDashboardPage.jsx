@@ -275,7 +275,7 @@ const AdminDashboardPage = () => {
                         {/* DTF UV CONFIG */}
                         <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
                             <div className="flex items-center gap-2 mb-6 text-warning">
-                                <span className="material-symbols-outlined">ink_low</span>
+                                <span className="material-symbols-outlined">filter_drama</span>
                                 <h3 className="text-lg font-bold text-text-main">Configuración DTF UV</h3>
                             </div>
 
