@@ -1,6 +1,6 @@
 
 import { createContext, useState, useEffect, useContext } from 'react';
-import { login as apiLogin, register as apiRegister } from '../../services/api';
+import { login as apiLogin, register as apiRegister, loginWithGoogle as apiLoginWithGoogle } from '../../services/api';
 
 const AuthContext = createContext(null);
 
@@ -65,6 +65,27 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const loginWithGoogle = async (googleCredential) => {
+        try {
+            const userData = await apiLoginWithGoogle(googleCredential);
+
+            let cleanUser = userData;
+            if (Array.isArray(userData)) cleanUser = userData[0];
+            if (cleanUser.json) cleanUser = cleanUser.json;
+
+            const userWithRole = {
+                ...cleanUser,
+                role: cleanUser.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+            };
+            setUser(userWithRole);
+            localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
+            return userWithRole;
+        } catch (error) {
+            console.error("Google Login failed:", error);
+            throw error;
+        }
+    };
+
     const logout = () => {
         setUser(null);
         localStorage.removeItem('dtf_user');
@@ -72,7 +93,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, loginWithGoogle, logout, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

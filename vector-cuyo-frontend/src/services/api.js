@@ -11,6 +11,7 @@ const ENDPOINTS = {
     UPLOAD_ORDER: import.meta.env.VITE_API_UPLOAD_ORDER_ENDPOINT,
     LOGIN: import.meta.env.VITE_API_LOGIN_ENDPOINT || '/auth-login',
     REGISTER: import.meta.env.VITE_API_REGISTER_ENDPOINT || '/auth-register',
+    GOOGLE_LOGIN: import.meta.env.VITE_API_GOOGLE_LOGIN_ENDPOINT || '/auth-google',
     GET_ORDERS: import.meta.env.VITE_API_GET_ORDERS_ENDPOINT,
     VERIFY_PAYMENT: '/webhook/verificar-pago',
     // Admin Endpoints
@@ -71,6 +72,33 @@ export const register = async (userData) => {
         return data;
     } catch (error) {
         console.error("Registration error:", error);
+        throw error;
+    }
+};
+
+/**
+ * Authenticates a user via Google OAuth.
+ * @param {string} googleCredential - JWT credential token from Google
+ * @returns {Promise<Object|null>} User object if success, or null
+ */
+export const loginWithGoogle = async (googleCredential) => {
+    try {
+        const formData = new FormData();
+        formData.append('google_token', googleCredential);
+
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GOOGLE_LOGIN}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Google Login failed');
+
+        let data = await response.json();
+        if (Array.isArray(data)) data = data[0];
+
+        return data; // Expected { id, nombre, correo, ... }
+    } catch (error) {
+        console.error('Google Login error:', error);
         throw error;
     }
 };
