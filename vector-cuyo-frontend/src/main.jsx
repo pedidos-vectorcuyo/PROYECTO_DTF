@@ -36,14 +36,22 @@ class ErrorBoundary extends React.Component {
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
+const AppWithProviders = () => (
+    <ThemeProvider>
+        <App />
+    </ThemeProvider>
+);
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ErrorBoundary>
-            <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-                <ThemeProvider>
-                    <App />
-                </ThemeProvider>
-            </GoogleOAuthProvider>
+            {GOOGLE_CLIENT_ID ? (
+                <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                    <AppWithProviders />
+                </GoogleOAuthProvider>
+            ) : (
+                <AppWithProviders />
+            )}
         </ErrorBoundary>
     </React.StrictMode>,
 )
