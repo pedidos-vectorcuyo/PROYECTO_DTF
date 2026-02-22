@@ -141,8 +141,8 @@ export const fetchOrders = async (clientId) => {
 };
 
 /**
- * Fetches current pricing configuration from n8n.
- * @returns {Promise<{base: number, p10: number, p30: number}>}
+ * Fetches current pricing and dimension configuration from n8n.
+ * @returns {Promise<Object>}
  */
 export const fetchPrices = async () => {
     try {
@@ -150,18 +150,40 @@ export const fetchPrices = async () => {
         if (!response.ok) throw new Error("Failed to fetch prices");
 
         const data = await response.json();
-        // Handle n8n array response structure
         const item = Array.isArray(data) ? data[0] : data;
 
+        // Standardized configuration object
         return {
-            base: parseFloat(item.precio_metro) || 13500,
-            p10: parseFloat(item.precio_mayorista_10) || 11500,
-            p30: parseFloat(item.precio_mayorista_30) || 10500
+            textil: {
+                base: parseFloat(item.precio_metro) || 13500,
+                p10: parseFloat(item.precio_mayorista_10) || 11500,
+                p30: parseFloat(item.precio_mayorista_30) || 10500,
+                limits: {
+                    minWidth: parseFloat(item.textil_min_width) || 50,
+                    maxWidth: parseFloat(item.textil_max_width) || 56,
+                    minLength: parseFloat(item.textil_min_length) || 1,
+                    maxLength: parseFloat(item.textil_max_length) || 10
+                }
+            },
+            uv: {
+                base: parseFloat(item.uv_precio_metro) || 18000,
+                p10: parseFloat(item.uv_precio_mayorista_10) || 16000,
+                p30: parseFloat(item.uv_precio_mayorista_30) || 15000,
+                limits: {
+                    minWidth: parseFloat(item.uv_min_width) || 25,
+                    maxWidth: parseFloat(item.uv_max_width) || 28,
+                    minLength: parseFloat(item.uv_min_length) || 0.1,
+                    maxLength: parseFloat(item.uv_max_length) || 5
+                }
+            }
         };
     } catch (error) {
         console.error("Error fetching prices:", error);
-        // Fallback defaults if API fails
-        return { base: 13500, p10: 11500, p30: 10500 };
+        // Fallback defaults
+        return {
+            textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+            uv: { base: 18000, p10: 16000, p30: 15000, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
+        };
     }
 };
 

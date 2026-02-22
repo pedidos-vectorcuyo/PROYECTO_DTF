@@ -15,19 +15,26 @@ const OrderPanelPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [dragActive, setDragActive] = useState(false);
-    const [prices, setPrices] = useState({ base: 13500, p10: 11500, p30: 10500 });
+    const [productType, setProductType] = useState('textil'); // Default to textil
+    const [config, setConfig] = useState({
+        textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+        uv: { base: 18000, p10: 16000, p30: 15000, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
+    });
     const [clientData, setClientData] = useState({
         observaciones: ''
     });
 
     useEffect(() => {
-        // Load prices on mount
-        const loadPrices = async () => {
-            const p = await fetchPrices();
-            setPrices(p);
+        // Load configuration on mount
+        const loadConfig = async () => {
+            const c = await fetchPrices();
+            if (c) setConfig(c);
         };
-        loadPrices();
+        loadConfig();
     }, []);
+
+    // Helper to get active product configuration
+    const activeConfig = config[productType];
 
     const handleDrag = useCallback((e) => {
         e.preventDefault();
@@ -58,23 +65,36 @@ const OrderPanelPage = () => {
 
     const handleFiles = async (fileList) => {
         setLoading(true);
+        const fileArray = Array.from(fileList);
 
         // Process files in parallel
         const processedFiles = await Promise.all(fileArray.map(async (file) => {
             const processed = await processFile(file);
 
-            // Validation: Width check
+            // Validation: Dynamic Width check from config
             const warnings = [...processed.warnings];
-            if (processed.meta.anchoCm < 50) {
-                warnings.push("El ancho es menor a 50cm (no es óptimo para aprovechamiento de impresión)");
+            const { minWidth, maxWidth, minLength, maxLength } = activeConfig.limits;
+
+            if (processed.meta.anchoCm < minWidth) {
+                warnings.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) es menor al recomendado (${minWidth}cm)`);
+            }
+            if (processed.meta.anchoCm > maxWidth) {
+                warnings.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) supera el máximo de impresión (${maxWidth}cm)`);
+            }
+            if (processed.meta.largoM < minLength) {
+                warnings.push(`El largo (${processed.meta.largoM.toFixed(2)}m) es menor al mínimo (${minLength}m)`);
+            }
+            if (processed.meta.largoM > maxLength) {
+                warnings.push(`El largo (${processed.meta.largoM.toFixed(2)}m) supera el máximo permitido (${maxLength}m)`);
             }
 
             return {
                 id: Date.now() + Math.random(),
                 file: file,
                 ...processed,
-                warnings: warnings, // Use updated warnings
+                warnings: warnings,
                 copies: 1,
+                productType: productType, // Mark file with current product type
                 options: {
                     whites: false,
                     blacks: false,
@@ -114,29 +134,31 @@ const OrderPanelPage = () => {
         }));
     };
 
-    // Calculations
-    const totalMeters = files.reduce((acc, curr) => {
+    // Calculations based on productType
+    const activeFiles = files.filter(f => f.productType === productType);
+
+    const totalMeters = activeFiles.reduce((acc, curr) => {
         if (!curr.valid) return acc;
         return acc + (curr.meta.largoM * curr.copies);
     }, 0);
 
-    const effectiveMeters = totalMeters > 0 ? Math.max(1, Math.ceil(totalMeters * 10) / 10) : 0;
+    const effectiveMeters = totalMeters > 0 ? Math.max(activeConfig.limits.minLength, Math.ceil(totalMeters * 10) / 10) : 0;
 
-    let currentPrice = prices.base;
+    let currentPrice = activeConfig.base;
     let tierName = "Precio Base";
     let tierColor = "bg-blue-tint text-primary border-primary/20";
 
     if (effectiveMeters > 30) {
-        currentPrice = prices.p30;
+        currentPrice = activeConfig.p30;
         tierName = "GOLD (>30m)";
         tierColor = "bg-warning/10 text-warning border-warning/20";
     } else if (effectiveMeters > 10) {
-        currentPrice = prices.p10;
+        currentPrice = activeConfig.p10;
         tierName = "MAYORISTA (>10m)";
         tierColor = "bg-success/10 text-success border-success/20";
     }
 
-    const subtotal = effectiveMeters * prices.base;
+    const subtotal = effectiveMeters * activeConfig.base;
     const total = effectiveMeters * currentPrice;
     const discount = subtotal - total;
 
@@ -147,7 +169,7 @@ const OrderPanelPage = () => {
             return;
         }
 
-        if (files.length === 0 || files.some(f => !f.valid)) {
+        if (activeFiles.length === 0 || activeFiles.some(f => !f.valid)) {
             alert("Por favor revisa que todos los archivos sean válidos.");
             return;
         }
@@ -162,7 +184,7 @@ const OrderPanelPage = () => {
 
     const performOrderSubmission = async () => {
         setSubmitting(true);
-        const validFiles = files.filter(f => f.valid);
+        const validFiles = activeFiles.filter(f => f.valid);
         const orderId = `PED-${Date.now()}`;
         const shortDate = new Date().toISOString().slice(2, 10).replace(/-/g, '.');
         const clientName = user.nombre || 'Cliente';
@@ -176,7 +198,8 @@ const OrderPanelPage = () => {
             const propsMap = { whites: 'B', blacks: 'N', colors: 'C', halftones: 'S' };
             const activeProps = Object.keys(item.options).filter(k => item.options[k]).map(k => propsMap[k]);
             const codes = activeProps.length > 0 ? activeProps.join('') : 'Gral';
-            const finalName = `${shortDate} - ${clientName}(${cleanName})'x${item.copies}${codes}.png`;
+            const typeCode = productType === 'uv' ? '[UV]' : '[TEX]';
+            const finalName = `${shortDate} - ${clientName} ${typeCode}(${cleanName})'x${item.copies}${codes}.png`;
 
             // Append data
             fd.append("data", item.file, finalName);
@@ -190,11 +213,12 @@ const OrderPanelPage = () => {
             fd.append("anchoCm", item.meta.anchoCm);
             fd.append("largoM", item.meta.largoM);
             fd.append("copias", item.copies);
-            fd.append("propiedades", `#${i + 1}(${codes})`); // Simplified props string
+            fd.append("productType", productType === 'uv' ? 'DTF UV' : 'DTF Textil');
+            fd.append("propiedades", `#${i + 1}(${codes})`);
 
-            // Totals (sent with every file, n8n handles aggregation/logic)
-            fd.append("precioCotizado", total); // Sending raw number for easier processing in backend if needed
-            fd.append("precio_final", total.toString().replace('.', ',')); // Formatting for display/sheets
+            // Totals 
+            fd.append("precioCotizado", total);
+            fd.append("precio_final", total.toString().replace('.', ','));
 
             fd.append("totalArchivos", validFiles.length);
             fd.append("indiceArchivo", i + 1);
@@ -212,8 +236,9 @@ const OrderPanelPage = () => {
 
         if (failCount === 0) {
             alert("✅ ¡Pedido Creado con Éxito!");
-            // setFiles([]); // Clear or navigate
-            navigate('/dashboard'); // Mock navigation
+            // Remove only submitted files from state
+            setFiles(prev => prev.filter(f => f.productType !== productType));
+            navigate('/dashboard');
         } else {
             alert(`⚠️ Se subieron ${successCount} archivos, pero fallaron ${failCount}. Por favor reintenta los fallidos.`);
         }
@@ -222,18 +247,35 @@ const OrderPanelPage = () => {
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left Panel: Upload & List (8 cols ~ 66%) */}
                 <div className="lg:col-span-8 space-y-6">
                     <div className="bg-surface border border-gray-border rounded-card p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                            <h2 className="text-[18px] sm:text-[20px] font-bold text-text-main">Lámina DTF Textil</h2>
-                            <span className="inline-block w-fit px-3 py-1 bg-blue-tint text-primary text-[11px] font-bold rounded-full uppercase tracking-wide">
-                                Producción 24hs
-                            </span>
+                            <div>
+                                <h2 className="text-[18px] sm:text-[20px] font-bold text-text-main">
+                                    {productType === 'uv' ? 'Lámina DTF UV' : 'Lámina DTF Textil'}
+                                </h2>
+                                <p className="text-xs text-text-secondary mt-1">Selecciona el tipo de impresión para tu diseño</p>
+                            </div>
+
+                            {/* Product Selector Tap */}
+                            <div className="flex bg-muted p-1 rounded-xl border border-gray-border">
+                                <button
+                                    onClick={() => setProductType('textil')}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${productType === 'textil' ? 'bg-surface text-primary shadow-sm border border-gray-border' : 'text-text-secondary hover:text-text-main'}`}
+                                >
+                                    DTF Textil
+                                </button>
+                                <button
+                                    onClick={() => setProductType('uv')}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${productType === 'uv' ? 'bg-surface text-warning shadow-sm border border-gray-border' : 'text-text-secondary hover:text-text-main'}`}
+                                >
+                                    DTF UV [Beta]
+                                </button>
+                            </div>
                         </div>
 
                         <div
-                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${dragActive ? 'border-primary bg-blue-tint' : 'border-gray-border hover:border-primary hover:bg-muted'}`}
+                            className={`border-2 border-dashed rounded-xl p-10 text-center transition-all cursor-pointer ${dragActive ? 'border-primary bg-blue-tint' : 'border-gray-border hover:border-primary hover:bg-muted'}`}
                             onDragEnter={handleDrag}
                             onDragLeave={handleDrag}
                             onDragOver={handleDrag}
@@ -248,18 +290,23 @@ const OrderPanelPage = () => {
                                 accept="image/png"
                                 onChange={handleChange}
                             />
-                            <div className="w-16 h-16 bg-surface border border-gray-border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-primary">
+                            <div className={`w-16 h-16 bg-surface border border-gray-border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm ${productType === 'uv' ? 'text-warning' : 'text-primary'}`}>
                                 <span className="material-symbols-outlined text-[32px]">cloud_upload</span>
                             </div>
                             <p className="text-text-main font-medium text-lg">Arrastra tus archivos PNG aquí</p>
                             <p className="text-text-secondary text-sm mt-1">o haz click para explorar tu dispositivo</p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mt-6 text-[11px] sm:text-xs text-text-secondary">
-                                <span className="flex items-center gap-1 font-bold text-primary"><span className="material-symbols-outlined text-[14px]">info</span> Ancho: 50 - 56cm</span>
-                                <span className="flex items-center gap-1 font-bold text-primary"><span className="material-symbols-outlined text-[14px]">info</span> Largo: 1 - 10m</span>
+                                <span className="flex items-center gap-1 font-bold text-text-main">
+                                    <span className="material-symbols-outlined text-[14px]">info</span>
+                                    Ancho: {activeConfig.limits.minWidth} - {activeConfig.limits.maxWidth}cm
+                                </span>
+                                <span className="flex items-center gap-1 font-bold text-text-main">
+                                    <span className="material-symbols-outlined text-[14px]">info</span>
+                                    Largo: {activeConfig.limits.minLength} - {activeConfig.limits.maxLength}m
+                                </span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Fondo transparente</span>
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> 300 DPI</span>
-                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">check_circle</span> Modo RGB</span>
                             </div>
                         </div>
 
@@ -271,12 +318,10 @@ const OrderPanelPage = () => {
                         )}
                     </div>
 
-                    {/* File List */}
                     <div className="space-y-4">
                         {files.map((file) => (
-                            <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md`}>
+                            <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md ${file.productType !== productType ? 'hidden' : ''}`}>
                                 <div className="flex flex-col sm:flex-row gap-5">
-                                    {/* Preview */}
                                     <div className="w-full sm:w-20 h-40 sm:h-20 bg-muted border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
                                         <div className="absolute inset-0 bg-dtf-texture opacity-10"></div>
                                         {file.previewUrl ? (
@@ -286,59 +331,43 @@ const OrderPanelPage = () => {
                                         )}
                                     </div>
 
-                                    {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
-                                            <h3 className="font-semibold text-text-main text-[15px] truncate pr-4" title={file.file.name}>{file.file.name}</h3>
-                                            {file.valid && (
-                                                <button
-                                                    onClick={() => removeFile(file.id)}
-                                                    className="text-text-secondary hover:text-danger transition-colors p-1 -mr-2"
-                                                    title="Eliminar archivo"
-                                                >
-                                                    <span className="material-symbols-outlined text-[20px]">delete</span>
-                                                </button>
-                                            )}
+                                            <div className="flex items-center gap-2 overflow-hidden">
+                                                <h3 className="font-semibold text-text-main text-[15px] truncate" title={file.file.name}>{file.file.name}</h3>
+                                                {file.productType === 'uv' && <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-[10px] font-bold rounded">UV</span>}
+                                            </div>
+                                            <button
+                                                onClick={() => removeFile(file.id)}
+                                                className="text-text-secondary hover:text-danger transition-colors p-1 -mr-2"
+                                                title="Eliminar archivo"
+                                            >
+                                                <span className="material-symbols-outlined text-[20px]">delete</span>
+                                            </button>
                                         </div>
 
                                         {file.valid ? (
                                             <>
                                                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-[13px] text-text-secondary">
-                                                    <span className="flex items-center gap-1.5" title="Ancho">
+                                                    <span className="flex items-center gap-1.5">
                                                         <span className="material-symbols-outlined text-[16px]">aspect_ratio</span>
                                                         {file.meta.anchoCm.toFixed(1)} cm
                                                     </span>
-                                                    <span className="flex items-center gap-1.5" title="Largo estimado">
+                                                    <span className="flex items-center gap-1.5">
                                                         <span className="material-symbols-outlined text-[16px]">straighten</span>
                                                         {file.meta.largoM.toFixed(2)} m
                                                     </span>
-                                                    <span className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
+                                                    <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
                                                         {file.meta.dpi} DPI
                                                     </span>
                                                 </div>
 
-                                                {/* Quantity Control */}
                                                 <div className="flex items-center mt-4 gap-3">
                                                     <span className="text-[13px] font-medium text-text-main">Copias:</span>
                                                     <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
-                                                        <button
-                                                            onClick={() => updateCopies(file.id, -1)}
-                                                            className="w-8 h-full flex items-center justify-center hover:bg-muted text-text-secondary border-r border-gray-border"
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <input
-                                                            type="text"
-                                                            readOnly
-                                                            value={file.copies}
-                                                            className="w-10 text-center text-sm font-semibold text-text-main bg-transparent outline-none"
-                                                        />
-                                                        <button
-                                                            onClick={() => updateCopies(file.id, 1)}
-                                                            className="w-8 h-full flex items-center justify-center hover:bg-muted text-text-secondary border-l border-gray-border"
-                                                        >
-                                                            +
-                                                        </button>
+                                                        <button onClick={() => updateCopies(file.id, -1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-r border-gray-border">-</button>
+                                                        <input type="text" readOnly value={file.copies} className="w-10 text-center text-sm font-semibold bg-transparent" />
+                                                        <button onClick={() => updateCopies(file.id, 1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-l border-gray-border">+</button>
                                                     </div>
                                                 </div>
                                             </>
@@ -350,145 +379,81 @@ const OrderPanelPage = () => {
                                         )}
 
                                         {file.warnings.length > 0 && (
-                                            <div className="mt-2 text-xs text-warning bg-warning/10 p-2 rounded flex items-start gap-2">
+                                            <div className="mt-2 text-xs text-warning bg-warning/10 p-2 rounded flex items-start gap-2 border border-warning/20">
                                                 <span className="material-symbols-outlined text-[14px] mt-0.5">warning</span>
                                                 <span>{file.warnings.join(', ')}</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-
-                                {file.valid && (
-                                    <div className="mt-4 pt-4 border-t border-gray-border">
-                                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                                            <span className="text-[12px] font-bold text-text-secondary uppercase tracking-widest shrink-0">Tratamientos:</span>
-                                            <div className="flex flex-wrap gap-2">
-                                                {[
-                                                    { id: 'whites', label: 'Base Blanca' },
-                                                    { id: 'blacks', label: 'Base Negra' },
-                                                    { id: 'colors', label: 'Potenciar Color' },
-                                                    { id: 'halftones', label: 'Semitonos' }
-                                                ].map(opt => (
-                                                    <button
-                                                        key={opt.id}
-                                                        onClick={() => toggleOption(file.id, opt.id)}
-                                                        className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${file.options[opt.id]
-                                                            ? 'bg-primary text-white border-primary shadow-sm'
-                                                            : 'bg-surface text-text-secondary border-gray-border hover:border-gray-border/80'
-                                                            }`}
-                                                    >
-                                                        {opt.label}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         ))}
 
-                        {files.length === 0 && (
-                            <div className="flex flex-col items-center justify-center py-16 bg-surface border border-dashed border-gray-200 rounded-card text-text-secondary">
-                                <span className="material-symbols-outlined text-[48px] opacity-20 mb-2">inventory_2</span>
-                                <p className="text-sm">Tu lista de archivos está vacía</p>
+                        {activeFiles.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-16 bg-surface border border-dashed border-gray-border rounded-card text-text-secondary">
+                                <span className="material-symbols-outlined text-[48px] opacity-20 mb-2">upload_file</span>
+                                <p className="text-sm">Tu lista de archivos {productType === 'uv' ? 'UV' : 'Textil'} está vacía</p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Right Panel: Summary (4 cols ~ 33%) */}
                 <div className="lg:col-span-4 relative">
                     <div className="sticky top-[88px] space-y-4">
                         <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
                             <div className="flex items-center gap-2 mb-6 text-text-main">
-                                <span className="material-symbols-outlined">receipt_long</span>
-                                <h3 className="text-lg font-bold">Resumen del Pedido</h3>
+                                <span className="material-symbols-outlined">analytics</span>
+                                <h3 className="text-lg font-bold text-text-main">Presupuesto {productType === 'uv' ? 'UV' : 'Textil'}</h3>
                             </div>
 
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-text-secondary">Metros Lineales</span>
-                                    <span className="font-semibold text-text-main text-[15px]">{effectiveMeters.toFixed(2)} m</span>
+                                    <span className="text-text-secondary">Metros Totales</span>
+                                    <span className="font-bold text-text-main">{effectiveMeters.toFixed(2)} m</span>
                                 </div>
 
-                                <div className="h-px bg-gray-border"></div>
-
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-text-secondary">Precio base</span>
-                                        <span className="text-text-main">${prices.base.toLocaleString()}</span>
+                                <div className="p-3 bg-muted rounded-xl border border-gray-border space-y-2">
+                                    <div className="flex justify-between text-[11px] uppercase tracking-wider font-bold text-text-secondary">
+                                        <span>Precio Unitario</span>
+                                        <span>Subtotal</span>
                                     </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-text-secondary">Nivel de precio</span>
-                                        <span className={`font-bold border px-1.5 rounded text-xs ${tierColor}`}>
+                                    <div className="flex justify-between items-end">
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${tierColor}`}>
                                             {tierName}
                                         </span>
+                                        <span className="font-bold text-text-main text-lg">${total.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                <div className="h-px bg-gray-border"></div>
-
-                                <div className="flex justify-between items-end">
-                                    <span className="text-sm font-medium text-text-secondary">Total Estimado</span>
-                                    <div className="text-right">
-                                        <span className="block text-xl sm:text-2xl font-bold text-text-main tracking-tight">${total.toLocaleString()}</span>
-                                        {discount > 0 && (
-                                            <span className="text-[11px] sm:text-xs text-success font-medium">Ahorraste ${discount.toLocaleString()}</span>
-                                        )}
+                                {discount > 0 && (
+                                    <div className="bg-success/10 border border-success/20 p-2 rounded-lg text-center">
+                                        <p className="text-[11px] text-success font-bold">¡Ahorraste ${discount.toLocaleString()} con descuento por volumen!</p>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             <div className="mb-6">
-                                <label className="block text-[12px] font-bold text-text-secondary uppercase tracking-wider mb-2" htmlFor="obs">
-                                    Observaciones
-                                </label>
+                                <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-2 px-1">Notas Adicionales</label>
                                 <textarea
-                                    id="obs"
-                                    className="w-full border border-gray-border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-shadow resize-none bg-off-white focus:bg-surface"
-                                    rows="3"
-                                    placeholder="Detalles de entrega, especificaciones..."
+                                    className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted/50 focus:bg-surface h-24 resize-none"
+                                    placeholder="Instrucciones especiales para tu pedido..."
                                     value={clientData.observaciones}
                                     onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
-                                ></textarea>
+                                />
                             </div>
 
                             <Button
                                 onClick={handleConfirmOrder}
-                                className="w-full shadow-lg shadow-primary/20"
-                                size="lg"
-                                disabled={files.length === 0 || files.some(f => !f.valid) || submitting}
+                                className={`w-full py-4 text-base shadow-lg ${productType === 'uv' ? 'shadow-warning/20' : 'shadow-primary/20'}`}
+                                disabled={activeFiles.length === 0 || activeFiles.some(f => !f.valid) || submitting}
                             >
-                                {submitting ? (
-                                    <>
-                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                        Procesando...
-                                    </>
-                                ) : "Confirmar Pedido"}
+                                {submitting ? "Procesando..." : "Confirmar e Ir al Pago"}
                             </Button>
-
-                            <div className="mt-4 text-center">
-                                <p className="text-[11px] text-text-secondary">
-                                    Tiempos de producción sujetos a disponibilidad.
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Support Card */}
-                        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-card p-5 text-white shadow-sm">
-                            <div className="flex gap-3 mb-2">
-                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                                    <span className="material-symbols-outlined text-sm">support_agent</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-sm">¿Necesitas ayuda?</h4>
-                                    <p className="text-xs text-slate-300 mt-1">Contacta a soporte técnico si tienes dudas con tus archivos.</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <PaymentModal
                 isOpen={showPaymentModal}
                 onClose={() => setShowPaymentModal(false)}

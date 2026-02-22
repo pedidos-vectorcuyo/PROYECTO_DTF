@@ -5,7 +5,10 @@ import Button from '../components/ui/Button';
 const AdminDashboardPage = () => {
     const [activeTab, setActiveTab] = useState('orders');
     const [orders, setOrders] = useState([]);
-    const [prices, setPrices] = useState({ base: 0, p10: 0, p30: 0 });
+    const [config, setConfig] = useState({
+        textil: { base: 0, p10: 0, p30: 0, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+        uv: { base: 0, p10: 0, p30: 0, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
+    });
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -17,12 +20,12 @@ const AdminDashboardPage = () => {
 
     const loadData = async () => {
         setLoading(true);
-        const [ordersData, pricesData] = await Promise.all([
+        const [ordersData, configData] = await Promise.all([
             fetchAllOrders(),
             fetchPrices()
         ]);
         setOrders(ordersData || []);
-        setPrices(pricesData || { base: 0, p10: 0, p30: 0 });
+        if (configData) setConfig(configData);
         setLoading(false);
     };
 
@@ -35,18 +38,32 @@ const AdminDashboardPage = () => {
         setUpdating(false);
     };
 
-    const handlePriceUpdate = async () => {
+    const handleConfigUpdate = async () => {
         setUpdating(true);
-        const success = await updatePrices({
-            precio_metro: prices.base,
-            precio_mayorista_10: prices.p10,
-            precio_mayorista_30: prices.p30
-        });
-        if (success) alert("Precios actualizados con éxito");
+        // Map back to the flat structure n8n expects (preserving backward compatibility)
+        const flatConfig = {
+            precio_metro: config.textil.base,
+            precio_mayorista_10: config.textil.p10,
+            precio_mayorista_30: config.textil.p30,
+            textil_min_width: config.textil.limits.minWidth,
+            textil_max_width: config.textil.limits.maxWidth,
+            textil_min_length: config.textil.limits.minLength,
+            textil_max_length: config.textil.limits.maxLength,
+            uv_precio_metro: config.uv.base,
+            uv_precio_mayorista_10: config.uv.p10,
+            uv_precio_mayorista_30: config.uv.p30,
+            uv_min_width: config.uv.limits.minWidth,
+            uv_max_width: config.uv.limits.maxWidth,
+            uv_min_length: config.uv.limits.minLength,
+            uv_max_length: config.uv.limits.maxLength
+        };
+
+        const success = await updatePrices(flatConfig);
+        if (success) alert("Configuración web actualizada con éxito");
         setUpdating(false);
     };
 
-    // Filtering logic
+    // Filtering logic (same as before)
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
             order.id_pedido?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -163,61 +180,204 @@ const AdminDashboardPage = () => {
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
-                        <div className="flex items-center gap-2 mb-6 text-primary">
-                            <span className="material-symbols-outlined">payments</span>
-                            <h3 className="text-lg font-bold text-text-main">Precios DTF Textil</h3>
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* DTF TEXTIL CONFIG */}
+                        <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
+                            <div className="flex items-center gap-2 mb-6 text-primary">
+                                <span className="material-symbols-outlined">apparel</span>
+                                <h3 className="text-lg font-bold text-text-main">Configuración DTF Textil</h3>
+                            </div>
+
+                            <div className="space-y-6">
+                                {/* Prices */}
+                                <div className="space-y-4">
+                                    <p className="text-[11px] font-bold text-text-secondary uppercase tracking-[0.2em]">Escalas de Precios</p>
+                                    <div>
+                                        <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Precio Base ($ / Metro)</label>
+                                        <input
+                                            type="number"
+                                            value={config.textil.base}
+                                            onChange={(e) => setConfig({ ...config, textil: { ...config.textil, base: parseFloat(e.target.value) } })}
+                                            className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Mayorista ({">"}10m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.textil.p10}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, p10: parseFloat(e.target.value) } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Platinum ({">"}30m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.textil.p30}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, p30: parseFloat(e.target.value) } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Limits */}
+                                <div className="space-y-4 pt-4 border-t border-gray-border">
+                                    <p className="text-[11px] font-bold text-text-secondary uppercase tracking-[0.2em]">Límites de Producción</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Ancho Mínimo (cm)</label>
+                                            <input
+                                                type="number"
+                                                value={config.textil.limits.minWidth}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, limits: { ...config.textil.limits, minWidth: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Ancho Máximo (cm)</label>
+                                            <input
+                                                type="number"
+                                                value={config.textil.limits.maxWidth}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, limits: { ...config.textil.limits, maxWidth: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Largo Mínimo (m)</label>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                value={config.textil.limits.minLength}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, limits: { ...config.textil.limits, minLength: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Largo Máximo (m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.textil.limits.maxLength}
+                                                onChange={(e) => setConfig({ ...config, textil: { ...config.textil, limits: { ...config.textil.limits, maxLength: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Precio Base (por metro)</label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary font-bold">$</span>
-                                    <input
-                                        type="number"
-                                        value={prices.base}
-                                        onChange={(e) => setPrices({ ...prices, base: parseFloat(e.target.value) })}
-                                        className="w-full bg-surface border border-gray-border rounded-xl pl-8 pr-4 py-3 text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-medium"
-                                    />
+
+                        {/* DTF UV CONFIG */}
+                        <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm">
+                            <div className="flex items-center gap-2 mb-6 text-warning">
+                                <span className="material-symbols-outlined">ink_low</span>
+                                <h3 className="text-lg font-bold text-text-main">Configuración DTF UV</h3>
+                            </div>
+
+                            <div className="space-y-6">
+                                {/* Prices */}
+                                <div className="space-y-4">
+                                    <p className="text-[11px] font-bold text-text-secondary uppercase tracking-[0.2em]">Escalas de Precios (UV)</p>
+                                    <div>
+                                        <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Precio Base ($ / Metro)</label>
+                                        <input
+                                            type="number"
+                                            value={config.uv.base}
+                                            onChange={(e) => setConfig({ ...config, uv: { ...config.uv, base: parseFloat(e.target.value) } })}
+                                            className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Mayorista ({">"}10m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.uv.p10}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, p10: parseFloat(e.target.value) } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Platinum ({">"}30m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.uv.p30}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, p30: parseFloat(e.target.value) } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Limits */}
+                                <div className="space-y-4 pt-4 border-t border-gray-border">
+                                    <p className="text-[11px] font-bold text-text-secondary uppercase tracking-[0.2em]">Límites UV</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Ancho Mínimo (cm)</label>
+                                            <input
+                                                type="number"
+                                                value={config.uv.limits.minWidth}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, limits: { ...config.uv.limits, minWidth: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Ancho Máximo (cm)</label>
+                                            <input
+                                                type="number"
+                                                value={config.uv.limits.maxWidth}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, limits: { ...config.uv.limits, maxWidth: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Largo Mínimo (m)</label>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                value={config.uv.limits.minLength}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, limits: { ...config.uv.limits, minLength: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-text-secondary mb-1.5 text-left">Largo Máximo (m)</label>
+                                            <input
+                                                type="number"
+                                                value={config.uv.limits.maxLength}
+                                                onChange={(e) => setConfig({ ...config, uv: { ...config.uv, limits: { ...config.uv.limits, maxLength: parseFloat(e.target.value) } } })}
+                                                className="w-full bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-text-main outline-none focus:border-primary font-medium"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Mayorista (+10m)</label>
-                                    <input
-                                        type="number"
-                                        value={prices.p10}
-                                        onChange={(e) => setPrices({ ...prices, p10: parseFloat(e.target.value) })}
-                                        className="w-full bg-surface border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Platinum (+30m)</label>
-                                    <input
-                                        type="number"
-                                        value={prices.p30}
-                                        onChange={(e) => setPrices({ ...prices, p30: parseFloat(e.target.value) })}
-                                        className="w-full bg-surface border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
-                                    />
-                                </div>
-                            </div>
-                            <Button
-                                onClick={handlePriceUpdate}
-                                className="w-full mt-4 py-3"
-                                disabled={updating}
-                            >
-                                {updating ? "Procesando..." : "Actualizar Precios en la Web"}
-                            </Button>
                         </div>
                     </div>
 
-                    <div className="bg-surface border border-gray-border rounded-card p-6 shadow-sm opacity-50 cursor-not-allowed">
-                        <div className="flex items-center gap-2 mb-6 text-text-secondary">
-                            <span className="material-symbols-outlined">settings</span>
-                            <h3 className="text-lg font-bold">Otros Ajustes</h3>
-                        </div>
-                        <p className="text-sm text-text-secondary italic">Más configuraciones próximamente...</p>
+                    <div className="flex justify-end">
+                        <Button
+                            onClick={handleConfigUpdate}
+                            className="w-full md:w-auto px-12 py-4 text-base shadow-xl shadow-primary/20"
+                            disabled={updating}
+                        >
+                            <span className="flex items-center gap-2">
+                                {updating ? (
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                ) : (
+                                    <span className="material-symbols-outlined">save</span>
+                                )}
+                                Guardar Toda la Configuración Web
+                            </span>
+                        </Button>
                     </div>
                 </div>
             )}
