@@ -1,38 +1,17 @@
-name: Deploy to Deploy Branch
+# Este workflow fue desactivado — el deploy se realiza desde deploy.yml
+# Se mantiene el archivo para no romper referencias existentes.
+name: Deploy to Deploy Branch (DISABLED)
 
 on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Manually triggered only'
+        required: false
 
 jobs:
-  build-and-deploy:
+  placeholder:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: vector-cuyo-frontend/package-lock.json
-      
-      - name: Install and Build
-        run: |
-          cd vector-cuyo-frontend
-          npm ci
-          npm run build
-      
-      - name: Deploy to deploy branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./vector-cuyo-frontend/dist
-          publish_branch: deploy
-          force_orphan: true
+      - name: Notice
+        run: echo 'Este workflow está desactivado. Usar deploy.yml.'

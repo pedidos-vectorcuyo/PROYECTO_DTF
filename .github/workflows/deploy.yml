@@ -1,5 +1,4 @@
 name: Deploy to Hostinger
-# Trigger: Manual re-trigger for UI and Dark Mode fixes
 
 on:
   push:
@@ -9,35 +8,41 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: vector-cuyo-frontend/package-lock.json
-      
+
       - name: Install dependencies
         run: |
           cd vector-cuyo-frontend
           npm ci
-      
+
       - name: Build application
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_API_PRICES_ENDPOINT: ${{ secrets.VITE_API_PRICES_ENDPOINT }}
+          VITE_API_UPLOAD_ORDER_ENDPOINT: ${{ secrets.VITE_API_UPLOAD_ORDER_ENDPOINT }}
+          VITE_API_LOGIN_ENDPOINT: ${{ secrets.VITE_API_LOGIN_ENDPOINT }}
+          VITE_API_REGISTER_ENDPOINT: ${{ secrets.VITE_API_REGISTER_ENDPOINT }}
+          VITE_API_GET_ORDERS_ENDPOINT: ${{ secrets.VITE_API_GET_ORDERS_ENDPOINT }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: |
           cd vector-cuyo-frontend
           npm run build
-      
+
       - name: Deploy to Hostinger via FTP
         run: |
-          # Install lftp
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install -y lftp
-          
-          # Deploy only dist contents to public_html
+
           lftp -c "
           set ssl:verify-certificate no;
           open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }};
