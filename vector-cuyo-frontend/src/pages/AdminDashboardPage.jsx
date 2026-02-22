@@ -98,13 +98,13 @@ const AdminDashboardPage = () => {
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="bg-muted/30 border border-gray-border rounded-xl px-4 py-2.5 text-sm text-text-main outline-none focus:border-primary"
+                            className="bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-sm text-text-main outline-none focus:border-primary appearance-none cursor-pointer"
                         >
-                            <option value="all">Todos los estados</option>
-                            <option value="pendiente">Pendiente</option>
-                            <option value="pagado">Pagado</option>
-                            <option value="listo">Listo</option>
-                            <option value="entregado">Entregado</option>
+                            <option value="all" className="bg-surface text-text-main">Todos los estados</option>
+                            <option value="pendiente" className="bg-surface text-text-main">Pendiente</option>
+                            <option value="pagado" className="bg-surface text-text-main">Pagado</option>
+                            <option value="listo" className="bg-surface text-text-main">Listo</option>
+                            <option value="entregado" className="bg-surface text-text-main">Entregado</option>
                         </select>
                     </div>
 
@@ -129,9 +129,9 @@ const AdminDashboardPage = () => {
                                             <td className="p-4 text-sm font-medium text-text-main">{order.cliente}</td>
                                             <td className="p-4">
                                                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${order.estado === 'pendiente' ? 'bg-warning/10 text-warning' :
-                                                        order.estado === 'pagado' ? 'bg-primary/10 text-primary' :
-                                                            order.estado === 'listo' ? 'bg-success/10 text-success' :
-                                                                order.estado === 'entregado' ? 'bg-surface-raised text-text-secondary border border-gray-border' : 'bg-muted text-text-secondary'
+                                                    order.estado === 'pagado' ? 'bg-primary/10 text-primary' :
+                                                        order.estado === 'listo' ? 'bg-success/10 text-success' :
+                                                            order.estado === 'entregado' ? 'bg-surface-raised text-text-secondary border border-gray-border' : 'bg-muted text-text-secondary'
                                                     }`}>
                                                     {order.estado}
                                                 </span>
@@ -178,7 +178,7 @@ const AdminDashboardPage = () => {
                                         type="number"
                                         value={prices.base}
                                         onChange={(e) => setPrices({ ...prices, base: parseFloat(e.target.value) })}
-                                        className="w-full bg-muted/30 border border-gray-border rounded-xl pl-8 pr-4 py-3 text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-medium"
+                                        className="w-full bg-surface border border-gray-border rounded-xl pl-8 pr-4 py-3 text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-medium"
                                     />
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ const AdminDashboardPage = () => {
                                         type="number"
                                         value={prices.p10}
                                         onChange={(e) => setPrices({ ...prices, p10: parseFloat(e.target.value) })}
-                                        className="w-full bg-muted/30 border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
+                                        className="w-full bg-surface border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
                                     />
                                 </div>
                                 <div>
@@ -198,7 +198,7 @@ const AdminDashboardPage = () => {
                                         type="number"
                                         value={prices.p30}
                                         onChange={(e) => setPrices({ ...prices, p30: parseFloat(e.target.value) })}
-                                        className="w-full bg-muted/30 border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
+                                        className="w-full bg-surface border border-gray-border rounded-xl p-3 text-text-main outline-none focus:border-primary font-medium"
                                     />
                                 </div>
                             </div>

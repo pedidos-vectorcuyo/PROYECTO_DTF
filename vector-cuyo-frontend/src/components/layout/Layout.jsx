@@ -36,37 +36,41 @@ const Layout = () => {
                         {/* 2. Navigation (Center) */}
                         <div className="hidden md:flex justify-center h-full">
                             <nav className="flex items-center gap-1">
-                                <Link to="/" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
-                                    Inicio
-                                </Link>
+                                {!location.pathname.startsWith('/admin') && (
+                                    <>
+                                        <Link to="/" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
+                                            Inicio
+                                        </Link>
 
-                                {/* Servicios Dropdown */}
-                                <div className="relative group h-full flex items-center">
-                                    <button className={`flex items-center px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/nuevo-pedido') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
-                                        Servicios
-                                        <span className="material-symbols-outlined text-[20px] ml-1">expand_more</span>
-                                    </button>
-                                    <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-56 bg-surface border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
-                                        <div className="flex flex-col gap-1">
-                                            <Link to="/especificaciones" className="block px-4 py-2.5 rounded-lg text-[14px] text-text-main hover:bg-hover-tint hover:text-primary transition-colors">
-                                                Lámina DTF Textil
-                                            </Link>
-                                            <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
-                                                Lámina DTF UV (Próx.)
-                                            </span>
+                                        {/* Servicios Dropdown */}
+                                        <div className="relative group h-full flex items-center">
+                                            <button className={`flex items-center px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/nuevo-pedido') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
+                                                Servicios
+                                                <span className="material-symbols-outlined text-[20px] ml-1">expand_more</span>
+                                            </button>
+                                            <div className="absolute top-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-56 bg-surface border border-gray-border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50 p-2">
+                                                <div className="flex flex-col gap-1">
+                                                    <Link to="/especificaciones" className="block px-4 py-2.5 rounded-lg text-[14px] text-text-main hover:bg-hover-tint hover:text-primary transition-colors">
+                                                        Lámina DTF Textil
+                                                    </Link>
+                                                    <span className="block px-4 py-2.5 rounded-lg text-[14px] text-text-secondary opacity-60 cursor-not-allowed">
+                                                        Lámina DTF UV (Próx.)
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
 
-                                {/* Tutoriales Dropdown */}
-                                <Link to="/tutoriales" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-hover-tint transition-colors">
-                                    Tutoriales
-                                </Link>
+                                        {/* Tutoriales Dropdown */}
+                                        <Link to="/tutoriales" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-hover-tint transition-colors">
+                                            Tutoriales
+                                        </Link>
 
-                                <Link to="/nosotros" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-hover-tint transition-colors">
-                                    Nosotros
-                                </Link>
+                                        <Link to="/nosotros" className="px-4 py-2 rounded-full text-[14px] font-medium text-text-secondary hover:text-text-main hover:bg-hover-tint transition-colors">
+                                            Nosotros
+                                        </Link>
+                                    </>
+                                )}
 
                                 {user?.role === 'admin' && (
                                     <Link to="/admin" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/admin') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
@@ -74,7 +78,7 @@ const Layout = () => {
                                     </Link>
                                 )}
 
-                                {user && (
+                                {user && !location.pathname.startsWith('/admin') && (
                                     <Link to="/dashboard" className={`px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${isActive('/dashboard') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:text-text-main hover:bg-hover-tint'}`}>
                                         Perfil
                                     </Link>
@@ -128,43 +132,47 @@ const Layout = () => {
                         onClick={e => e.stopPropagation()}
                     >
                         <nav className="flex flex-col gap-2">
-                            <Link
-                                to="/"
-                                onClick={() => setIsMenuOpen(false)}
-                                className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:bg-hover-tint'}`}
-                            >
-                                Inicio
-                            </Link>
+                            {!location.pathname.startsWith('/admin') && (
+                                <>
+                                    <Link
+                                        to="/"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`px-4 py-3 rounded-xl text-[16px] font-medium transition-colors ${isActive('/') ? 'text-primary bg-active-tint' : 'text-text-secondary hover:bg-hover-tint'}`}
+                                    >
+                                        Inicio
+                                    </Link>
 
-                            <div className="space-y-1">
-                                <div className="px-4 py-2 text-[12px] font-bold text-text-secondary uppercase tracking-widest opacity-50">Servicios</div>
-                                <Link
-                                    to="/especificaciones"
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="block px-4 py-3 rounded-xl text-[16px] text-text-main hover:bg-hover-tint transition-colors"
-                                >
-                                    Lámina DTF Textil
-                                </Link>
-                                <span className="block px-4 py-3 rounded-xl text-[16px] text-text-secondary opacity-50 cursor-not-allowed">
-                                    Lámina DTF UV (Próx.)
-                                </span>
-                            </div>
+                                    <div className="space-y-1">
+                                        <div className="px-4 py-2 text-[12px] font-bold text-text-secondary uppercase tracking-widest opacity-50">Servicios</div>
+                                        <Link
+                                            to="/especificaciones"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="block px-4 py-3 rounded-xl text-[16px] text-text-main hover:bg-hover-tint transition-colors"
+                                        >
+                                            Lámina DTF Textil
+                                        </Link>
+                                        <span className="block px-4 py-3 rounded-xl text-[16px] text-text-secondary opacity-50 cursor-not-allowed">
+                                            Lámina DTF UV (Próx.)
+                                        </span>
+                                    </div>
 
-                            <Link
-                                to="/tutoriales"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
-                            >
-                                Tutoriales
-                            </Link>
+                                    <Link
+                                        to="/tutoriales"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
+                                    >
+                                        Tutoriales
+                                    </Link>
 
-                            <Link
-                                to="/nosotros"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
-                            >
-                                Nosotros
-                            </Link>
+                                    <Link
+                                        to="/nosotros"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="px-4 py-3 rounded-xl text-[16px] font-medium text-text-secondary hover:bg-hover-tint transition-colors"
+                                    >
+                                        Nosotros
+                                    </Link>
+                                </>
+                            )}
 
                             {user?.role === 'admin' && (
                                 <Link
@@ -176,7 +184,7 @@ const Layout = () => {
                                 </Link>
                             )}
 
-                            {user && (
+                            {user && !location.pathname.startsWith('/admin') && (
                                 <Link
                                     to="/dashboard"
                                     onClick={() => setIsMenuOpen(false)}
