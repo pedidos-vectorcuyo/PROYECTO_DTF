@@ -19,8 +19,12 @@ const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            await login(email, password);
-            navigate('/dashboard');
+            const user = await login(email, password);
+            if (user?.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             console.error(err);
             setError('Credenciales inválidas. Por favor verifique sus datos.');

@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
             };
             setUser(adminUser);
             localStorage.setItem('dtf_user', JSON.stringify(adminUser));
-            return true;
+            return adminUser;
         }
 
         try {
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
-            return true;
+            return userWithRole;
         } catch (error) {
             console.error("Login failed:", error);
             throw error;
