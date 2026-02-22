@@ -92,7 +92,7 @@ const AdminDashboardPage = () => {
                                 placeholder="Buscar por ID de pedido o nombre de cliente..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-muted/30 border border-gray-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-main outline-none focus:border-primary transition-all"
+                                className="w-full bg-surface border border-gray-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-text-main placeholder:text-text-secondary outline-none focus:border-primary transition-all"
                             />
                         </div>
                         <select
