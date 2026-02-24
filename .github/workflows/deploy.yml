@@ -51,3 +51,4 @@ jobs:
           server-dir: ./public_html/
           protocol: ftp
           port: 21
+          # Attempt Run 48: Validated credentials and IP
