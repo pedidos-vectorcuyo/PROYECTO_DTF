@@ -49,13 +49,5 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y lftp
-          lftp <<EOF
-          set ftp:ssl-allow no
-          set ftp:passive-mode true
-          set net:timeout 10
-          set net:max-retries 2
-          open -u "${FTP_USERNAME},${FTP_PASSWORD}" "${FTP_SERVER}"
-          ls public_html
-          mirror -R --delete --verbose --exclude-glob .git* vector-cuyo-frontend/dist/ public_html
-          quit
-          EOF
+          # Usamos parámetros de línea de comandos simples para lftp, que suele ser más tolerante
+          lftp -c "set ftp:ssl-allow no; set ftp:passive-mode true; set net:timeout 10; set net:max-retries 2; open -u '$FTP_USERNAME','$FTP_PASSWORD' $FTP_SERVER; ls public_html; mirror -R --delete --verbose --exclude-glob .git* vector-cuyo-frontend/dist/ public_html"
