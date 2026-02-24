@@ -34,7 +34,11 @@ class ErrorBoundary extends React.Component {
     }
 }
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim();
+const IS_GOOGLE_VAL_VALID = GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'undefined' && GOOGLE_CLIENT_ID !== 'null';
+
+console.log('[DEBUG] main.jsx: VITE_GOOGLE_CLIENT_ID:', GOOGLE_CLIENT_ID);
+console.log('[DEBUG] main.jsx: IS_GOOGLE_VAL_VALID:', IS_GOOGLE_VAL_VALID);
 
 const AppWithProviders = () => (
     <ThemeProvider>
@@ -45,7 +49,7 @@ const AppWithProviders = () => (
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ErrorBoundary>
-            {GOOGLE_CLIENT_ID ? (
+            {IS_GOOGLE_VAL_VALID ? (
                 <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                     <AppWithProviders />
                 </GoogleOAuthProvider>

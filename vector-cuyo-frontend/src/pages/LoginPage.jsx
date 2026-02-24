@@ -6,7 +6,11 @@ import Button from '../components/ui/Button';
 import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 
 // Solo muestra el botón de Google si el Client ID está configurado en .env
-const GOOGLE_ENABLED = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
+const GOOGLE_CLIENT_ID_RAW = (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim();
+const GOOGLE_ENABLED = GOOGLE_CLIENT_ID_RAW && GOOGLE_CLIENT_ID_RAW !== 'undefined' && GOOGLE_CLIENT_ID_RAW !== 'null';
+
+console.log('[DEBUG] LoginPage.jsx: GOOGLE_ENABLED:', GOOGLE_ENABLED);
+console.log('[DEBUG] LoginPage.jsx: VITE_GOOGLE_CLIENT_ID raw length:', GOOGLE_CLIENT_ID_RAW.length);
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
