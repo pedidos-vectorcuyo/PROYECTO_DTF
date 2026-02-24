@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: ./public_html/
+          server-dir: ./
           protocol: ftp
           port: 21
-          # Attempt Run 48: Validated credentials and IP
+          # Run 49: Fix nested public_html/public_html folder issue
