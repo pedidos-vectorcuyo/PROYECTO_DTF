@@ -49,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: public_html/
+          server-dir: DEPOSITO_GITHUB/
           protocol: ftp
           port: 21
-          # Run 50: Adding deploy-info.txt and forcing public_html/ path
+          # Run 51: Using unique folder name to locate FTP landing path
