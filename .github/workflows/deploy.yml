@@ -49,5 +49,5 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y lftp
-          # Usamos comillas simples para envolver las variables de entorno y evitar problemas con carácteres especiales
+          # Despliegue con contraseña simplificada (sin carácteres de protocolo como @)
           lftp -e "set ftp:ssl-allow no; set ftp:ssl-force no; set ftp:passive-mode true; set net:timeout 10; set net:max-retries 2; open -u '$FTP_USERNAME','$FTP_PASSWORD' $FTP_SERVER; ls public_html; mirror -R --delete --verbose --exclude-glob .git* vector-cuyo-frontend/dist/ public_html; quit"
