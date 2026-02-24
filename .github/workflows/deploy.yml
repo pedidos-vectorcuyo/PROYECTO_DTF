@@ -42,10 +42,10 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🔍 Inspect Remote Structure (Debug)
+      - name: 🔍 Locate Real Web Root (Debug)
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; pwd; ls -R"
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; find . | grep DO_NOT_UPLOAD_HERE"
         continue-on-error: true
 
       - name: 📂 Deploy to Hostinger via FTP Action
@@ -58,4 +58,4 @@ jobs:
           server-dir: ./
           protocol: ftp
           port: 21
-          # Run 54: Verbose console output for path tracing
+          # Run 55: Searching for the 'DO_NOT_UPLOAD_HERE' ghost file
