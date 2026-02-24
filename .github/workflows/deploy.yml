@@ -38,6 +38,9 @@ jobs:
           cd vector-cuyo-frontend
           npm run build
 
+      - name: List build files for debug
+        run: ls -R vector-cuyo-frontend/dist/
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -45,5 +48,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: ./
+          server-dir: public_html/
+          port: 21
           dangerous-clean-slate: false
