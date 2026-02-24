@@ -52,4 +52,4 @@ jobs:
           server-dir: domains/vectorcuyo.com/public_html/
           protocol: ftp
           port: 21
-          # Run 57: Targetting the REAL physical path found in Hostinger
+          # Run 58: Confirmed path domains/vectorcuyo.com/public_html/
