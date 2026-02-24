@@ -52,4 +52,4 @@ jobs:
           server-dir: domains/vectorcuyo.com/public_html/
           protocol: ftp
           port: 21
-          # Run 62: Cleaning up and using standard deploy with NEW FTP Host
+          # Run 63: Targetting production path again with CORRECT IP (167.88.35.13)
