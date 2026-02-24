@@ -42,19 +42,6 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🔍 Light Inspect (Quick Truth)
-        run: |
-          sudo apt-get install -y lftp
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; 
-          echo '--- CURRENT WORKDIR ---';
-          pwd;
-          echo '--- ROOT LIST ---';
-          ls -a;
-          echo '--- PUBLIC_HTML CONTENT ---';
-          ls -a public_html || echo 'no public_html found';
-          echo '--- END ---'"
-        continue-on-error: true
-
       - name: 📂 Deploy to Hostinger via FTP Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -62,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: ./
+          server-dir: public_html/
           protocol: ftp
           port: 21
-          # Run 65: Attempting root upload with minimal noise
+          # Run 66: Final production sync to srv890
