@@ -37,6 +37,7 @@ jobs:
         run: |
           cd vector-cuyo-frontend
           npm run build
+          echo "Deploy from GitHub Actions Run $GITHUB_RUN_NUMBER at $(date)" > dist/deploy-info.txt
 
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
@@ -48,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: ./
+          server-dir: public_html/
           protocol: ftp
           port: 21
-          # Run 49: Fix nested public_html/public_html folder issue
+          # Run 50: Adding deploy-info.txt and forcing public_html/ path
