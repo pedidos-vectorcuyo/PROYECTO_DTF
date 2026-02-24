@@ -42,18 +42,17 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🔍 Deep Inspect (The Truth)
+      - name: 🔍 Light Inspect (Quick Truth)
         run: |
           sudo apt-get install -y lftp
-          echo "Scanning start..."
           lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; 
-          echo '--- ROOT CONTENT ---';
+          echo '--- CURRENT WORKDIR ---';
+          pwd;
+          echo '--- ROOT LIST ---';
           ls -a;
-          echo '--- SEARCHING FOR domains ---';
-          find -d 2 domains || echo 'domains folder not found at root';
-          echo '--- SEARCHING FOR public_html ---';
-          ls -la public_html;
-          echo '--- END OF SCAN ---'"
+          echo '--- PUBLIC_HTML CONTENT ---';
+          ls -a public_html || echo 'no public_html found';
+          echo '--- END ---'"
         continue-on-error: true
 
       - name: 📂 Deploy to Hostinger via FTP Action
@@ -66,4 +65,4 @@ jobs:
           server-dir: ./
           protocol: ftp
           port: 21
-          # Run 64: Back to root while we inspect the map
+          # Run 65: Attempting root upload with minimal noise
