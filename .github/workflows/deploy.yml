@@ -52,4 +52,4 @@ jobs:
           server-dir: DEPOSITO_GITHUB/
           protocol: ftp
           port: 21
-          # Run 51: Using unique folder name to locate FTP landing path
+          # Run 51: Using unique folder name to locate FTP landing path - Forced trigger
