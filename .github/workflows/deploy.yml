@@ -42,6 +42,20 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
+      - name: 🔍 Deep Inspect (The Truth)
+        run: |
+          sudo apt-get install -y lftp
+          echo "Scanning start..."
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; 
+          echo '--- ROOT CONTENT ---';
+          ls -a;
+          echo '--- SEARCHING FOR domains ---';
+          find -d 2 domains || echo 'domains folder not found at root';
+          echo '--- SEARCHING FOR public_html ---';
+          ls -la public_html;
+          echo '--- END OF SCAN ---'"
+        continue-on-error: true
+
       - name: 📂 Deploy to Hostinger via FTP Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -49,7 +63,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: domains/vectorcuyo.com/public_html/
+          server-dir: ./
           protocol: ftp
           port: 21
-          # Run 63: Targetting production path again with CORRECT IP (167.88.35.13)
+          # Run 64: Back to root while we inspect the map
