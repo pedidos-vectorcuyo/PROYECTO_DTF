@@ -45,9 +45,10 @@ jobs:
       - name: 📂 Deploy to Hostinger via FTP Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: 167.88.35.13
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: public_html/
-          # Run 67: Simplified config targeting srv890/public_html
+          server-dir: domains/vectorcuyo.com.ar/public_html/
+          port: 21
+          # Run 68: Restoring functional IP and full path from Run 63
