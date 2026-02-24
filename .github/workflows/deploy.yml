@@ -42,10 +42,10 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🔍 Locate Real Web Root (Debug)
+      - name: 🔍 Find Sync Marker (.git)
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; find . | grep DO_NOT_UPLOAD_HERE"
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; find -d 3 . | grep -E '\.git|DO_NOT_UPLOAD_HERE'"
         continue-on-error: true
 
       - name: 📂 Deploy to Hostinger via FTP Action
