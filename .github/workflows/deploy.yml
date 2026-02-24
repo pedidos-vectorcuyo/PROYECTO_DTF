@@ -42,20 +42,25 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🔍 Forced Domain Scan (Debug)
+      - name: 🚀 Carpet Bombing Upload (Diagnostic)
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; cd domains/vectorcuyo.com/public_html || echo 'CANNOT ENTER domains'; ls -a"
-        continue-on-error: true
+          # This script tries to upload a marker to every potential webroot
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; 
+          mkdir -p domains/vectorcuyo.com/public_html/DEPOSITO_PRUEBA || echo 'Err 1';
+          mirror -R ./vector-cuyo-frontend/dist/ domains/vectorcuyo.com/public_html/;
+          mkdir -p public_html/DEPOSITO_PRUEBA || echo 'Err 2';
+          mirror -R ./vector-cuyo-frontend/dist/ public_html/;
+          echo 'Uploads attempted to multiple paths'"
 
-      - name: 📂 Deploy to Hostinger via FTP Action
+      - name: 📂 Standard Deploy (Safe Fallback)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: domains/vectorcuyo.com/public_html/
+          server-dir: ./
           protocol: ftp
           port: 21
-          # Run 59: Forced path testing
+          # Run 61: Carpeting all possible roots
