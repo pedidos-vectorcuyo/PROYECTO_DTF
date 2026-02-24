@@ -49,5 +49,5 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y lftp
-          # Usamos parámetros de línea de comandos simples para lftp, que suele ser más tolerante
-          lftp -c "set ftp:ssl-allow no; set ftp:passive-mode true; set net:timeout 10; set net:max-retries 2; open -u '$FTP_USERNAME','$FTP_PASSWORD' $FTP_SERVER; ls public_html; mirror -R --delete --verbose --exclude-glob .git* vector-cuyo-frontend/dist/ public_html"
+          # Nueva sintaxis: Pasamos usuario y contraseña como argumentos directos de lftp para evitar problemas con símbolos raros
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e "set ftp:ssl-allow no; set ftp:ssl-force no; set ftp:passive-mode true; set net:timeout 10; set net:max-retries 2; ls public_html; mirror -R --delete --verbose --exclude-glob .git* vector-cuyo-frontend/dist/ public_html; quit"
