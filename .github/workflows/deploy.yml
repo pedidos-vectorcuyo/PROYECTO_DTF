@@ -42,25 +42,14 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🚀 Carpet Bombing Upload (Diagnostic)
-        run: |
-          sudo apt-get install -y lftp
-          # This script tries to upload a marker to every potential webroot
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; 
-          mkdir -p domains/vectorcuyo.com/public_html/DEPOSITO_PRUEBA || echo 'Err 1';
-          mirror -R ./vector-cuyo-frontend/dist/ domains/vectorcuyo.com/public_html/;
-          mkdir -p public_html/DEPOSITO_PRUEBA || echo 'Err 2';
-          mirror -R ./vector-cuyo-frontend/dist/ public_html/;
-          echo 'Uploads attempted to multiple paths'"
-
-      - name: 📂 Standard Deploy (Safe Fallback)
+      - name: 📂 Deploy to Hostinger via FTP Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: ./
+          server-dir: domains/vectorcuyo.com/public_html/
           protocol: ftp
           port: 21
-          # Run 61: Carpeting all possible roots
+          # Run 62: Cleaning up and using standard deploy with NEW FTP Host
