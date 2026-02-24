@@ -42,6 +42,12 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
+      - name: 🔍 Forced Domain Scan (Debug)
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; cd domains/vectorcuyo.com/public_html || echo 'CANNOT ENTER domains'; ls -a"
+        continue-on-error: true
+
       - name: 📂 Deploy to Hostinger via FTP Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -52,4 +58,4 @@ jobs:
           server-dir: domains/vectorcuyo.com/public_html/
           protocol: ftp
           port: 21
-          # Run 58: Confirmed path domains/vectorcuyo.com/public_html/
+          # Run 59: Forced path testing
