@@ -49,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./vector-cuyo-frontend/dist/
-          server-dir: DEPOSITO_GITHUB/
+          server-dir: ./
           protocol: ftp
           port: 21
-          # Run 51: Using unique folder name to locate FTP landing path - Forced trigger
+          # Run 52: Fix path doubling. FTP Account is already rooted at public_html/
