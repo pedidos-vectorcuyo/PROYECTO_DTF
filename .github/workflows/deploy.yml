@@ -45,7 +45,7 @@ jobs:
       - name: 🔍 Inspect Remote Structure (Debug)
         run: |
           sudo apt-get install -y lftp
-          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; ls -R > server-structure.txt; put server-structure.txt"
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }}; pwd; ls -R"
         continue-on-error: true
 
       - name: 📂 Deploy to Hostinger via FTP Action
@@ -58,4 +58,4 @@ jobs:
           server-dir: ./
           protocol: ftp
           port: 21
-          # Run 53: Inspecting remote structure to solve the mystery
+          # Run 54: Verbose console output for path tracing
