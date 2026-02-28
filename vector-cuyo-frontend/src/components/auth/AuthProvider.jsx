@@ -71,7 +71,11 @@ export const AuthProvider = ({ children }) => {
 
             let cleanUser = userData;
             if (Array.isArray(userData)) cleanUser = userData[0];
-            if (cleanUser.json) cleanUser = cleanUser.json;
+            if (cleanUser?.json) cleanUser = cleanUser.json;
+
+            if (!cleanUser || Object.keys(cleanUser).length === 0) {
+                throw new Error("No user data received from server");
+            }
 
             const userWithRole = {
                 ...cleanUser,
@@ -81,7 +85,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
             return userWithRole;
         } catch (error) {
-            console.error("Google Login failed:", error);
+            console.error("Google Login failed:", error.message || error);
             throw error;
         }
     };

@@ -30,22 +30,26 @@ const DashboardPage = () => {
         const loadOrders = async () => {
             if (user?.id) {
                 setLoading(true);
-                const data = await fetchOrders(user.id);
-                // Transform API data to Component state format if necessary
-                // API keys: id, creado_en, estado, precio_final, nombre_archivo (?)
-                const formatted = data.map(o => ({
-                    id: o.id ? o.id.toString() : 'N/A',
-                    date: o.creado_en ? o.creado_en.split('T')[0] : '-',
-                    files: o.nombre_archivo || 'Sin archivo', // Adjust based on actual API response
-                    price: parseFloat(o.precio_final || 0),
-                    status: o.estado || 'Ingresado',
-                    shipping: "Estándar (24h)", // Default for now
-                    // Store original object too if needed
-                    ...o
-                }));
-                // Sort by ID descending (newest first)
-                formatted.sort((a, b) => b.id - a.id);
-                setOrders(formatted);
+                try {
+                    const data = await fetchOrders(user.id);
+                    const formatted = data.map(o => ({
+                        id: o.id ? o.id.toString() : 'N/A',
+                        date: o.creado_en ? o.creado_en.split('T')[0] : '-',
+                        files: o.nombre_archivo || 'Sin archivo',
+                        price: parseFloat(o.precio_final || 0),
+                        status: o.estado || 'Ingresado',
+                        shipping: "Estándar (24h)",
+                        ...o
+                    }));
+                    formatted.sort((a, b) => b.id - a.id);
+                    setOrders(formatted);
+                } catch (error) {
+                    console.error("Dashboard: Error loading orders", error);
+                } finally {
+                    setLoading(false);
+                }
+            } else if (user) {
+                // User is logged in but has no ID? (shouldn't happen with correct DB data)
                 setLoading(false);
             }
         };
