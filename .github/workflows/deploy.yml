@@ -42,15 +42,23 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 📂 Deploy to Hostinger via FTP Action
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 🧹 Clean old files on server
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          server: 167.88.35.13
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: vector-cuyo-frontend/dist/
-          server-dir: /
-          port: 21
-          # Run 78: IP directa + cuenta u501128802.VectorCuyo (home=domains/vectorcuyo.com/public_html)
+          host: 167.88.35.13
+          port: 65002
+          username: u501128802
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: rm -rf /home/u501128802/domains/vectorcuyo.com/public_html/*
 
-
+      - name: 📂 Deploy via SSH/SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 167.88.35.13
+          port: 65002
+          username: u501128802
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "vector-cuyo-frontend/dist/"
+          target: "/home/u501128802/domains/vectorcuyo.com/public_html"
+          strip_components: 2
+          # Run 79: SSH/SCP replacing FTP - avoids Hostinger FTP rate limiting
