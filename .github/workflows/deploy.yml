@@ -49,7 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: domains/vectorcuyo.com/public_html/
+          server-dir: /
           port: 21
-          # Run 74: FTP_SERVER secret fixed to clean IP, correct domain path
+          # Run 75: FTP home IS public_html web root, using / to upload directly there
 
