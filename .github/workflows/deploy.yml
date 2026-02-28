@@ -51,5 +51,5 @@ jobs:
           local-dir: vector-cuyo-frontend/dist/
           server-dir: domains/vectorcuyo.com/public_html/
           port: 21
-          # Run 71: Correct domain path vectorcuyo.com (not .com.ar)
-
+          protocol: ftp
+          # Run 72: plain FTP (not FTPS) + correct domain path
