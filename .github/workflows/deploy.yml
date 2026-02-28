@@ -49,7 +49,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: /
+          server-dir: domains/vectorcuyo.com/public_html/
           port: 21
-          # Run 75: FTP home IS public_html web root, using / to upload directly there
+          dangerous-clean-slate: true
+          # Run 76: correct path + force clean slate (delete old files + re-upload all)
+
 
