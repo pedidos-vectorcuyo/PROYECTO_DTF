@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
                 setUser({
                     ...parsed,
-                    role: parsed.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                    role: parsed.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
                 });
             } catch (e) {
                 console.error("Session parse error", e);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
             const adminUser = {
                 id: 'admin_official',
                 nombre: 'Administrador Vector Cuyo',
-                correo: email,
+                email: email,
                 role: 'admin'
             };
             setUser(adminUser);
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
 
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: cleanUser.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.correo === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: cleanUser.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));

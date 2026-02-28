@@ -65,7 +65,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, nombre, correo, telefono FROM clientes WHERE correo = '{{ $json.email }}' LIMIT 1;"
+        "query": "SELECT id, nombre_completo, email, telefono FROM clientes WHERE email = '{{ $json.email }}' LIMIT 1;"
       },
       "id": "mysql-find-user",
       "name": "Buscar usuario en DB",
@@ -106,7 +106,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO clientes (nombre, correo, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON DUPLICATE KEY UPDATE\n  google_id = VALUES(google_id),\n  imagen_perfil = VALUES(imagen_perfil);\n\nSELECT id, nombre, correo FROM clientes WHERE correo = '{{ $node[\"Google UserInfo API\"].json.email }}' LIMIT 1;"
+        "query": "INSERT INTO clientes (nombre_completo, email, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON DUPLICATE KEY UPDATE\n  google_id = VALUES(google_id),\n  imagen_perfil = VALUES(imagen_perfil);\n\nSELECT id, nombre_completo, email FROM clientes WHERE email = '{{ $node[\"Google UserInfo API\"].json.email }}' LIMIT 1;"
       },
       "id": "mysql-create-user",
       "name": "Crear usuario nuevo",
