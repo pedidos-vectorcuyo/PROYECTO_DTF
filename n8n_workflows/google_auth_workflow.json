@@ -12,7 +12,10 @@
       "name": "Webhook - Google Auth",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "google-auth-vectorcuyo"
     },
     {
@@ -34,7 +37,10 @@
       "name": "Google UserInfo API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -51,22 +57,28 @@
       "name": "¿Token válido?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
         "query": "SELECT id, nombre, correo, telefono FROM clientes WHERE correo = '{{ $json.email }}' LIMIT 1;"
       },
-      "id": "postgres-find-user",
+      "id": "mysql-find-user",
       "name": "Buscar usuario en DB",
-      "type": "n8n-nodes-base.postgres",
+      "type": "n8n-nodes-base.mySql",
       "typeVersion": 2,
-      "position": [900, 200],
+      "position": [
+        900,
+        200
+      ],
       "credentials": {
-        "postgres": {
+        "mySql": {
           "id": "REEMPLAZAR_CON_ID_CREDENCIAL",
-          "name": "PostgreSQL VectorCuyo"
+          "name": "MySQL VectorCuyo"
         }
       }
     },
@@ -86,22 +98,28 @@
       "name": "¿Usuario existe?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [1120, 200]
+      "position": [
+        1120,
+        200
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO clientes (nombre, correo, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON CONFLICT (correo) DO UPDATE SET\n  google_id = EXCLUDED.google_id,\n  imagen_perfil = EXCLUDED.imagen_perfil\nRETURNING id, nombre, correo;"
+        "query": "INSERT INTO clientes (nombre, correo, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON DUPLICATE KEY UPDATE\n  google_id = VALUES(google_id),\n  imagen_perfil = VALUES(imagen_perfil);\n\nSELECT id, nombre, correo FROM clientes WHERE correo = '{{ $node[\"Google UserInfo API\"].json.email }}' LIMIT 1;"
       },
-      "id": "postgres-create-user",
+      "id": "mysql-create-user",
       "name": "Crear usuario nuevo",
-      "type": "n8n-nodes-base.postgres",
+      "type": "n8n-nodes-base.mySql",
       "typeVersion": 2,
-      "position": [1340, 300],
+      "position": [
+        1340,
+        300
+      ],
       "credentials": {
-        "postgres": {
+        "mySql": {
           "id": "REEMPLAZAR_CON_ID_CREDENCIAL",
-          "name": "PostgreSQL VectorCuyo"
+          "name": "MySQL VectorCuyo"
         }
       }
     },
@@ -117,7 +135,10 @@
       "name": "Responder - Éxito",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1560, 200]
+      "position": [
+        1560,
+        200
+      ]
     },
     {
       "parameters": {
@@ -131,40 +152,91 @@
       "name": "Responder - Error 401",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [900, 420]
+      "position": [
+        900,
+        420
+      ]
     }
   ],
   "connections": {
     "Webhook - Google Auth": {
       "main": [
-        [{ "node": "Google UserInfo API", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Google UserInfo API",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Google UserInfo API": {
       "main": [
-        [{ "node": "¿Token válido?", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "¿Token válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "¿Token válido?": {
       "main": [
-        [{ "node": "Buscar usuario en DB", "type": "main", "index": 0 }],
-        [{ "node": "Responder - Error 401", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Buscar usuario en DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder - Error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Buscar usuario en DB": {
       "main": [
-        [{ "node": "¿Usuario existe?", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "¿Usuario existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "¿Usuario existe?": {
       "main": [
-        [{ "node": "Responder - Éxito", "type": "main", "index": 0 }],
-        [{ "node": "Crear usuario nuevo", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Responder - Éxito",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear usuario nuevo",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Crear usuario nuevo": {
       "main": [
-        [{ "node": "Responder - Éxito", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Responder - Éxito",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -176,5 +248,9 @@
   "meta": {
     "instanceId": "vectorcuyo-google-oauth"
   },
-  "tags": ["auth", "google", "vectorcuyo"]
+  "tags": [
+    "auth",
+    "google",
+    "vectorcuyo"
+  ]
 }
