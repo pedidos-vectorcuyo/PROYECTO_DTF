@@ -49,6 +49,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: domains/vectorcuyo.com.ar/public_html/
+          server-dir: public_html/
           port: 21
-          # Run 68: Restoring functional IP and full path from Run 63
+          # Run 69: Fixed path - site serves from public_html/ root, not domains subfolder
