@@ -86,7 +86,10 @@ export const loginWithGoogle = async (googleCredential) => {
         const formData = new FormData();
         formData.append('google_token', googleCredential);
 
-        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GOOGLE_LOGIN}`, {
+        const loginUrl = `${API_BASE_URL.replace(/\/$/, '')}/${ENDPOINTS.GOOGLE_LOGIN.replace(/^\//, '')}`;
+        console.log('[DEBUG] api.js: calling Google Login at:', loginUrl);
+
+        const response = await fetch(loginUrl, {
             method: 'POST',
             body: formData
         });

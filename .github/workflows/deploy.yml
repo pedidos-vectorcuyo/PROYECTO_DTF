@@ -33,6 +33,7 @@ jobs:
           VITE_API_LOGIN_ENDPOINT: ${{ secrets.VITE_API_LOGIN_ENDPOINT }}
           VITE_API_REGISTER_ENDPOINT: ${{ secrets.VITE_API_REGISTER_ENDPOINT }}
           VITE_API_GET_ORDERS_ENDPOINT: ${{ secrets.VITE_API_GET_ORDERS_ENDPOINT }}
+          VITE_API_GOOGLE_LOGIN_ENDPOINT: ${{ secrets.VITE_API_GOOGLE_LOGIN_ENDPOINT }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: |
           cd vector-cuyo-frontend
