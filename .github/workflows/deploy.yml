@@ -49,6 +49,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: vector-cuyo-frontend/dist/
-          server-dir: /
+          server-dir: domains/vectorcuyo.com/public_html/
           port: 21
-          # Run 70: FTP root already IS public_html, use / as target
+          # Run 71: Correct domain path vectorcuyo.com (not .com.ar)
+
