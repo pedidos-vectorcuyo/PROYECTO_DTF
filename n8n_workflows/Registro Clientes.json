@@ -1,0 +1,74 @@
+{
+  "name": "Registro Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/auth-register",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "557f9031-b73e-401f-99ea-9dcd87903bc0",
+      "name": "Webhook",
+      "webhookId": "fb5f27b7-c868-4b29-966e-6f902bb85a15"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clientes (\n    id_cliente,\n    nombre_completo,  /* Antes: nombre */\n    email,            /* Antes: correo */\n    telefono,         /* Antes: whatsapp */\n    cuit_dni,         /* NUEVO: Agregar mapping */\n    password,\n    fecha_creacion,\n    activo\n) VALUES (\n    'CLI-{{ $now.toMillis() }}', \n    '{{ $json.body.nombre_completo }}', /* Actualizar referencia */\n    '{{ $json.body.email }}',\n    '{{ $json.body.telefono }}',\n    '{{ $json.body.cuit_dni }}',        /* Nuevo campo */\n    '{{ $json.body.password }}',\n    NOW(),\n    1\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        144,
+        0
+      ],
+      "id": "69ddc6c3-3494-4c17-bbde-78fe6320b298",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "36c1e745-27e2-4e40-996c-ffa5581ab342",
+  "meta": {
+    "instanceId": "e81149c8d3d3ce37891014898fb23730686517fa2ac66b7b07c2b65e452990e0"
+  },
+  "id": "J0WT3mACdkpxzWc7RclsQ",
+  "tags": [
+    {
+      "updatedAt": "2026-01-06T23:26:39.141Z",
+      "createdAt": "2026-01-06T23:26:39.141Z",
+      "id": "wfD4fzLFbPdfB5Fq",
+      "name": "Web"
+    }
+  ]
+}

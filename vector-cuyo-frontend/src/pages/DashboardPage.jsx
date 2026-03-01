@@ -13,6 +13,7 @@ const STATUS_CONFIG = {
     entregado: { color: "text-status-green", bg: "bg-green-50", border: "border-status-green/20", dot: "bg-status-green", label: "Entregado" },
     pagado: { color: "text-status-indigo", bg: "bg-indigo-50", border: "border-status-indigo/20", dot: "bg-status-indigo", label: "Pagado" },
     borrador: { color: "text-gray-500", bg: "bg-gray-100", border: "border-gray-200", dot: "bg-gray-400", label: "Borrador" },
+    'Pendiente de pago por cliente': { color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", dot: "bg-orange-500", label: "Pendiente Pago (Cliente)" },
 };
 
 const DashboardPage = () => {
@@ -157,20 +158,46 @@ const DashboardPage = () => {
                         <h4 className="px-4 text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-3">Accesos Rápidos</h4>
                         <div className="space-y-1">
                             <button
-                                onClick={() => { handleNotImplemented('Facturación'); setIsFiltersOpen(false); }}
+                                onClick={() => handleNotImplemented('Facturas')}
                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
                             >
                                 <span className="material-symbols-outlined text-[20px]">receipt_long</span>
-                                Facturación
-                            </button>
-                            <button
-                                onClick={() => { handleNotImplemented('Configuración'); setIsFiltersOpen(false); }}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
-                            >
-                                <span className="material-symbols-outlined text-[20px]">settings</span>
-                                Configuración
+                                Mis Facturas
                             </button>
                         </div>
+
+                        {/* B2B Token Section */}
+                        {user?.token_b2b && (
+                            <div className="p-5 bg-primary/5 border border-primary/20 rounded-2xl">
+                                <h4 className="text-[11px] font-black uppercase text-primary tracking-widest mb-3 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-[16px]">point_of_sale</span>
+                                    Mi Identidad B2B
+                                </h4>
+                                <div className="flex items-center justify-between gap-3 p-3 bg-white border border-gray-border rounded-xl shadow-sm">
+                                    <code className="text-sm font-bold text-text-main tracking-wider">{user.token_b2b}</code>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(user.token_b2b);
+                                            alert("Token copiado al portapapeles. Pásaselo a tu diseñador.");
+                                        }}
+                                        className="p-1.5 hover:bg-muted rounded-lg transition-colors text-primary"
+                                        title="Copiar Token"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                                    </button>
+                                </div>
+                                <p className="text-[10px] text-text-secondary mt-3 leading-relaxed">
+                                    Dale este código a tu diseñador para que te envíe pedidos directamente a tu cuenta.
+                                </p>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => { handleNotImplemented('Configuración'); setIsFiltersOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-card text-[14px] font-medium text-text-secondary hover:bg-surface-raised hover:text-text-main transition-all"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">settings</span>
+                            Configuración
+                        </button>
                     </div>
                 </div>
             </aside>

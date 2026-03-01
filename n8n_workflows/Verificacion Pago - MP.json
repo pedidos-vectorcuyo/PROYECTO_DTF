@@ -1,0 +1,295 @@
+{
+  "name": "Verificacion Pago - MP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "verificar-pago",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "083a68f0-1353-43b9-9e1b-96c1fe1c2979",
+      "name": "Recibir Pedido Web",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        752,
+        768
+      ],
+      "webhookId": "verificar-pago-id"
+    },
+    {
+      "parameters": {
+        "url": "https://api.mercadopago.com/v1/payments/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "sort",
+              "value": "date_created"
+            },
+            {
+              "name": "criteria",
+              "value": "desc"
+            },
+            {
+              "name": "range",
+              "value": "date_created"
+            },
+            {
+              "name": "begin_date",
+              "value": "={{ $now.minus({minutes: 600}).toISO() }}"
+            },
+            {
+              "name": "transaction_amount",
+              "value": "={{ $json.body.monto }}"
+            },
+            {
+              "name": "status",
+              "value": "approved"
+            },
+            {
+              "name": "end_date",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9aa176b6-ba55-4a94-84d3-8783a2bd8a77",
+      "name": "Consultar Mercado Pago",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        976,
+        768
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jDxhFA8wgr5OFcuF",
+          "name": "MercadoPago API Gabi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Obtener datos\nconst datosWebhook = $('Recibir Pedido Web').first().json;\n\n// Esperamos 'cuit_titular' del formulario web\nconst cuitIngresado = datosWebhook.body?.cuit_titular || \"0\"; \n\nconst pagosEncontrados = $input.all(); \n\n// 2. Si no hay pagos en MP, rechazamos\nif (pagosEncontrados.length === 0 || !pagosEncontrados[0].json.results || pagosEncontrados[0].json.results.length === 0) {\n  return { json: { verificado: false, motivo: \"No se encontraron pagos recientes por ese monto exacto.\" } };\n}\n\nconst listaPagos = pagosEncontrados[0].json.results;\n\n// Función Limpieza\nfunction limpiarNumeros(valor) {\n  if (!valor) return \"\";\n  return String(valor).replace(/[^0-9]/g, \"\"); \n}\n\n// 3. Lógica de Comparación por CUIT\nconst pagoValidado = listaPagos.find(pago => {\n  let cuitMP = \"\";\n  // Buscamos el CUIT en el pagador\n  if (pago.payer && pago.payer.identification) {\n    cuitMP = pago.payer.identification.number;\n  }\n  \n  const c1 = limpiarNumeros(cuitMP);\n  const c2 = limpiarNumeros(cuitIngresado);\n\n  // Validamos coincidencia (longitud minima 5 para evitar '0' vs '0')\n  if (c1.length > 5 && c1 === c2) {\n    return true;\n  }\n  return false;\n});\n\n// 4. Output\nif (pagoValidado) {\n  return { json: { \n    verificado: true, \n    pago_id: pagoValidado.id, \n    monto: pagoValidado.transaction_amount,\n    detalle: \"Pago Aprobado por CUIT\"\n  } };\n} else {\n  return { json: { \n    verificado: false, \n    motivo: \"El monto coincide, pero el CUIT del titular no corresponde.\"\n  } };\n}"
+      },
+      "id": "f326153b-2132-416c-b6d9-6f657f241e3f",
+      "name": "Validar CUIT Logica",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1234",
+              "leftValue": "={{ $json.verificado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0c9869bd-6bae-4344-b345-d25de74976e8",
+      "name": "Es Verificado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"{{ $json.motivo }}\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "7852beb6-56f2-4590-9178-c879c457b39a",
+      "name": "Respuesta Web Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1664,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ordenes_trabajo\nSET estado = 'Pagado',\n    observaciones = CONCAT(IFNULL(observaciones, ''), ' | Pago MP: ', '{{ $json.pago_id }}')\nWHERE id = {{ $('Recibir Pedido Web1').item.json.body.id_orden }};",
+        "options": {}
+      },
+      "id": "dc2a9d89-a1c5-44d7-a841-937351615a83",
+      "name": "Registrar Pago en DB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1664,
+        640
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "DHCqIwSsTPrl5I9i",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7813157810",
+        "text": "=✅ ¡Nuevo Pago Confirmado!\n\n🆔 Orden: {{ $('Recibir Pedido Web').item.json.body.id_orden ? $('Recibir Pedido Web').item.json.body.id_orden : 'Nueva (Sin ID)' }}\n💰 Monto: ${{ $json.monto }}\n🧾 ID Pago MP: {{ $json.pago_id }}\n👤 CUIT Validado\n\nEl usuario procederá a cargar el pedido.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b3822e7a-8bde-42eb-992d-23e6ce87b639",
+      "name": "Aviso Staff",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        640
+      ],
+      "webhookId": "f7fc1a2d-4870-41f6-89b5-a5210d92b2df",
+      "credentials": {
+        "telegramApi": {
+          "id": "AGndVGFeG84kWihj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"Pago verificado correctamente. Tu orden se está procesando.\",\n  \"data\": {\n    \"pago_id\": \"{{ $('Validar CUIT Logica1').item.json.pago_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "26dcbc09-7791-4421-8f11-25dd4e09a18c",
+      "name": "Respuesta Web OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2112,
+        640
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recibir Pedido Web": {
+      "main": [
+        [
+          {
+            "node": "Consultar Mercado Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Mercado Pago": {
+      "main": [
+        [
+          {
+            "node": "Validar CUIT Logica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar CUIT Logica": {
+      "main": [
+        [
+          {
+            "node": "Es Verificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Verificado?": {
+      "main": [
+        [
+          {
+            "node": "Aviso Staff",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respuesta Web Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Pago en DB": {
+      "main": [
+        [
+          {
+            "node": "Aviso Staff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aviso Staff": {
+      "main": [
+        [
+          {
+            "node": "Respuesta Web OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "198618a7-a233-48fc-a9a5-c2c465126011",
+  "meta": {
+    "instanceId": "e81149c8d3d3ce37891014898fb23730686517fa2ac66b7b07c2b65e452990e0"
+  },
+  "id": "tCgUvsxHliAoTrY4S5O-n",
+  "tags": [
+    {
+      "updatedAt": "2026-01-06T23:29:08.643Z",
+      "createdAt": "2026-01-06T23:29:08.643Z",
+      "id": "yyeU9aXRwJHwGFfo",
+      "name": "Pagos"
+    }
+  ]
+}

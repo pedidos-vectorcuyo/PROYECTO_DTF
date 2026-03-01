@@ -21,7 +21,8 @@ const OrderPanelPage = () => {
         uv: { base: 18000, p10: 16000, p30: 15000, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
     });
     const [clientData, setClientData] = useState({
-        observaciones: ''
+        observaciones: '',
+        tokenReceptor: ''
     });
 
     useEffect(() => {
@@ -174,7 +175,14 @@ const OrderPanelPage = () => {
             return;
         }
 
-        setShowPaymentModal(true);
+        if (clientData.tokenReceptor?.trim()) {
+            // IF token provided, we skip immediate payment modal for the designer
+            if (window.confirm(`¿Confirmas que deseas enviar este pedido al cliente con Token [${clientData.tokenReceptor}]? El cliente deberá pagarlo desde su perfil.`)) {
+                performOrderSubmission();
+            }
+        } else {
+            setShowPaymentModal(true);
+        }
     };
 
     const handlePaymentVerified = async () => {
@@ -223,6 +231,14 @@ const OrderPanelPage = () => {
             fd.append("totalArchivos", validFiles.length);
             fd.append("indiceArchivo", i + 1);
             if (user.id) fd.append("id_cliente", user.id);
+
+            // B2B Metadata
+            if (clientData.tokenReceptor?.trim()) {
+                fd.append("token_receptor", clientData.tokenReceptor.trim());
+                fd.append("id_emisor", user.id);
+                fd.append("nombre_emisor", user.nombre_completo || user.nombre);
+                return await submitOrder(fd, true); // We'll update submitOrder or use submitB2BOrder?
+            }
 
             return await submitOrder(fd);
         });
@@ -432,14 +448,30 @@ const OrderPanelPage = () => {
                                 )}
                             </div>
 
-                            <div className="mb-6">
-                                <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-2 px-1">Notas Adicionales</label>
-                                <textarea
-                                    className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted/50 focus:bg-surface h-24 resize-none"
-                                    placeholder="Instrucciones especiales para tu pedido..."
-                                    value={clientData.observaciones}
-                                    onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
-                                />
+                            <div className="mb-6 space-y-4">
+                                <div>
+                                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-2 px-1">Notas Adicionales</label>
+                                    <textarea
+                                        className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted/50 focus:bg-surface h-24 resize-none"
+                                        placeholder="Instrucciones especiales para tu pedido..."
+                                        value={clientData.observaciones}
+                                        onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
+                                    />
+                                </div>
+                                <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                                    <label className="flex items-center gap-2 text-[11px] font-bold text-primary uppercase tracking-widest mb-2">
+                                        <span className="material-symbols-outlined text-[16px]">point_of_sale</span>
+                                        ¿Enviar a un Cliente? (B2B)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ingresa el Token del Cliente (ej: VC-A1B2)"
+                                        className="w-full border border-gray-border rounded-lg p-2.5 text-sm focus:border-primary outline-none transition-all bg-surface"
+                                        value={clientData.tokenReceptor}
+                                        onChange={(e) => setClientData({ ...clientData, tokenReceptor: e.target.value.toUpperCase() })}
+                                    />
+                                    <p className="text-[10px] text-text-secondary mt-2 leading-tight italic">Si ingresas un token, el cliente recibirá el pedido en su perfil para que él realice el pago.</p>
+                                </div>
                             </div>
 
                             <Button
@@ -447,7 +479,7 @@ const OrderPanelPage = () => {
                                 className={`w-full py-4 text-base shadow-lg ${productType === 'uv' ? 'shadow-warning/20' : 'shadow-primary/20'}`}
                                 disabled={activeFiles.length === 0 || activeFiles.some(f => !f.valid) || submitting}
                             >
-                                {submitting ? "Procesando..." : "Confirmar e Ir al Pago"}
+                                {submitting ? "Procesando..." : (clientData.tokenReceptor?.trim() ? "Enviar al Cliente" : "Confirmar e Ir al Pago")}
                             </Button>
                         </div>
                     </div>

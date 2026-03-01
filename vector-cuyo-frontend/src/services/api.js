@@ -14,6 +14,7 @@ const ENDPOINTS = {
     GOOGLE_LOGIN: import.meta.env.VITE_API_GOOGLE_LOGIN_ENDPOINT || '/auth-google',
     GET_ORDERS: import.meta.env.VITE_API_GET_ORDERS_ENDPOINT,
     VERIFY_PAYMENT: '/webhook/verificar-pago',
+    B2B_ORDER: '/webhook/b2b-order',
     // Admin Endpoints
     GET_ALL_ORDERS: '/admin/get-all-orders',
     UPDATE_ORDER_STATUS: '/admin/update-order-status',
@@ -221,11 +222,13 @@ export const fetchPrices = async () => {
 /**
  * Submits a new order to n8n.
  * @param {FormData} formData - The FormData object containing files and fields
+ * @param {boolean} isB2B - Whether this is a B2B order sent to a client
  * @returns {Promise<boolean>} - True if successful
  */
-export const submitOrder = async (formData) => {
+export const submitOrder = async (formData, isB2B = false) => {
     try {
-        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.UPLOAD_ORDER}`, {
+        const endpoint = isB2B ? ENDPOINTS.B2B_ORDER : ENDPOINTS.UPLOAD_ORDER;
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: "POST",
             body: formData
         });
@@ -305,5 +308,25 @@ export default {
     submitOrder,
     fetchAllOrders,
     updateOrderStatus,
-    updatePrices
+    updatePrices,
+    submitB2BOrder
+};
+/**
+ * Submits an order linked to a client via B2B Token.
+ * @param {FormData} formData 
+ * @returns {Promise<Object>} Response data
+ */
+export const submitB2BOrder = async (formData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.B2B_ORDER}`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("B2B Submission failed");
+        return await response.json();
+    } catch (error) {
+        console.error("B2B Submission error:", error);
+        throw error;
+    }
 };
