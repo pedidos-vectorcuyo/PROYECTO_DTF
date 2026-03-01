@@ -80,7 +80,8 @@ const OrderPanelPage = () => {
                 warnings.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) es menor al recomendado (${minWidth}cm)`);
             }
             if (processed.meta.anchoCm > maxWidth) {
-                warnings.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) supera el máximo de impresión (${maxWidth}cm)`);
+                processed.valid = false;
+                processed.errors.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) supera el máximo de impresión (${maxWidth}cm)`);
             }
             if (processed.meta.largoM < minLength) {
                 warnings.push(`El largo (${processed.meta.largoM.toFixed(2)}m) es menor al mínimo (${minLength}m)`);
@@ -452,7 +453,7 @@ const OrderPanelPage = () => {
                                 <div>
                                     <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-2 px-1">Notas Adicionales</label>
                                     <textarea
-                                        className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted text-text-main focus:bg-surface h-24 resize-none"
+                                        className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted text-text-main focus:bg-surface-raised h-24 resize-none dark:bg-slate-900 dark:text-white"
                                         placeholder="Instrucciones especiales para tu pedido..."
                                         value={clientData.observaciones}
                                         onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
