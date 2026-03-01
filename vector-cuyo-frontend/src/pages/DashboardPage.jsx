@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/auth/AuthProvider';
-import { fetchOrders } from '../services/api';
+import { fetchOrders, updateOrderStatus } from '../services/api';
 import Button from '../components/ui/Button';
+import PaymentModal from '../components/orders/PaymentModal';
 
 const STATUS_CONFIG = {
     // API returns 'Ingresado' as default, mapping to 'en_curso' style or adding new ones
@@ -25,38 +26,60 @@ const DashboardPage = () => {
     const [statusFilter, setStatusFilter] = useState(''); // Dropdown filter
     const [isFiltersOpen, setIsFiltersOpen] = useState(false); // Mobile filters toggle
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Payment Modal State
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
     const itemsPerPage = 10; // Standard pagination size
 
-    useEffect(() => {
-        const loadOrders = async () => {
-            if (user?.id) {
-                setLoading(true);
-                try {
-                    const data = await fetchOrders(user.id);
-                    const formatted = data.map(o => ({
-                        id: o.id ? o.id.toString() : 'N/A',
-                        date: o.creado_en ? o.creado_en.split('T')[0] : '-',
-                        files: o.nombre_archivo || 'Sin archivo',
-                        price: parseFloat(o.precio_final || 0),
-                        status: o.estado || 'Ingresado',
-                        shipping: "Estándar (24h)",
-                        ...o
-                    }));
-                    formatted.sort((a, b) => b.id - a.id);
-                    setOrders(formatted);
-                } catch (error) {
-                    console.error("Dashboard: Error loading orders", error);
-                } finally {
-                    setLoading(false);
-                }
-            } else if (user) {
-                // User is logged in but has no ID? (shouldn't happen with correct DB data)
+    const loadOrders = async () => {
+        if (user?.id) {
+            setLoading(true);
+            try {
+                const data = await fetchOrders(user.id);
+                const formatted = data.map(o => ({
+                    id: o.id_pedido || o.id || 'N/A',
+                    date: o.creado_en ? o.creado_en.split('T')[0] : '-',
+                    files: o.nombre_archivo || 'Sin archivo',
+                    price: parseFloat(o.precio_final || 0),
+                    status: o.estado || 'Ingresado',
+                    shipping: "Estándar (24h)",
+                    meters: parseFloat(o.largoM || 0),
+                    ...o
+                }));
+                formatted.sort((a, b) => b.id - a.id);
+                setOrders(formatted);
+            } catch (error) {
+                console.error("Dashboard: Error loading orders", error);
+            } finally {
                 setLoading(false);
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         loadOrders();
     }, [user]);
+
+    const handlePaymentVerified = async () => {
+        if (!selectedOrder) return;
+
+        // Notify backend (n8n usually handles this via verifyPayment, 
+        // but for B2B we might need an explicit status update if not automated)
+        const success = await updateOrderStatus(selectedOrder.id, 'pagado');
+        if (success) {
+            alert("¡Pago verificado con éxito! El pedido pasará a producción.");
+            setShowPaymentModal(false);
+            loadOrders(); // Refresh list
+        } else {
+            alert("El pago se verificó pero hubo un error actualizando el estado. Por favor contacta a soporte.");
+        }
+    };
+
+    const handleOpenPayment = (order) => {
+        setSelectedOrder(order);
+        setShowPaymentModal(true);
+    };
 
     // Counts for sidebar badges
     const vigentesCount = orders.filter(o => ['Ingresado', 'en_curso', 'pausado', 'en_revision'].includes(o.status)).length;
@@ -283,7 +306,16 @@ const DashboardPage = () => {
                                                 <p className="text-[12px] text-text-secondary mb-0.5">Total</p>
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
-                                            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                                            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                                                {order.status === 'Pendiente de pago por cliente' && (
+                                                    <Button
+                                                        onClick={() => handleOpenPayment(order)}
+                                                        className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white"
+                                                    >
+                                                        <span className="material-symbols-outlined text-[18px] mr-1.5">payments</span>
+                                                        Pagar ahora
+                                                    </Button>
+                                                )}
                                                 <Button variant="ghost" size="sm" className="text-xs flex-1 sm:flex-none justify-center">Ver detalles</Button>
                                                 <Button size="icon" variant="secondary" className="h-9 w-9 shrink-0" title="Descargar Factura">
                                                     <span className="material-symbols-outlined text-[18px]">receipt_long</span>
@@ -326,6 +358,17 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Payment Modal for B2B Orders */}
+            {selectedOrder && (
+                <PaymentModal
+                    isOpen={showPaymentModal}
+                    onClose={() => setShowPaymentModal(false)}
+                    totalMeters={selectedOrder.meters || 0}
+                    totalPrice={selectedOrder.price}
+                    onPaymentVerified={handlePaymentVerified}
+                />
+            )}
         </div>
     );
 };
