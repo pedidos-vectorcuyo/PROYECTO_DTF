@@ -36,18 +36,8 @@ const DashboardPage = () => {
         if (user?.id) {
             setLoading(true);
             try {
-                // We send both id_cliente (as receiver) AND current user ID to fetch all related B2B
-                const formData = new FormData();
-                formData.append('id_cliente', user.id);
-                // The n8n endpoint should be updated to return orders where id_cliente = user.id OR id_emisor = user.id
-
-                const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ORDERS}`, {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await response.json();
-                const rawOrders = data.json || data.data || (Array.isArray(data) ? data : []);
+                // Use the service which already has access to API_BASE_URL/ENDPOINTS
+                const rawOrders = await fetchOrders(user.id);
 
                 const formatted = rawOrders.map(o => {
                     const isSender = o.id_emisor == user.id;
