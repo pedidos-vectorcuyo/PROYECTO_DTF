@@ -98,7 +98,7 @@ const Layout = () => {
                                         </div>
                                         <div className="relative group/user">
                                             <div className="w-10 h-10 rounded-full border border-gray-border overflow-hidden bg-surface-raised flex items-center justify-center shrink-0">
-                                                {user.imagen_perfil ? (
+                                                {user && user.imagen_perfil && typeof user.imagen_perfil === 'string' && user.imagen_perfil.startsWith('http') ? (
                                                     <img
                                                         src={user.imagen_perfil}
                                                         alt={user.nombre_completo}
