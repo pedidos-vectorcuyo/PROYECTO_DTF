@@ -91,29 +91,26 @@ const Layout = () => {
                             <ThemeToggle />
                             <div className="hidden md:flex items-center space-x-4">
                                 {user ? (
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-[12px] text-text-secondary leading-none">Hola,</span>
-                                            <span className="text-[14px] font-bold text-text-main leading-tight">{user.nombre_completo?.split(' ')[0] || user.nombre || 'Usuario'}</span>
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="flex flex-col items-end leading-none">
+                                            <span className="text-[11px] text-text-secondary mb-0.5">Hola,</span>
+                                            <span className="text-[13px] font-bold text-text-main">{user.nombre_completo?.split(' ')[0] || user.nombre || 'Usuario'}</span>
                                         </div>
-                                        <div className="relative group/user">
-                                            <div className="w-10 h-10 rounded-full border border-gray-border overflow-hidden bg-surface-raised flex items-center justify-center shrink-0">
-                                                {user && user.imagen_perfil && typeof user.imagen_perfil === 'string' && user.imagen_perfil.startsWith('http') ? (
-                                                    <img
-                                                        src={user.imagen_perfil}
-                                                        alt={user.nombre_completo}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }} // Fallback on error
-                                                    />
-                                                ) : (
-                                                    <span className="material-symbols-outlined text-text-secondary text-[24px]">person</span>
-                                                )}
-                                            </div>
-                                            {/* Tooltip or logout hint on hover could go here */}
+                                        <div className="w-8 h-8 rounded-full border-2 border-black/5 overflow-hidden bg-surface-raised flex items-center justify-center shrink-0 ring-1 ring-black/5 ring-offset-2 ring-offset-surface shadow-sm">
+                                            {user && user.imagen_perfil && typeof user.imagen_perfil === 'string' && user.imagen_perfil.startsWith('http') ? (
+                                                <img
+                                                    src={user.imagen_perfil}
+                                                    alt={user.nombre_completo}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => { e.target.onerror = null; e.target.src = ''; }}
+                                                />
+                                            ) : (
+                                                <span className="material-symbols-outlined text-text-secondary text-[20px]">person</span>
+                                            )}
                                         </div>
                                         <button
                                             onClick={logout}
-                                            className="text-[13px] font-medium text-danger hover:underline transition-all ml-1"
+                                            className="text-[12px] font-bold text-danger hover:opacity-80 transition-all ml-1 px-2 py-1 rounded-lg hover:bg-danger/5"
                                         >
                                             Salir
                                         </button>
@@ -216,17 +213,17 @@ const Layout = () => {
                         <div className="pt-6 border-t border-gray-border flex flex-col gap-4">
                             {user ? (
                                 <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-4 px-4 py-2 bg-surface-raised rounded-xl border border-gray-border">
-                                        <div className="w-12 h-12 rounded-full border border-gray-border overflow-hidden bg-surface flex items-center justify-center shrink-0">
-                                            {user.imagen_perfil ? (
+                                    <div className="flex items-center gap-4 px-4 py-2 bg-surface-raised rounded-xl border border-gray-border shadow-inner">
+                                        <div className="w-10 h-10 rounded-full border-2 border-black/5 overflow-hidden bg-surface flex items-center justify-center shrink-0 ring-1 ring-black/5 ring-offset-2 ring-offset-surface">
+                                            {user && user.imagen_perfil && typeof user.imagen_perfil === 'string' && user.imagen_perfil.startsWith('http') ? (
                                                 <img src={user.imagen_perfil} alt={user.nombre_completo} className="w-full h-full object-cover" />
                                             ) : (
-                                                <span className="material-symbols-outlined text-text-secondary text-[28px]">person</span>
+                                                <span className="material-symbols-outlined text-text-secondary text-[24px]">person</span>
                                             )}
                                         </div>
                                         <div className="flex flex-col">
-                                            <p className="text-[12px] text-text-secondary leading-none mb-1">Conectado como:</p>
-                                            <p className="font-bold text-text-main text-[16px] leading-tight">{user.nombre_completo || user.nombre}</p>
+                                            <p className="text-[11px] text-text-secondary leading-none mb-1">Conectado como:</p>
+                                            <p className="font-bold text-text-main text-[15px] leading-tight">{user.nombre_completo || user.nombre}</p>
                                         </div>
                                     </div>
                                     <Button
