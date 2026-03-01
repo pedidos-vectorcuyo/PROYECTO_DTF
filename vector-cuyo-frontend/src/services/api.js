@@ -192,7 +192,7 @@ export const fetchPrices = async () => {
                 p30: parseFloat(item.precio_mayorista_30) || 10500,
                 limits: {
                     minWidth: parseFloat(item.textil_min_width) || 50,
-                    maxWidth: parseFloat(item.textil_max_width) || 56,
+                    maxWidth: parseFloat(item.textil_max_width) || 58,
                     minLength: parseFloat(item.textil_min_length) || 1,
                     maxLength: parseFloat(item.textil_max_length) || 10
                 }
