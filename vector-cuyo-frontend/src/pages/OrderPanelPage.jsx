@@ -452,7 +452,7 @@ const OrderPanelPage = () => {
                                 <div>
                                     <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-2 px-1">Notas Adicionales</label>
                                     <textarea
-                                        className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted/50 focus:bg-surface h-24 resize-none"
+                                        className="w-full border border-gray-border rounded-xl p-3 text-sm focus:border-primary outline-none transition-all bg-muted text-text-main focus:bg-surface h-24 resize-none"
                                         placeholder="Instrucciones especiales para tu pedido..."
                                         value={clientData.observaciones}
                                         onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
