@@ -213,7 +213,7 @@ export const fetchPrices = async () => {
         console.error("Error fetching prices:", error);
         // Fallback defaults
         return {
-            textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+            textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 58, minLength: 1, maxLength: 10 } },
             uv: { base: 18000, p10: 16000, p30: 15000, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
         };
     }
@@ -299,18 +299,6 @@ export const updatePrices = async (newPrices) => {
         return false;
     }
 };
-export default {
-    login,
-    register,
-    verifyPayment,
-    fetchOrders,
-    fetchPrices,
-    submitOrder,
-    fetchAllOrders,
-    updateOrderStatus,
-    updatePrices,
-    submitB2BOrder
-};
 /**
  * Submits an order linked to a client via B2B Token.
  * @param {FormData} formData 
@@ -329,4 +317,17 @@ export const submitB2BOrder = async (formData) => {
         console.error("B2B Submission error:", error);
         throw error;
     }
+};
+
+export default {
+    login,
+    register,
+    verifyPayment,
+    fetchOrders,
+    fetchPrices,
+    submitOrder,
+    fetchAllOrders,
+    updateOrderStatus,
+    updatePrices,
+    submitB2BOrder
 };
