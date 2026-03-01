@@ -133,7 +133,7 @@ const DashboardPage = () => {
                             <span className="material-symbols-outlined text-[20px]">timelapse</span>
                             Vigentes
                             {vigentesCount > 0 && (
-                                <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full ${filter === 'vigentes' ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'}`}>
+                                <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full ${filter === 'vigentes' ? 'bg-white/10 text-white' : 'bg-blue-tint text-primary'}`}>
                                     {vigentesCount}
                                 </span>
                             )}
@@ -168,7 +168,7 @@ const DashboardPage = () => {
 
                         {/* B2B Token Section */}
                         {user?.token_b2b && (
-                            <div className="p-5 bg-primary/5 border border-primary/20 rounded-2xl">
+                            <div className="p-5 bg-blue-tint border border-primary/20 rounded-2xl">
                                 <h4 className="text-[11px] font-black uppercase text-primary tracking-widest mb-3 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-[16px]">vpn_key</span>
                                     Token Único

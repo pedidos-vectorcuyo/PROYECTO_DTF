@@ -67,7 +67,7 @@ const HomePage = () => {
                     </div>
                 </div>
                 <div className="relative group">
-                    <div className="absolute inset-0 bg-primary/5 rounded-card transform rotate-2 transition-transform group-hover:rotate-1"></div>
+                    <div className="absolute inset-0 bg-blue-tint rounded-card transform rotate-2 transition-transform group-hover:rotate-1"></div>
                     <div className="relative bg-surface border border-gray-border rounded-card p-6 shadow-sm overflow-hidden min-h-[400px] flex flex-col">
                         {/* Carousel Images */}
                         {carouselImages.map((image, index) => (

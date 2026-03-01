@@ -459,7 +459,7 @@ const OrderPanelPage = () => {
                                         onChange={(e) => setClientData({ ...clientData, observaciones: e.target.value })}
                                     />
                                 </div>
-                                <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                                <div className="p-4 bg-blue-tint border border-primary/20 rounded-xl">
                                     <label className="flex items-center gap-2 text-[11px] font-bold text-primary uppercase tracking-widest mb-2">
                                         <span className="material-symbols-outlined text-[16px]">point_of_sale</span>
                                         ¿Enviar a un Cliente? (Token Único)

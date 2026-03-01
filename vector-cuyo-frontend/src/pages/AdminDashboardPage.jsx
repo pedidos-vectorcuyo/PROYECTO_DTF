@@ -6,7 +6,7 @@ const AdminDashboardPage = () => {
     const [activeTab, setActiveTab] = useState('orders');
     const [orders, setOrders] = useState([]);
     const [config, setConfig] = useState({
-        textil: { base: 0, p10: 0, p30: 0, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+        textil: { base: 0, p10: 0, p30: 0, limits: { minWidth: 50, maxWidth: 58, minLength: 1, maxLength: 10 } },
         uv: { base: 0, p10: 0, p30: 0, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
     });
     const [loading, setLoading] = useState(true);
@@ -128,7 +128,7 @@ const AdminDashboardPage = () => {
                     <div className="bg-surface border border-gray-border rounded-card overflow-hidden shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
-                                <thead className="bg-muted/50 border-b border-gray-border">
+                                <thead className="bg-muted border-b border-gray-border">
                                     <tr>
                                         <th className="p-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Pedido</th>
                                         <th className="p-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Cliente</th>
@@ -138,16 +138,16 @@ const AdminDashboardPage = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-border">
                                     {filteredOrders.length > 0 ? filteredOrders.map(order => (
-                                        <tr key={order.id_pedido} className="hover:bg-muted/20 transition-colors">
+                                        <tr key={order.id_pedido} className="hover:bg-off-white transition-colors">
                                             <td className="p-4">
                                                 <div className="font-bold text-text-main">#{order.id_pedido}</div>
                                                 <div className="text-[11px] text-text-secondary font-medium">{order.fecha}</div>
                                             </td>
                                             <td className="p-4 text-sm font-medium text-text-main">{order.cliente}</td>
                                             <td className="p-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${order.estado === 'pendiente' ? 'bg-warning/10 text-warning' :
-                                                    order.estado === 'pagado' ? 'bg-primary/10 text-primary' :
-                                                        order.estado === 'listo' ? 'bg-success/10 text-success' :
+                                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${order.estado === 'pendiente' ? 'bg-warning text-white' :
+                                                    order.estado === 'pagado' ? 'bg-primary text-white' :
+                                                        order.estado === 'listo' ? 'bg-success text-white' :
                                                             order.estado === 'entregado' ? 'bg-surface-raised text-text-secondary border border-gray-border' : 'bg-muted text-text-secondary'
                                                     }`}>
                                                     {order.estado}
