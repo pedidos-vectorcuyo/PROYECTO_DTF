@@ -461,12 +461,12 @@ const OrderPanelPage = () => {
                                 <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
                                     <label className="flex items-center gap-2 text-[11px] font-bold text-primary uppercase tracking-widest mb-2">
                                         <span className="material-symbols-outlined text-[16px]">point_of_sale</span>
-                                        ¿Enviar a un Cliente? (B2B)
+                                        ¿Enviar a un Cliente? (Token Único)
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Ingresa el Token del Cliente (ej: VC-A1B2)"
-                                        className="w-full border border-gray-border rounded-lg p-2.5 text-sm focus:border-primary outline-none transition-all bg-surface"
+                                        placeholder="Ingresa el Token Único del Cliente"
+                                        className="w-full border border-gray-border rounded-lg p-2.5 text-sm focus:border-primary outline-none transition-all bg-surface text-text-main"
                                         value={clientData.tokenReceptor}
                                         onChange={(e) => setClientData({ ...clientData, tokenReceptor: e.target.value.toUpperCase() })}
                                     />

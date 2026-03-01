@@ -170,10 +170,10 @@ const DashboardPage = () => {
                         {user?.token_b2b && (
                             <div className="p-5 bg-primary/5 border border-primary/20 rounded-2xl">
                                 <h4 className="text-[11px] font-black uppercase text-primary tracking-widest mb-3 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-[16px]">point_of_sale</span>
-                                    Mi Identidad B2B
+                                    <span className="material-symbols-outlined text-[16px]">vpn_key</span>
+                                    Token Único
                                 </h4>
-                                <div className="flex items-center justify-between gap-3 p-3 bg-white border border-gray-border rounded-xl shadow-sm">
+                                <div className="flex items-center justify-between gap-3 p-3 bg-surface border border-gray-border rounded-xl shadow-sm">
                                     <code className="text-sm font-bold text-text-main tracking-wider">{user.token_b2b}</code>
                                     <button
                                         onClick={() => {
@@ -187,7 +187,7 @@ const DashboardPage = () => {
                                     </button>
                                 </div>
                                 <p className="text-[10px] text-text-secondary mt-3 leading-relaxed">
-                                    Dale este código a tu diseñador para que te envíe pedidos directamente a tu cuenta.
+                                    Este es tu código para recibir pedidos de terceros.
                                 </p>
                             </div>
                         )}
