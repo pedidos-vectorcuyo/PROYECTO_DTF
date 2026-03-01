@@ -306,7 +306,7 @@ export const updatePrices = async (newPrices) => {
  */
 export const submitB2BOrder = async (formData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.B2B_ORDER}`, {
+        const response = await fetch(`https://n8n.vectorcuyo.com/webhook/b2b-order`, {
             method: "POST",
             body: formData
         });

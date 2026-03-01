@@ -54,7 +54,16 @@ const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOpti
                                 </span>
                             </div>
 
-                            {/* Options Grid */}
+                            <div className="flex items-center gap-3">
+                                <span className="text-[13px] font-medium text-text-main">Copias:</span>
+                                <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
+                                    <button onClick={() => updateCopies(file.id, -1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-r border-gray-border">-</button>
+                                    <input type="text" readOnly value={file.copies} className="w-10 text-center text-sm font-semibold bg-transparent" />
+                                    <button onClick={() => updateCopies(file.id, 1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-l border-gray-border">+</button>
+                                </div>
+                            </div>
+
+                            {/* Options Grid - Moved Below Copies */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-3 border-y border-gray-border">
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
@@ -63,7 +72,7 @@ const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOpti
                                         onChange={() => toggleOption(file.id, 'whites')}
                                         className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
                                     />
-                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">ByN (Gris)</span>
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">ByN (Solo Negro)</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
@@ -81,7 +90,7 @@ const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOpti
                                         onChange={() => toggleOption(file.id, 'colors')}
                                         className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
                                     />
-                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Color +</span>
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Limpieza Color</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input
@@ -90,17 +99,8 @@ const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOpti
                                         onChange={() => toggleOption(file.id, 'halftones')}
                                         className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
                                     />
-                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Tramado</span>
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Quitar Fondo</span>
                                 </label>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <span className="text-[13px] font-medium text-text-main">Copias:</span>
-                                <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
-                                    <button onClick={() => updateCopies(file.id, -1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-r border-gray-border">-</button>
-                                    <input type="text" readOnly value={file.copies} className="w-10 text-center text-sm font-semibold bg-transparent" />
-                                    <button onClick={() => updateCopies(file.id, 1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-l border-gray-border">+</button>
-                                </div>
                             </div>
                         </div>
                     ) : (
