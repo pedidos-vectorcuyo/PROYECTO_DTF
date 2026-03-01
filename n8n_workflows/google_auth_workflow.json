@@ -85,11 +85,10 @@
     {
       "parameters": {
         "conditions": {
-          "number": [
+          "string": [
             {
-              "value1": "={{ $items().length }}",
-              "operation": "larger",
-              "value2": 0
+              "value1": "={{ $json.id }}",
+              "operation": "isNotEmpty"
             }
           ]
         }

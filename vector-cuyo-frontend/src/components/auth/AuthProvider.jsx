@@ -73,8 +73,9 @@ export const AuthProvider = ({ children }) => {
             if (Array.isArray(userData)) cleanUser = userData[0];
             if (cleanUser?.json) cleanUser = cleanUser.json;
 
-            if (!cleanUser || Object.keys(cleanUser).length === 0) {
-                throw new Error("No user data received from server");
+            if (!cleanUser || !cleanUser.id) {
+                console.error("Auth: ID is missing in user data", cleanUser);
+                throw new Error("El servidor no devolvió un ID de usuario válido.");
             }
 
             const userWithRole = {
