@@ -36,17 +36,38 @@ const DashboardPage = () => {
         if (user?.id) {
             setLoading(true);
             try {
-                const data = await fetchOrders(user.id);
-                const formatted = data.map(o => ({
-                    id: o.id_pedido || o.id || 'N/A',
-                    date: o.creado_en ? o.creado_en.split('T')[0] : '-',
-                    files: o.nombre_archivo || 'Sin archivo',
-                    price: parseFloat(o.precio_final || 0),
-                    status: o.estado || 'Ingresado',
-                    shipping: "Estándar (24h)",
-                    meters: parseFloat(o.largoM || 0),
-                    ...o
-                }));
+                // We send both id_cliente (as receiver) AND current user ID to fetch all related B2B
+                const formData = new FormData();
+                formData.append('id_cliente', user.id);
+                // The n8n endpoint should be updated to return orders where id_cliente = user.id OR id_emisor = user.id
+
+                const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ORDERS}`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+                const rawOrders = data.json || data.data || (Array.isArray(data) ? data : []);
+
+                const formatted = rawOrders.map(o => {
+                    const isSender = o.id_emisor == user.id;
+                    const isReceiver = o.id_cliente == user.id || o.id_receptor == user.id;
+
+                    return {
+                        id: o.id_pedido || o.id || 'N/A',
+                        date: o.creado_en ? o.creado_en.split('T')[0] : '-',
+                        files: o.nombre_archivo || 'Sin archivo',
+                        price: parseFloat(o.precio_final || 0),
+                        status: o.estado || 'Ingresado',
+                        shipping: "Estándar (24h)",
+                        meters: parseFloat(o.largoM || 0),
+                        isB2B: !!(o.id_emisor && o.id_receptor),
+                        isSender,
+                        isReceiver,
+                        receptorToken: o.token_receptor || null,
+                        ...o
+                    };
+                });
                 formatted.sort((a, b) => b.id - a.id);
                 setOrders(formatted);
             } catch (error) {
@@ -278,6 +299,11 @@ const DashboardPage = () => {
                                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                                         <span className="text-[16px] font-bold text-text-main">#{order.id}</span>
                                                         <span className="text-[12px] text-text-secondary">{order.date}</span>
+                                                        {order.isSender && (
+                                                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full border border-primary/20">
+                                                                ENVIADO A: {order.token_receptor || 'OTRO'}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <span className="text-[13px] font-medium text-text-secondary block truncate max-w-[200px] sm:max-w-none">{order.files}</span>
                                                 </div>
@@ -307,7 +333,7 @@ const DashboardPage = () => {
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                                                {order.status === 'Pendiente de pago por cliente' && (
+                                                {(order.status === 'Pendiente de pago por cliente' || order.status === 'Ingresado') && order.isReceiver && (
                                                     <Button
                                                         onClick={() => handleOpenPayment(order)}
                                                         className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white"
@@ -316,7 +342,14 @@ const DashboardPage = () => {
                                                         Pagar ahora
                                                     </Button>
                                                 )}
-                                                <Button variant="ghost" size="sm" className="text-xs flex-1 sm:flex-none justify-center">Ver detalles</Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-xs flex-1 sm:flex-none justify-center"
+                                                    onClick={() => alert(`ID: ${order.id}\nArchivo: ${order.files}\nTotal: $${order.price}`)}
+                                                >
+                                                    Ver detalles
+                                                </Button>
                                                 <Button size="icon" variant="secondary" className="h-9 w-9 shrink-0" title="Descargar Factura">
                                                     <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                                                 </Button>
