@@ -17,7 +17,7 @@ const OrderPanelPage = () => {
     const [dragActive, setDragActive] = useState(false);
     const [productType, setProductType] = useState('textil'); // Default to textil
     const [config, setConfig] = useState({
-        textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 56, minLength: 1, maxLength: 10 } },
+        textil: { base: 13500, p10: 11500, p30: 10500, limits: { minWidth: 50, maxWidth: 58, minLength: 1, maxLength: 10 } },
         uv: { base: 18000, p10: 16000, p30: 15000, limits: { minWidth: 25, maxWidth: 28, minLength: 0.1, maxLength: 5 } }
     });
     const [clientData, setClientData] = useState({
