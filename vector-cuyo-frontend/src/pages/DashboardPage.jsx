@@ -325,8 +325,8 @@ const DashboardPage = () => {
                         </Button>
                     </div>
                 </div>
-            </section >
-        </div >
+            </section>
+        </div>
     );
 };
 
