@@ -65,7 +65,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, nombre_completo, email, telefono FROM clientes WHERE email = '{{ $json.email }}' LIMIT 1;"
+        "query": "SELECT id, nombre_completo, email, telefono, imagen_perfil FROM clientes WHERE email = '{{ $json.email }}' LIMIT 1;"
       },
       "id": "mysql-find-user",
       "name": "Buscar usuario en DB",
@@ -105,7 +105,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO clientes (nombre_completo, email, password, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  'GOOGLE_AUTH_NO_PASSWORD',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON DUPLICATE KEY UPDATE\n  google_id = VALUES(google_id),\n  imagen_perfil = VALUES(imagen_perfil);\n\nSELECT id, nombre_completo, email FROM clientes WHERE email = '{{ $node[\"Google UserInfo API\"].json.email }}' LIMIT 1;"
+        "query": "INSERT INTO clientes (nombre_completo, email, password, google_id, imagen_perfil)\nVALUES (\n  '{{ $node[\"Google UserInfo API\"].json.name }}',\n  '{{ $node[\"Google UserInfo API\"].json.email }}',\n  'GOOGLE_AUTH_NO_PASSWORD',\n  '{{ $node[\"Google UserInfo API\"].json.id }}',\n  '{{ $node[\"Google UserInfo API\"].json.picture }}'\n)\nON DUPLICATE KEY UPDATE\n  google_id = VALUES(google_id),\n  imagen_perfil = VALUES(imagen_perfil);\n\nSELECT id, nombre_completo, email, imagen_perfil FROM clientes WHERE email = '{{ $node[\"Google UserInfo API\"].json.email }}' LIMIT 1;"
       },
       "id": "mysql-create-user",
       "name": "Crear usuario nuevo",

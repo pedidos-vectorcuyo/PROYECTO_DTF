@@ -91,15 +91,33 @@ const Layout = () => {
                             <ThemeToggle />
                             <div className="hidden md:flex items-center space-x-4">
                                 {user ? (
-                                    <>
-                                        <span className="text-[14px] text-text-main hidden lg:block">Hola, <strong>{user.nombre_completo || user.nombre || 'Usuario'}</strong></span>
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-[12px] text-text-secondary leading-none">Hola,</span>
+                                            <span className="text-[14px] font-bold text-text-main leading-tight">{user.nombre_completo?.split(' ')[0] || user.nombre || 'Usuario'}</span>
+                                        </div>
+                                        <div className="relative group/user">
+                                            <div className="w-10 h-10 rounded-full border border-gray-border overflow-hidden bg-surface-raised flex items-center justify-center shrink-0">
+                                                {user.imagen_perfil ? (
+                                                    <img
+                                                        src={user.imagen_perfil}
+                                                        alt={user.nombre_completo}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = ''; }} // Fallback on error
+                                                    />
+                                                ) : (
+                                                    <span className="material-symbols-outlined text-text-secondary text-[24px]">person</span>
+                                                )}
+                                            </div>
+                                            {/* Tooltip or logout hint on hover could go here */}
+                                        </div>
                                         <button
                                             onClick={logout}
-                                            className="text-[14px] font-medium text-danger hover:text-red-700 transition-colors"
+                                            className="text-[13px] font-medium text-danger hover:underline transition-all ml-1"
                                         >
                                             Salir
                                         </button>
-                                    </>
+                                    </div>
                                 ) : (
                                     <div className="space-x-3 flex items-center">
                                         <Button to="/login" variant="ghost" size="sm">
@@ -198,9 +216,18 @@ const Layout = () => {
                         <div className="pt-6 border-t border-gray-border flex flex-col gap-4">
                             {user ? (
                                 <div className="flex flex-col gap-3">
-                                    <div className="px-4">
-                                        <p className="text-[14px] text-text-secondary">Conectado como:</p>
-                                        <p className="font-bold text-text-main">{user.nombre_completo || user.nombre}</p>
+                                    <div className="flex items-center gap-4 px-4 py-2 bg-surface-raised rounded-xl border border-gray-border">
+                                        <div className="w-12 h-12 rounded-full border border-gray-border overflow-hidden bg-surface flex items-center justify-center shrink-0">
+                                            {user.imagen_perfil ? (
+                                                <img src={user.imagen_perfil} alt={user.nombre_completo} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="material-symbols-outlined text-text-secondary text-[28px]">person</span>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="text-[12px] text-text-secondary leading-none mb-1">Conectado como:</p>
+                                            <p className="font-bold text-text-main text-[16px] leading-tight">{user.nombre_completo || user.nombre}</p>
+                                        </div>
                                     </div>
                                     <Button
                                         onClick={() => { logout(); setIsMenuOpen(false); }}
