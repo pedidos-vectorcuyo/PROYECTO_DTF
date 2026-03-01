@@ -323,32 +323,36 @@ const OrderPanelPage = () => {
         const validFiles = activeFiles.filter(f => f.valid);
         const orderId = `PED-${Date.now()}`;
         const shortDate = new Date().toISOString().slice(2, 10).replace(/-/g, '.');
-        const clientName = user.nombre || 'Cliente';
+        const clientName = user.nombre_completo || user.nombre || 'Cliente';
 
         // Upload files in parallel
         const uploadPromises = validFiles.map(async (item, i) => {
             try {
-                const fd = new FormData();
+                // Determine name and clean it for SQL safety (n8n fix)
+                let cleanOriginalName = item.file.name.replace(/'/g, "");
+                const cleanNameWithoutExt = cleanOriginalName.replace(/\.[^/.]+$/, "");
+                const originalExtension = cleanOriginalName.split('.').pop();
 
-                // Construct filename
-                const cleanName = item.file.name.split('.').slice(0, -1).join('.');
                 const propsMap = { whites: 'B', blacks: 'N', colors: 'C', halftones: 'S' };
                 const activeProps = Object.keys(item.options).filter(k => item.options[k]).map(k => propsMap[k]);
                 const codes = activeProps.length > 0 ? activeProps.join('') : 'Gral';
                 const typeCode = productType === 'uv' ? '[UV]' : '[TEX]';
-                const finalName = `${shortDate} - ${clientName} ${typeCode}(${cleanName})'x${item.copies}${codes}.png`;
+                const finalName = `${shortDate} - ${clientName} ${typeCode}(${cleanNameWithoutExt})x${item.copies}${codes}.${originalExtension}`;
+
+                const fd = new FormData();
+                const nombreEmisor = user.nombre_completo || user.nombre || 'S/N';
 
                 // Append data
                 fd.append("data", item.file, finalName);
                 fd.append("idPedido", orderId);
-                fd.append("cliente", user.nombre || '');
+                fd.append("cliente", nombreEmisor);
                 fd.append("email", user.correo || '');
                 fd.append("telefono", user.whatsapp || '');
                 fd.append("observaciones", clientData.observaciones);
 
                 // Explicit fields for n8n body
                 fd.append("nombre_archivo", finalName);
-                fd.append("nombre_emisor", user.nombre || '');
+                fd.append("nombre_emisor", nombreEmisor);
 
                 // Metrics
                 fd.append("anchoCm", item.meta.anchoCm);
@@ -369,7 +373,7 @@ const OrderPanelPage = () => {
                 if (clientData.tokenReceptor?.trim()) {
                     fd.append("token_receptor", clientData.tokenReceptor.trim());
                     fd.append("id_emisor", user.id);
-                    fd.append("nombre_emisor", user.nombre_completo || user.nombre);
+                    // nombre_emisor is already appended above
                     if (user.token_b2b) fd.append("token_emisor", user.token_b2b);
 
                     // Specific prices for B2B - ensures string format n8n likes
