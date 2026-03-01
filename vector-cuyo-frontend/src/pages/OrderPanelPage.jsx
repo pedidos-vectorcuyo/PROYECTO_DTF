@@ -11,6 +11,22 @@ import PaymentModal from '../components/orders/PaymentModal';
 const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOption }) => {
     if (file.productType !== productType) return null;
 
+    if (file.loading) {
+        return (
+            <div className="bg-surface border border-gray-border rounded-card p-5 opacity-60">
+                <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center animate-pulse">
+                        <span className="material-symbols-outlined text-gray-300">hourglass_empty</span>
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-semibold text-text-main text-sm animate-pulse">{file.name}</h3>
+                        <p className="text-xs text-text-secondary mt-1">Procesando imagen...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md`}>
             <div className="flex flex-col sm:flex-row gap-5">
@@ -180,26 +196,35 @@ const OrderPanelPage = () => {
     };
 
     const handleFiles = async (fileList) => {
-        setLoading(true);
         const fileArray = Array.from(fileList);
-        const processedFiles = [];
 
-        // Give UI a chance to show loading state
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Add placeholders immediately to avoid blocking UI
+        const newPlaceholders = fileArray.map(f => ({
+            id: 'temp-' + Math.random(),
+            name: f.name,
+            loading: true,
+            productType: productType,
+            file: f
+        }));
 
-        // Process files one by one to avoid blocking main thread too long
-        for (const file of fileArray) {
+        setFiles(prev => [...prev, ...newPlaceholders]);
+        setLoading(true);
+
+        // Process sequentially with yields
+        for (const placeholder of newPlaceholders) {
             try {
-                const processed = await processFile(file);
+                // Yield to allow UI update
+                await new Promise(resolve => setTimeout(resolve, 0));
 
-                // Dynamic validation against config
+                const processed = await processFile(placeholder.file);
+
                 const warnings = [...processed.warnings];
                 const { minWidth, maxWidth, minLength, maxLength } = activeConfig.limits;
 
                 if (processed.meta.anchoCm < minWidth) {
                     warnings.push(`Aprovechamiento bajo: ${processed.meta.anchoCm.toFixed(1)}cm (Recomendado: min ${minWidth}cm)`);
                 }
-                if (processed.meta.anchoCm > maxWidth + 0.1) { // 0.1 margin for precision
+                if (processed.meta.anchoCm > maxWidth + 0.1) {
                     processed.valid = false;
                     processed.errors.push(`Ancho excede el máximo: ${processed.meta.anchoCm.toFixed(1)}cm (Máx: ${maxWidth}cm)`);
                 }
@@ -210,29 +235,26 @@ const OrderPanelPage = () => {
                     warnings.push(`Largo excede el máximo recomendado (${maxLength}m)`);
                 }
 
-                processedFiles.push({
-                    id: Date.now() + Math.random(),
-                    file: file,
+                setFiles(prev => prev.map(f => f.id === placeholder.id ? {
+                    ...f,
                     ...processed,
+                    id: Date.now() + Math.random(),
+                    loading: false,
                     warnings: warnings,
                     copies: 1,
-                    productType: productType,
                     options: {
                         whites: false,
                         blacks: false,
                         colors: false,
                         halftones: false
                     }
-                });
-
-                // Small yield to event loop
-                await new Promise(resolve => setTimeout(resolve, 0));
+                } : f));
             } catch (err) {
-                console.error("Error processing file:", file.name, err);
+                console.error("Error processing file:", placeholder.name, err);
+                setFiles(prev => prev.filter(f => f.id !== placeholder.id));
             }
         }
 
-        setFiles(prev => [...prev, ...processedFiles]);
         setLoading(false);
     };
 
@@ -323,6 +345,10 @@ const OrderPanelPage = () => {
                 fd.append("email", user.correo || '');
                 fd.append("telefono", user.whatsapp || '');
                 fd.append("observaciones", clientData.observaciones);
+
+                // Explicit fields for n8n body
+                fd.append("nombre_archivo", finalName);
+                fd.append("nombre_emisor", user.nombre || '');
 
                 // Metrics
                 fd.append("anchoCm", item.meta.anchoCm);
