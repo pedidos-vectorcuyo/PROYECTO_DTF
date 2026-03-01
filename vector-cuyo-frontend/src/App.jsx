@@ -19,6 +19,7 @@ import TutorialPage from './pages/TutorialPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
 function App() {
+    console.log('App version: 1.0.5c83cc4 (Cache Buster)');
     return (
         <BrowserRouter>
             <AuthProvider>
