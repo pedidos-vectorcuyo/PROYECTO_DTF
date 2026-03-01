@@ -1,11 +1,126 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/auth/AuthProvider';
 import { processFile } from '../utils/fileProcessor';
-import { fetchPrices, submitOrder } from '../services/api';
+import { fetchPrices, submitOrder, submitB2BOrder } from '../services/api';
 import Button from '../components/ui/Button';
 import PaymentModal from '../components/orders/PaymentModal';
+
+// Memoized component to optimize performance
+const FileItem = memo(({ file, productType, removeFile, updateCopies, toggleOption }) => {
+    if (file.productType !== productType) return null;
+
+    return (
+        <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md`}>
+            <div className="flex flex-col sm:flex-row gap-5">
+                <div className="w-full sm:w-20 h-40 sm:h-20 bg-muted border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-dtf-texture opacity-10"></div>
+                    {file.previewUrl ? (
+                        <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain relative z-10" />
+                    ) : (
+                        <span className="material-symbols-outlined text-gray-300">image</span>
+                    )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            <h3 className="font-semibold text-text-main text-[15px] truncate" title={file.file.name}>{file.file.name}</h3>
+                            {file.productType === 'uv' && <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-[10px] font-bold rounded">UV</span>}
+                        </div>
+                        <button
+                            onClick={() => removeFile(file.id)}
+                            className="text-text-secondary hover:text-danger transition-colors p-1 -mr-2"
+                            title="Eliminar archivo"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                    </div>
+
+                    {file.valid ? (
+                        <div className="space-y-4">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-[13px] text-text-secondary">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="material-symbols-outlined text-[16px]">aspect_ratio</span>
+                                    {file.meta.anchoCm.toFixed(1)} cm
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <span className="material-symbols-outlined text-[16px]">straighten</span>
+                                    {file.meta.largoM.toFixed(2)} m
+                                </span>
+                                <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
+                                    {file.meta.dpi} DPI
+                                </span>
+                            </div>
+
+                            {/* Options Grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-3 border-y border-gray-border">
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={file.options.whites}
+                                        onChange={() => toggleOption(file.id, 'whites')}
+                                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                                    />
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">ByN (Gris)</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={file.options.blacks}
+                                        onChange={() => toggleOption(file.id, 'blacks')}
+                                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                                    />
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Quitar Negro</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={file.options.colors}
+                                        onChange={() => toggleOption(file.id, 'colors')}
+                                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                                    />
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Color +</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={file.options.halftones}
+                                        onChange={() => toggleOption(file.id, 'halftones')}
+                                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                                    />
+                                    <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-main transition-colors">Tramado</span>
+                                </label>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <span className="text-[13px] font-medium text-text-main">Copias:</span>
+                                <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
+                                    <button onClick={() => updateCopies(file.id, -1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-r border-gray-border">-</button>
+                                    <input type="text" readOnly value={file.copies} className="w-10 text-center text-sm font-semibold bg-transparent" />
+                                    <button onClick={() => updateCopies(file.id, 1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-l border-gray-border">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mt-2 text-sm text-danger font-medium flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[18px]">error</span>
+                            {file.errors.join(', ')}
+                        </div>
+                    )}
+
+                    {file.warnings.length > 0 && (
+                        <div className="mt-2 text-xs text-warning bg-warning/10 p-2 rounded flex items-start gap-2 border border-warning/20">
+                            <span className="material-symbols-outlined text-[14px] mt-0.5">warning</span>
+                            <span>{file.warnings.join(', ')}</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+});
 
 const OrderPanelPage = () => {
     const { user } = useAuth();
@@ -136,35 +251,116 @@ const OrderPanelPage = () => {
         }));
     };
 
-    // Calculations based on productType
-    const activeFiles = files.filter(f => f.productType === productType);
+    // Memoized calculations to prevent lag on every keypress/click
+    const activeFiles = useMemo(() => files.filter(f => f.productType === productType), [files, productType]);
 
-    const totalMeters = activeFiles.reduce((acc, curr) => {
+    const totalMeters = useMemo(() => activeFiles.reduce((acc, curr) => {
         if (!curr.valid) return acc;
         return acc + (curr.meta.largoM * curr.copies);
-    }, 0);
+    }, 0), [activeFiles]);
 
-    const effectiveMeters = totalMeters > 0 ? Math.max(activeConfig.limits.minLength, Math.ceil(totalMeters * 10) / 10) : 0;
+    const effectiveMeters = useMemo(() => totalMeters > 0 ? Math.max(activeConfig.limits.minLength, Math.ceil(totalMeters * 10) / 10) : 0, [totalMeters, activeConfig]);
 
-    let currentPrice = activeConfig.base;
-    let tierName = "Precio Base";
-    let tierColor = "bg-blue-tint text-primary border-primary/20";
+    const budget = useMemo(() => {
+        let currentPrice = activeConfig.base;
+        let tierName = "Precio Base";
+        let tierColor = "bg-blue-tint text-primary border-primary/20";
 
-    if (effectiveMeters > 30) {
-        currentPrice = activeConfig.p30;
-        tierName = "GOLD (>30m)";
-        tierColor = "bg-warning/10 text-warning border-warning/20";
-    } else if (effectiveMeters > 10) {
-        currentPrice = activeConfig.p10;
-        tierName = "MAYORISTA (>10m)";
-        tierColor = "bg-success/10 text-success border-success/20";
-    }
+        if (effectiveMeters > 30) {
+            currentPrice = activeConfig.p30;
+            tierName = "GOLD (>30m)";
+            tierColor = "bg-warning/10 text-warning border-warning/20";
+        } else if (effectiveMeters > 10) {
+            currentPrice = activeConfig.p10;
+            tierName = "MAYORISTA (>10m)";
+            tierColor = "bg-success/10 text-success border-success/20";
+        }
 
-    const subtotal = effectiveMeters * activeConfig.base;
-    const total = effectiveMeters * currentPrice;
-    const discount = subtotal - total;
+        const subtotal = effectiveMeters * activeConfig.base;
+        const total = effectiveMeters * currentPrice;
+        const discount = subtotal - total;
 
-    const handleConfirmOrder = () => {
+        return { currentPrice, tierName, tierColor, total, discount };
+    }, [effectiveMeters, activeConfig]);
+
+    const { tierName, tierColor, total, discount } = budget;
+
+    const performOrderSubmission = useCallback(async () => {
+        setSubmitting(true);
+        const validFiles = activeFiles.filter(f => f.valid);
+        const orderId = `PED-${Date.now()}`;
+        const shortDate = new Date().toISOString().slice(2, 10).replace(/-/g, '.');
+        const clientName = user.nombre || 'Cliente';
+
+        // Upload files in parallel
+        const uploadPromises = validFiles.map(async (item, i) => {
+            try {
+                const fd = new FormData();
+
+                // Construct filename
+                const cleanName = item.file.name.split('.').slice(0, -1).join('.');
+                const propsMap = { whites: 'B', blacks: 'N', colors: 'C', halftones: 'S' };
+                const activeProps = Object.keys(item.options).filter(k => item.options[k]).map(k => propsMap[k]);
+                const codes = activeProps.length > 0 ? activeProps.join('') : 'Gral';
+                const typeCode = productType === 'uv' ? '[UV]' : '[TEX]';
+                const finalName = `${shortDate} - ${clientName} ${typeCode}(${cleanName})'x${item.copies}${codes}.png`;
+
+                // Append data
+                fd.append("data", item.file, finalName);
+                fd.append("idPedido", orderId);
+                fd.append("cliente", user.nombre || '');
+                fd.append("email", user.correo || '');
+                fd.append("telefono", user.whatsapp || '');
+                fd.append("observaciones", clientData.observaciones);
+
+                // Metrics
+                fd.append("anchoCm", item.meta.anchoCm);
+                fd.append("largoM", item.meta.largoM);
+                fd.append("copias", item.copies);
+                fd.append("productType", productType === 'uv' ? 'DTF UV' : 'DTF Textil');
+                fd.append("propiedades", `#${i + 1}(${codes})`);
+
+                // Totals - This uses the calculated total for the WHOLE order 
+                fd.append("precioCotizado", total);
+                fd.append("precio_final", total.toLocaleString('es-AR', { useGrouping: false }));
+
+                fd.append("totalArchivos", validFiles.length);
+                fd.append("indiceArchivo", i + 1);
+                if (user.id) fd.append("id_cliente", user.id);
+
+                // B2B Metadata
+                if (clientData.tokenReceptor?.trim()) {
+                    fd.append("token_receptor", clientData.tokenReceptor.trim());
+                    fd.append("id_emisor", user.id);
+                    fd.append("nombre_emisor", user.nombre_completo || user.nombre);
+                    // Use the specific B2B submission or the general one with B2B flag
+                    return await submitOrder(fd, true);
+                }
+
+                return await submitOrder(fd);
+            } catch (err) {
+                console.error("Single file upload error:", err);
+                return false;
+            }
+        });
+
+        const results = await Promise.all(uploadPromises);
+
+        const successCount = results.filter(r => r).length;
+        const failCount = results.length - successCount;
+
+        setSubmitting(false);
+
+        if (failCount === 0) {
+            alert("✅ ¡Pedido Creado con Éxito!");
+            setFiles(prev => prev.filter(f => f.productType !== productType));
+            navigate('/dashboard');
+        } else {
+            alert(`⚠️ Se procesaron ${successCount} archivos satisfactoriamente, pero ${failCount} fallaron. Por favor reintenta.`);
+        }
+    }, [activeFiles, user, clientData, total, productType, navigate]);
+
+    const handleConfirmOrder = useCallback(() => {
         if (!user) {
             alert("Debes iniciar sesión para confirmar el pedido.");
             navigate('/login');
@@ -177,89 +373,22 @@ const OrderPanelPage = () => {
         }
 
         if (clientData.tokenReceptor?.trim()) {
-            // IF token provided, we skip immediate payment modal for the designer
+            if (clientData.tokenReceptor.trim() === user.token_b2b) {
+                alert("No puedes enviarte un pedido a ti mismo usando tu propio token.");
+                return;
+            }
             if (window.confirm(`¿Confirmas que deseas enviar este pedido al cliente con Token [${clientData.tokenReceptor}]? El cliente deberá pagarlo desde su perfil.`)) {
                 performOrderSubmission();
             }
         } else {
             setShowPaymentModal(true);
         }
-    };
+    }, [user, activeFiles, clientData, navigate, performOrderSubmission]);
 
-    const handlePaymentVerified = async () => {
+    const handlePaymentVerified = useCallback(async () => {
         setShowPaymentModal(false);
         await performOrderSubmission();
-    };
-
-    const performOrderSubmission = async () => {
-        setSubmitting(true);
-        const validFiles = activeFiles.filter(f => f.valid);
-        const orderId = `PED-${Date.now()}`;
-        const shortDate = new Date().toISOString().slice(2, 10).replace(/-/g, '.');
-        const clientName = user.nombre || 'Cliente';
-
-        // Upload files in parallel
-        const uploadPromises = validFiles.map(async (item, i) => {
-            const fd = new FormData();
-
-            // Construct filename
-            const cleanName = item.file.name.split('.').slice(0, -1).join('.');
-            const propsMap = { whites: 'B', blacks: 'N', colors: 'C', halftones: 'S' };
-            const activeProps = Object.keys(item.options).filter(k => item.options[k]).map(k => propsMap[k]);
-            const codes = activeProps.length > 0 ? activeProps.join('') : 'Gral';
-            const typeCode = productType === 'uv' ? '[UV]' : '[TEX]';
-            const finalName = `${shortDate} - ${clientName} ${typeCode}(${cleanName})'x${item.copies}${codes}.png`;
-
-            // Append data
-            fd.append("data", item.file, finalName);
-            fd.append("idPedido", orderId);
-            fd.append("cliente", user.nombre || '');
-            fd.append("email", user.correo || '');
-            fd.append("telefono", user.whatsapp || '');
-            fd.append("observaciones", clientData.observaciones);
-
-            // Metrics
-            fd.append("anchoCm", item.meta.anchoCm);
-            fd.append("largoM", item.meta.largoM);
-            fd.append("copias", item.copies);
-            fd.append("productType", productType === 'uv' ? 'DTF UV' : 'DTF Textil');
-            fd.append("propiedades", `#${i + 1}(${codes})`);
-
-            // Totals 
-            fd.append("precioCotizado", total);
-            fd.append("precio_final", total.toString().replace('.', ','));
-
-            fd.append("totalArchivos", validFiles.length);
-            fd.append("indiceArchivo", i + 1);
-            if (user.id) fd.append("id_cliente", user.id);
-
-            // B2B Metadata
-            if (clientData.tokenReceptor?.trim()) {
-                fd.append("token_receptor", clientData.tokenReceptor.trim());
-                fd.append("id_emisor", user.id);
-                fd.append("nombre_emisor", user.nombre_completo || user.nombre);
-                return await submitOrder(fd, true); // We'll update submitOrder or use submitB2BOrder?
-            }
-
-            return await submitOrder(fd);
-        });
-
-        const results = await Promise.all(uploadPromises);
-
-        const successCount = results.filter(r => r).length;
-        const failCount = results.length - successCount;
-
-        setSubmitting(false);
-
-        if (failCount === 0) {
-            alert("✅ ¡Pedido Creado con Éxito!");
-            // Remove only submitted files from state
-            setFiles(prev => prev.filter(f => f.productType !== productType));
-            navigate('/dashboard');
-        } else {
-            alert(`⚠️ Se subieron ${successCount} archivos, pero fallaron ${failCount}. Por favor reintenta los fallidos.`);
-        }
-    };
+    }, [performOrderSubmission]);
 
     return (
         <>
@@ -337,73 +466,14 @@ const OrderPanelPage = () => {
 
                     <div className="space-y-4">
                         {files.map((file) => (
-                            <div key={file.id} className={`bg-surface border ${file.valid ? 'border-gray-border' : 'border-red-200 bg-red-50/50'} rounded-card p-5 transition-all hover:shadow-md ${file.productType !== productType ? 'hidden' : ''}`}>
-                                <div className="flex flex-col sm:flex-row gap-5">
-                                    <div className="w-full sm:w-20 h-40 sm:h-20 bg-muted border border-gray-border rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative">
-                                        <div className="absolute inset-0 bg-dtf-texture opacity-10"></div>
-                                        {file.previewUrl ? (
-                                            <img src={file.previewUrl} alt="Preview" className="w-full h-full object-contain relative z-10" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-gray-300">image</span>
-                                        )}
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <h3 className="font-semibold text-text-main text-[15px] truncate" title={file.file.name}>{file.file.name}</h3>
-                                                {file.productType === 'uv' && <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-[10px] font-bold rounded">UV</span>}
-                                            </div>
-                                            <button
-                                                onClick={() => removeFile(file.id)}
-                                                className="text-text-secondary hover:text-danger transition-colors p-1 -mr-2"
-                                                title="Eliminar archivo"
-                                            >
-                                                <span className="material-symbols-outlined text-[20px]">delete</span>
-                                            </button>
-                                        </div>
-
-                                        {file.valid ? (
-                                            <>
-                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-[13px] text-text-secondary">
-                                                    <span className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-[16px]">aspect_ratio</span>
-                                                        {file.meta.anchoCm.toFixed(1)} cm
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-[16px]">straighten</span>
-                                                        {file.meta.largoM.toFixed(2)} m
-                                                    </span>
-                                                    <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${file.meta.dpi < 300 ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
-                                                        {file.meta.dpi} DPI
-                                                    </span>
-                                                </div>
-
-                                                <div className="flex items-center mt-4 gap-3">
-                                                    <span className="text-[13px] font-medium text-text-main">Copias:</span>
-                                                    <div className="flex items-center bg-surface border border-gray-border rounded-lg h-[32px]">
-                                                        <button onClick={() => updateCopies(file.id, -1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-r border-gray-border">-</button>
-                                                        <input type="text" readOnly value={file.copies} className="w-10 text-center text-sm font-semibold bg-transparent" />
-                                                        <button onClick={() => updateCopies(file.id, 1)} className="w-8 h-full flex items-center justify-center hover:bg-muted border-l border-gray-border">+</button>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="mt-2 text-sm text-danger font-medium flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-[18px]">error</span>
-                                                {file.errors.join(', ')}
-                                            </div>
-                                        )}
-
-                                        {file.warnings.length > 0 && (
-                                            <div className="mt-2 text-xs text-warning bg-warning/10 p-2 rounded flex items-start gap-2 border border-warning/20">
-                                                <span className="material-symbols-outlined text-[14px] mt-0.5">warning</span>
-                                                <span>{file.warnings.join(', ')}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                            <FileItem
+                                key={file.id}
+                                file={file}
+                                productType={productType}
+                                removeFile={removeFile}
+                                updateCopies={updateCopies}
+                                toggleOption={toggleOption}
+                            />
                         ))}
 
                         {activeFiles.length === 0 && (
