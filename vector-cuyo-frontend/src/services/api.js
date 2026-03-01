@@ -227,14 +227,15 @@ export const fetchPrices = async () => {
  */
 export const submitOrder = async (formData, isB2B = false) => {
     try {
-        const endpoint = isB2B ? ENDPOINTS.B2B_ORDER : ENDPOINTS.UPLOAD_ORDER;
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const endpoint = isB2B ? "https://n8n.vectorcuyo.com/webhook/b2b-order" : `${API_BASE_URL}${ENDPOINTS.UPLOAD_ORDER}`;
+        const response = await fetch(endpoint, {
             method: "POST",
             body: formData
         });
 
         if (!response.ok) {
-            console.error("Upload failed", response.status, response.statusText);
+            const errorText = await response.text();
+            console.error(`Upload failed [${response.status}]:`, errorText);
             return false;
         }
 

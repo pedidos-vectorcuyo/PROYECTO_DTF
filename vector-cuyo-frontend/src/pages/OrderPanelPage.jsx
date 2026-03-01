@@ -182,44 +182,55 @@ const OrderPanelPage = () => {
     const handleFiles = async (fileList) => {
         setLoading(true);
         const fileArray = Array.from(fileList);
+        const processedFiles = [];
 
-        // Process files in parallel
-        const processedFiles = await Promise.all(fileArray.map(async (file) => {
-            const processed = await processFile(file);
+        // Give UI a chance to show loading state
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Validation: Dynamic Width check from config
-            const warnings = [...processed.warnings];
-            const { minWidth, maxWidth, minLength, maxLength } = activeConfig.limits;
+        // Process files one by one to avoid blocking main thread too long
+        for (const file of fileArray) {
+            try {
+                const processed = await processFile(file);
 
-            if (processed.meta.anchoCm < minWidth) {
-                warnings.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) es menor al recomendado (${minWidth}cm)`);
-            }
-            if (processed.meta.anchoCm > maxWidth) {
-                processed.valid = false;
-                processed.errors.push(`El ancho (${processed.meta.anchoCm.toFixed(1)}cm) supera el máximo de impresión (${maxWidth}cm)`);
-            }
-            if (processed.meta.largoM < minLength) {
-                warnings.push(`El largo (${processed.meta.largoM.toFixed(2)}m) es menor al mínimo (${minLength}m)`);
-            }
-            if (processed.meta.largoM > maxLength) {
-                warnings.push(`El largo (${processed.meta.largoM.toFixed(2)}m) supera el máximo permitido (${maxLength}m)`);
-            }
+                // Dynamic validation against config
+                const warnings = [...processed.warnings];
+                const { minWidth, maxWidth, minLength, maxLength } = activeConfig.limits;
 
-            return {
-                id: Date.now() + Math.random(),
-                file: file,
-                ...processed,
-                warnings: warnings,
-                copies: 1,
-                productType: productType, // Mark file with current product type
-                options: {
-                    whites: false,
-                    blacks: false,
-                    colors: false,
-                    halftones: false
+                if (processed.meta.anchoCm < minWidth) {
+                    warnings.push(`Aprovechamiento bajo: ${processed.meta.anchoCm.toFixed(1)}cm (Recomendado: min ${minWidth}cm)`);
                 }
-            };
-        }));
+                if (processed.meta.anchoCm > maxWidth + 0.1) { // 0.1 margin for precision
+                    processed.valid = false;
+                    processed.errors.push(`Ancho excede el máximo: ${processed.meta.anchoCm.toFixed(1)}cm (Máx: ${maxWidth}cm)`);
+                }
+                if (processed.meta.largoM < minLength) {
+                    warnings.push(`Largo menor al mínimo (${minLength}m). Se cobrará el mínimo.`);
+                }
+                if (processed.meta.largoM > maxLength) {
+                    warnings.push(`Largo excede el máximo recomendado (${maxLength}m)`);
+                }
+
+                processedFiles.push({
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    ...processed,
+                    warnings: warnings,
+                    copies: 1,
+                    productType: productType,
+                    options: {
+                        whites: false,
+                        blacks: false,
+                        colors: false,
+                        halftones: false
+                    }
+                });
+
+                // Small yield to event loop
+                await new Promise(resolve => setTimeout(resolve, 0));
+            } catch (err) {
+                console.error("Error processing file:", file.name, err);
+            }
+        }
 
         setFiles(prev => [...prev, ...processedFiles]);
         setLoading(false);
@@ -333,7 +344,11 @@ const OrderPanelPage = () => {
                     fd.append("token_receptor", clientData.tokenReceptor.trim());
                     fd.append("id_emisor", user.id);
                     fd.append("nombre_emisor", user.nombre_completo || user.nombre);
-                    // Use the specific B2B submission or the general one with B2B flag
+                    if (user.token_b2b) fd.append("token_emisor", user.token_b2b);
+
+                    // Specific prices for B2B - ensures string format n8n likes
+                    fd.append("precio_b2b", total.toString());
+
                     return await submitOrder(fd, true);
                 }
 

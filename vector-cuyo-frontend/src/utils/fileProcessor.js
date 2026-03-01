@@ -79,21 +79,8 @@ export const processFile = async (file) => {
         fileSize: file.size
     };
 
-    // 3. Validation Logic
-    if (dpi >= 350) {
-        errors.push(`DPI demasiado alto (${dpi}). Máximo recomendado: 300.`);
-    }
-    if (dpi < 299) {
-        // Original logic was an alert/error, but maybe strict
-        errors.push(`DPI bajo (${dpi}). Mínimo requerido: 300.`);
-    }
-
-    if (anchoCm > 57.5) {
-        errors.push(`El ancho (${anchoCm.toFixed(1)}cm) excede el máximo de 57.5cm.`);
-    }
-
-    // Limits
-    if (largoM >= 10) {
+    // Limits - Only hard-coded critical ones. Dynamic limits are handled in the UI.
+    if (largoM >= 10.1) {
         errors.push("El largo del archivo excede los 10 metros.");
     }
 
