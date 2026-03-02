@@ -345,6 +345,7 @@ const OrderPanelPage = () => {
                 // Append data
                 fd.append("data", item.file, finalName);
                 fd.append("idPedido", orderId);
+                fd.append("id_pedido_externo", orderId);
                 fd.append("cliente", nombreEmisor);
                 fd.append("email", user.correo || '');
                 fd.append("telefono", user.whatsapp || '');
