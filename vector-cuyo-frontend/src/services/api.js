@@ -144,6 +144,8 @@ export const fetchOrders = async (clientId) => {
     try {
         const formData = new FormData();
         formData.append('id_cliente', clientId);
+        formData.append('id_usuario', clientId); // Added for backends that check both
+        formData.append('include_sent', 'true'); // Hint for n8n to include emisor matches
 
         const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ORDERS}`, {
             method: "POST",
@@ -273,7 +275,7 @@ export const updateOrderStatus = async (orderId, newStatus) => {
         const response = await fetch(`${API_BASE_URL}${ENDPOINTS.UPDATE_ORDER_STATUS}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId, status: newStatus })
+            body: JSON.stringify({ id: orderId, status: newStatus })
         });
         return response.ok;
     } catch (error) {
