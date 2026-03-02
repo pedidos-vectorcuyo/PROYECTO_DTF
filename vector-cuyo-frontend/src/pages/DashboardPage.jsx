@@ -6,13 +6,13 @@ import Button from '../components/ui/Button';
 import PaymentModal from '../components/orders/PaymentModal';
 
 const STATUS_CONFIG = {
+    'Ingresado': { label: 'Ingresado', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' },
     'Pendiente de Pago': { label: 'Pendiente de Pago', color: 'text-status-amber', bg: 'bg-status-amber-light', dot: 'bg-status-amber', border: 'border-status-amber/20' },
     'Pago Verificado': { label: 'Pago Verificado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
-    'Producción': { label: 'En Producción', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' },
+    'Producción': { label: 'Producción', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' },
     'Terminado': { label: 'Terminado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
     'Entregado': { label: 'Entregado', color: 'text-text-secondary', bg: 'bg-muted', dot: 'bg-text-secondary', border: 'border-gray-border' },
-    'Cancelado': { label: 'Cancelado', color: 'text-danger', bg: 'bg-danger/10', dot: 'bg-danger', border: 'border-danger/20' },
-    'Ingresado': { label: 'Ingresado', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' }
+    'Cancelado': { label: 'Cancelado', color: 'text-danger', bg: 'bg-danger/10', dot: 'bg-danger', border: 'border-danger/20' }
 };
 
 const DashboardPage = () => {
@@ -49,12 +49,12 @@ const DashboardPage = () => {
                     return {
                         id: o.id_pedido || o.id || 'N/A',
                         date: o.creado_en ? o.creado_en.split('T')[0] : '-',
-                        files: o.nombre_archivo || 'Sin archivo',
+                        files: o.nombre_archivo || (o.nombre_emisor ? `Pedido de ${o.nombre_emisor}` : 'Sin archivo'),
                         price: parseFloat(o.precio_final || 0),
-                        status: o.estado || 'Ingresado',
+                        status: Object.keys(STATUS_CONFIG).includes(o.estado) ? o.estado : 'Ingresado',
                         shipping: "Estándar (24h)",
-                        meters: parseFloat(o.largoM || 0),
-                        isB2B: !!(o.id_emisor && o.id_receptor),
+                        meters: parseFloat(o.metros || o.largoM || 0),
+                        isB2B: !!(o.id_emisor || o.token_receptor),
                         isSender,
                         isReceiver,
                         receptorToken: o.token_receptor || null,
@@ -101,8 +101,8 @@ const DashboardPage = () => {
     // Filter Logic
     const filteredOrders = orders.filter(order => {
         // 1. Sidebar Filter
-        if (filter === 'vigentes' && !['Ingresado', 'Producción', 'pausado', 'en_revision'].includes(order.status)) return false;
-        if (filter === 'historial' && !['Terminado', 'Entregado', 'Pago Verificado'].includes(order.status)) return false;
+        if (filter === 'vigentes' && !['Ingresado', 'Pendiente de Pago', 'Pago Verificado', 'Producción'].includes(order.status)) return false;
+        if (filter === 'historial' && !['Terminado', 'Entregado', 'Cancelado'].includes(order.status)) return false;
         if (filter === 'borradores' && order.status !== 'borrador') return false;
 
         // 2. Text Search (ID or Files)
@@ -327,10 +327,10 @@ const DashboardPage = () => {
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                                                {order.status === 'Pendiente de Pago' && order.isReceiver && (
+                                                {order.status === 'Pendiente de Pago' && !order.isSender && (
                                                     <Button
                                                         onClick={(e) => { e.stopPropagation(); handleOpenPayment(order); }}
-                                                        className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white shadow-lg shadow-success/20"
+                                                        className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white shadow-lg shadow-success/20 animate-bounce-subtle"
                                                     >
                                                         <span className="material-symbols-outlined text-[18px] mr-1.5">payments</span>
                                                         Pagar ahora
