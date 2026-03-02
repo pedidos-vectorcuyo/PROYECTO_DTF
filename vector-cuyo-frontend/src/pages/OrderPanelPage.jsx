@@ -373,7 +373,7 @@ const OrderPanelPage = () => {
                     fd.append("id_cliente", clientData.tokenReceptor.trim()); // Temporary mapping for n8n lookup
                     fd.append("token_receptor", clientData.tokenReceptor.trim());
                     fd.append("id_emisor", user.id);
-                    fd.append("estado", "Pendiente");
+                    fd.append("estado", "Pendiente de Pago");
                     // nombre_emisor is already appended above
                     if (user.token_b2b) fd.append("token_emisor", user.token_b2b);
 

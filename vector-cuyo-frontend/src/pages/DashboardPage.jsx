@@ -6,7 +6,7 @@ import Button from '../components/ui/Button';
 import PaymentModal from '../components/orders/PaymentModal';
 
 const STATUS_CONFIG = {
-    'Pendiente': { label: 'Pendiente de Pago', color: 'text-status-amber', bg: 'bg-status-amber-light', dot: 'bg-status-amber', border: 'border-status-amber/20' },
+    'Pendiente de Pago': { label: 'Pendiente de Pago', color: 'text-status-amber', bg: 'bg-status-amber-light', dot: 'bg-status-amber', border: 'border-status-amber/20' },
     'Pago Verificado': { label: 'Pago Verificado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
     'Producción': { label: 'En Producción', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' },
     'Terminado': { label: 'Terminado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
@@ -322,10 +322,10 @@ const DashboardPage = () => {
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                                                {order.status === 'Pendiente' && order.isReceiver && (
+                                                {order.status === 'Pendiente de Pago' && order.isReceiver && (
                                                     <Button
-                                                        onClick={() => handleOpenPayment(order)}
-                                                        className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white"
+                                                        onClick={(e) => { e.stopPropagation(); handleOpenPayment(order); }}
+                                                        className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white shadow-lg shadow-success/20"
                                                     >
                                                         <span className="material-symbols-outlined text-[18px] mr-1.5">payments</span>
                                                         Pagar ahora
