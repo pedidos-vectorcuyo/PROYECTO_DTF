@@ -6,15 +6,13 @@ import Button from '../components/ui/Button';
 import PaymentModal from '../components/orders/PaymentModal';
 
 const STATUS_CONFIG = {
-    // API returns 'Ingresado' as default, mapping to 'en_curso' style or adding new ones
-    Ingresado: { color: "text-primary", bg: "bg-blue-tint", border: "border-primary/20", dot: "bg-primary", label: "Ingresado" },
-    en_curso: { color: "text-primary", bg: "bg-blue-tint", border: "border-primary/20", dot: "bg-primary", label: "En curso" },
-    pausado: { color: "text-status-amber", bg: "bg-amber-50", border: "border-status-amber/20", dot: "bg-status-amber", label: "Pausado" },
-    en_revision: { color: "text-status-slate", bg: "bg-slate-50", border: "border-status-slate/20", dot: "bg-status-slate", label: "En revisión" },
-    entregado: { color: "text-status-green", bg: "bg-green-50", border: "border-status-green/20", dot: "bg-status-green", label: "Entregado" },
-    pagado: { color: "text-status-indigo", bg: "bg-indigo-50", border: "border-status-indigo/20", dot: "bg-status-indigo", label: "Pagado" },
-    borrador: { color: "text-gray-500", bg: "bg-gray-100", border: "border-gray-200", dot: "bg-gray-400", label: "Borrador" },
-    'Pendiente de pago por cliente': { color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", dot: "bg-orange-500", label: "Pendiente Pago (Cliente)" },
+    'Pendiente': { label: 'Pendiente de Pago', color: 'text-status-amber', bg: 'bg-status-amber-light', dot: 'bg-status-amber', border: 'border-status-amber/20' },
+    'Pago Verificado': { label: 'Pago Verificado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
+    'Producción': { label: 'En Producción', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' },
+    'Terminado': { label: 'Terminado', color: 'text-success', bg: 'bg-success/10', dot: 'bg-success', border: 'border-success/20' },
+    'Entregado': { label: 'Entregado', color: 'text-text-secondary', bg: 'bg-muted', dot: 'bg-text-secondary', border: 'border-gray-border' },
+    'Cancelado': { label: 'Cancelado', color: 'text-danger', bg: 'bg-danger/10', dot: 'bg-danger', border: 'border-danger/20' },
+    'Ingresado': { label: 'Ingresado', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', border: 'border-primary/20' }
 };
 
 const DashboardPage = () => {
@@ -77,7 +75,7 @@ const DashboardPage = () => {
 
         // Notify backend (n8n usually handles this via verifyPayment, 
         // but for B2B we might need an explicit status update if not automated)
-        const success = await updateOrderStatus(selectedOrder.id, 'pagado');
+        const success = await updateOrderStatus(selectedOrder.id, 'Pago Verificado');
         if (success) {
             alert("¡Pago verificado con éxito! El pedido pasará a producción.");
             setShowPaymentModal(false);
@@ -93,13 +91,13 @@ const DashboardPage = () => {
     };
 
     // Counts for sidebar badges
-    const vigentesCount = orders.filter(o => ['Ingresado', 'en_curso', 'pausado', 'en_revision'].includes(o.status)).length;
+    const vigentesCount = orders.filter(o => ['Ingresado', 'Producción', 'pausado', 'en_revision'].includes(o.status)).length;
 
     // Filter Logic
     const filteredOrders = orders.filter(order => {
         // 1. Sidebar Filter
-        if (filter === 'vigentes' && !['Ingresado', 'en_curso', 'pausado', 'en_revision'].includes(order.status)) return false;
-        if (filter === 'historial' && !['entregado', 'pagado'].includes(order.status)) return false;
+        if (filter === 'vigentes' && !['Ingresado', 'Producción', 'pausado', 'en_revision'].includes(order.status)) return false;
+        if (filter === 'historial' && !['Terminado', 'Entregado', 'Pago Verificado'].includes(order.status)) return false;
         if (filter === 'borradores' && order.status !== 'borrador') return false;
 
         // 2. Text Search (ID or Files)
@@ -266,11 +264,12 @@ const DashboardPage = () => {
                         >
                             <option value="">Filtrar por estado</option>
                             <option value="Ingresado">Ingresado</option>
-                            <option value="en_curso">En curso</option>
+                            <option value="Producción">En producción</option>
                             <option value="pausado">Pausado</option>
                             <option value="en_revision">En revisión</option>
-                            <option value="entregado">Entregado</option>
-                            <option value="pagado">Pagado</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Pago Verificado">Pago Verificado</option>
+                            <option value="Pendiente">Pendiente de Pago</option>
                         </select>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
                     </div>
@@ -304,7 +303,7 @@ const DashboardPage = () => {
                                             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                                                 <div className="relative group cursor-pointer">
                                                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${style.bg} border ${style.border}`}>
-                                                        <span className={`w-2 h-2 rounded-full ${style.dot} ${order.status === 'en_curso' ? 'animate-pulse' : ''}`}></span>
+                                                        <span className={`w-2 h-2 rounded-full ${style.dot} ${order.status === 'Producción' ? 'animate-pulse' : ''}`}></span>
                                                         <span className={`text-[11px] font-bold uppercase tracking-wide ${style.color}`}>{style.label}</span>
                                                     </div>
                                                 </div>
@@ -323,7 +322,7 @@ const DashboardPage = () => {
                                                 <p className="text-[18px] font-bold text-text-main">${order.price.toFixed(2)}</p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                                                {(order.status === 'Pendiente de pago por cliente' || order.status === 'Ingresado') && order.isReceiver && (
+                                                {order.status === 'Pendiente' && order.isReceiver && (
                                                     <Button
                                                         onClick={() => handleOpenPayment(order)}
                                                         className="text-xs flex-1 sm:flex-none justify-center bg-success hover:bg-success-dark text-white"

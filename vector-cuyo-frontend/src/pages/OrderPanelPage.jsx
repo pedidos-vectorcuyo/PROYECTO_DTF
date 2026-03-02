@@ -367,12 +367,13 @@ const OrderPanelPage = () => {
 
                 fd.append("totalArchivos", validFiles.length);
                 fd.append("indiceArchivo", i + 1);
-                if (user.id) fd.append("id_cliente", user.id);
 
-                // B2B Metadata
+                // B2B Metadata and initial state
                 if (clientData.tokenReceptor?.trim()) {
+                    fd.append("id_cliente", clientData.tokenReceptor.trim()); // Temporary mapping for n8n lookup
                     fd.append("token_receptor", clientData.tokenReceptor.trim());
                     fd.append("id_emisor", user.id);
+                    fd.append("estado", "Pendiente");
                     // nombre_emisor is already appended above
                     if (user.token_b2b) fd.append("token_emisor", user.token_b2b);
 
