@@ -363,7 +363,7 @@ const OrderPanelPage = () => {
 
                 // Totals - This uses the calculated total for the WHOLE order 
                 fd.append("precioCotizado", total);
-                fd.append("precio_final", total.toLocaleString('es-AR', { useGrouping: false }));
+                fd.append("precio_final", total.toFixed(2));
 
                 fd.append("totalArchivos", validFiles.length);
                 fd.append("indiceArchivo", i + 1);
