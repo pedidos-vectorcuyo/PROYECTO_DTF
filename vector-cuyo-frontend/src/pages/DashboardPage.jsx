@@ -38,8 +38,13 @@ const DashboardPage = () => {
                 const rawOrders = await fetchOrders(user.id);
 
                 const formatted = rawOrders.map(o => {
-                    const isSender = o.id_emisor == user.id;
-                    const isReceiver = o.id_cliente == user.id || o.id_receptor == user.id;
+                    // Normalize IDs for comparison
+                    const currentId = user.id.toString();
+                    const receptorId = (o.id_cliente || o.id_receptor || '').toString();
+                    const emisorId = (o.id_emisor || '').toString();
+
+                    const isSender = emisorId === currentId;
+                    const isReceiver = receptorId === currentId;
 
                     return {
                         id: o.id_pedido || o.id || 'N/A',
@@ -264,12 +269,12 @@ const DashboardPage = () => {
                         >
                             <option value="">Filtrar por estado</option>
                             <option value="Ingresado">Ingresado</option>
-                            <option value="Producción">En producción</option>
-                            <option value="pausado">Pausado</option>
-                            <option value="en_revision">En revisión</option>
-                            <option value="Entregado">Entregado</option>
+                            <option value="Pendiente de Pago">Pendiente de Pago</option>
                             <option value="Pago Verificado">Pago Verificado</option>
-                            <option value="Pendiente">Pendiente de Pago</option>
+                            <option value="Producción">Producción</option>
+                            <option value="Terminado">Terminado</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Cancelado">Cancelado</option>
                         </select>
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary material-symbols-outlined text-[20px] pointer-events-none">expand_more</span>
                     </div>
