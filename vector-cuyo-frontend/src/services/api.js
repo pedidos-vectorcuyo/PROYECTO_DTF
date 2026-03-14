@@ -15,6 +15,7 @@ const ENDPOINTS = {
     GET_ORDERS: import.meta.env.VITE_API_GET_ORDERS_ENDPOINT,
     VERIFY_PAYMENT: '/webhook/verificar-pago',
     B2B_ORDER: '/webhook/b2b-order',
+    RESET_PASSWORD: '/auth-reset',
     // Admin Endpoints
     GET_ALL_ORDERS: '/admin/get-all-orders',
     UPDATE_ORDER_STATUS: '/admin/update-order-status',
@@ -103,6 +104,30 @@ export const loginWithGoogle = async (googleCredential) => {
         return data; // Expected { id, nombre, correo, ... }
     } catch (error) {
         console.error('Google Login error:', error);
+        throw error;
+    }
+};
+
+/**
+ * Requests a password reset.
+ * @param {string} email 
+ * @returns {Promise<Object>} Response data
+ */
+export const resetPassword = async (email) => {
+    try {
+        const formData = new FormData();
+        formData.append('email', email);
+
+        const response = await fetch(`${API_BASE_URL}${ENDPOINTS.RESET_PASSWORD}`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("Password reset request failed");
+
+        return await response.json();
+    } catch (error) {
+        console.error("Password reset error:", error);
         throw error;
     }
 };
@@ -325,6 +350,7 @@ export const submitB2BOrder = async (formData) => {
 export default {
     login,
     register,
+    resetPassword,
     verifyPayment,
     fetchOrders,
     fetchPrices,

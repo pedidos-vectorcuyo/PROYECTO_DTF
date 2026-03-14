@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
                 setUser({
                     ...parsed,
-                    role: parsed.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                    role: parsed.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
                 });
             } catch (e) {
                 console.error("Session parse error", e);
@@ -32,11 +32,12 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         // Official Admin Bypass
-        if (email === 'pedidos@vectorcuyo.com.ar' && password === 'VectorCuyoAdmin2024!_') {
+        const isAdminEmail = email.trim().toLowerCase() === 'pedidos@vectorcuyo.com.ar';
+        if (isAdminEmail && password === 'VectorCuyoAdmin2024!_') {
             const adminUser = {
                 id: 'admin_official',
                 nombre: 'Administrador Vector Cuyo',
-                email: email,
+                email: 'pedidos@vectorcuyo.com.ar',
                 role: 'admin'
             };
             setUser(adminUser);
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: cleanUser.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
@@ -80,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.email === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: cleanUser.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
