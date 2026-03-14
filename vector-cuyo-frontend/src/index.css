@@ -21,6 +21,8 @@
     --color-success: #16A34A;
     --color-warning: #F59E0B;
     --color-danger: #DC2626;
+    /* Force cache bust CSS */
+    --cache-bust: 1;
 }
 
 .dark {
