@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -43,23 +45,11 @@ jobs:
       - name: List build files for debug
         run: ls -R vector-cuyo-frontend/dist/
 
-      - name: 🧹 Clean old files on server
-        uses: appleboy/ssh-action@v1.0.0
+      - name: 🚀 Deploy to branch for Hostinger
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          host: 167.88.35.13
-          port: 65002
-          username: u501128802
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: rm -rf /home/u501128802/domains/vectorcuyo.com/public_html/*
-
-      - name: 📂 Deploy via SSH/SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 167.88.35.13
-          port: 65002
-          username: u501128802
-          password: ${{ secrets.SSH_PASSWORD }}
-          source: "vector-cuyo-frontend/dist/"
-          target: "/home/u501128802/domains/vectorcuyo.com/public_html"
-          strip_components: 2
-          # Run 79: SSH/SCP replacing FTP - avoids Hostinger FTP rate limiting
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./vector-cuyo-frontend/dist
+          publish_branch: hostinger-dist
+          force_orphan: true
+          commit_message: "Automated Deployment from CI - ${{ github.sha }}"
