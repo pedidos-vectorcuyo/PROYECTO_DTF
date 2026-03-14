@@ -51,5 +51,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./vector-cuyo-frontend/dist
           publish_branch: hostinger-dist
-          force_orphan: true
+          force_orphan: false
           commit_message: "Automated Deployment from CI - ${{ github.sha }}"
