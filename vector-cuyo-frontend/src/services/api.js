@@ -281,7 +281,8 @@ export const fetchAllOrders = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}${ENDPOINTS.GET_ALL_ORDERS}`);
         if (!response.ok) throw new Error("Failed to fetch all orders");
-        const data = await response.json();
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : [];
         return Array.isArray(data) ? data : (data.json || []);
     } catch (error) {
         console.error("Error fetching all orders:", error);
