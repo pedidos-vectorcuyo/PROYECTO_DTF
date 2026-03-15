@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
                 if (parsed.json) parsed = parsed.json;
 
                 const userEmail = parsed.email?.toLowerCase();
-                const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+                const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar';
 
                 setUser({
                     ...parsed,
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
             if (cleanUser.json) cleanUser = cleanUser.json;
 
             const userEmail = cleanUser.email?.toLowerCase();
-            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar';
 
             const userWithRole = {
                 ...cleanUser,
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             const userEmail = cleanUser.email?.toLowerCase();
-            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar';
 
             const userWithRole = {
                 ...cleanUser,
