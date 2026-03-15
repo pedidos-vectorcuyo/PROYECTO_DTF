@@ -1,0 +1,159 @@
+{
+    "name": "Admin Endpoints",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "admin/get-all-orders",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "1",
+            "name": "Webhook Get Orders",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                200,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT o.id as id_pedido, o.fecha_creacion as fecha, c.nombre_completo as cliente, o.estado as estado FROM ordenes_trabajo o LEFT JOIN clientes c ON o.id_emisor = c.id ORDER BY o.id DESC LIMIT 200;",
+                "options": {}
+            },
+            "id": "2",
+            "name": "MySQL - All Orders",
+            "type": "n8n-nodes-base.mySql",
+            "typeVersion": 2.5,
+            "position": [
+                420,
+                200
+            ],
+            "credentials": {
+                "mySql": {
+                    "id": "DHCqIwSsTPrl5I9i",
+                    "name": "MySQL account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {}
+            },
+            "id": "3",
+            "name": "Respond Get Orders",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                640,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "admin/update-order-status",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "4",
+            "name": "Webhook Update Status",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                200,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE ordenes_trabajo SET estado = '{{ $json[\"body\"][\"status\"] }}' WHERE id = {{ $json[\"body\"][\"id\"] }};\nSELECT id, estado FROM ordenes_trabajo WHERE id = {{ $json[\"body\"][\"id\"] }};",
+                "options": {}
+            },
+            "id": "5",
+            "name": "MySQL - Update Status",
+            "type": "n8n-nodes-base.mySql",
+            "typeVersion": 2.5,
+            "position": [
+                420,
+                400
+            ],
+            "credentials": {
+                "mySql": {
+                    "id": "DHCqIwSsTPrl5I9i",
+                    "name": "MySQL account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\"success\": true}",
+                "options": {}
+            },
+            "id": "6",
+            "name": "Respond Update Status",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                640,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Get Orders": {
+            "main": [
+                [
+                    {
+                        "node": "MySQL - All Orders",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "MySQL - All Orders": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Get Orders",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook Update Status": {
+            "main": [
+                [
+                    {
+                        "node": "MySQL - Update Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "MySQL - Update Status": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Update Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "tags": []
+}

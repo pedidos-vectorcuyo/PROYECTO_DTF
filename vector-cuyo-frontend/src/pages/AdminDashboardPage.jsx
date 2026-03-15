@@ -118,10 +118,13 @@ const AdminDashboardPage = () => {
                             className="bg-surface border border-gray-border rounded-xl px-4 py-2.5 text-sm text-text-main outline-none focus:border-primary appearance-none cursor-pointer"
                         >
                             <option value="all" className="bg-surface text-text-main">Todos los estados</option>
-                            <option value="pendiente" className="bg-surface text-text-main">Pendiente</option>
-                            <option value="pagado" className="bg-surface text-text-main">Pagado</option>
-                            <option value="listo" className="bg-surface text-text-main">Listo</option>
-                            <option value="entregado" className="bg-surface text-text-main">Entregado</option>
+                            <option value="Ingresado" className="bg-surface text-text-main">Ingresado</option>
+                            <option value="Pendiente de Pago" className="bg-surface text-text-main">Pendiente de Pago</option>
+                            <option value="Pago Verificado" className="bg-surface text-text-main">Pago Verificado</option>
+                            <option value="Producción" className="bg-surface text-text-main">En Producción</option>
+                            <option value="Terminado" className="bg-surface text-text-main">Terminado</option>
+                            <option value="Entregado" className="bg-surface text-text-main">Entregado</option>
+                            <option value="Cancelado" className="bg-surface text-text-main">Cancelado</option>
                         </select>
                     </div>
 
@@ -145,10 +148,11 @@ const AdminDashboardPage = () => {
                                             </td>
                                             <td className="p-4 text-sm font-medium text-text-main">{order.cliente}</td>
                                             <td className="p-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${order.estado === 'pendiente' ? 'bg-warning text-white' :
-                                                    order.estado === 'pagado' ? 'bg-primary text-white' :
-                                                        order.estado === 'listo' ? 'bg-success text-white' :
-                                                            order.estado === 'entregado' ? 'bg-surface-raised text-text-secondary border border-gray-border' : 'bg-muted text-text-secondary'
+                                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${order.estado === 'Pendiente de Pago' ? 'bg-warning text-white' :
+                                                        order.estado === 'Pago Verificado' ? 'bg-success text-white' :
+                                                            ['Producción', 'Terminado'].includes(order.estado) ? 'bg-primary text-white' :
+                                                                order.estado === 'Cancelado' ? 'bg-danger text-white' :
+                                                                    'bg-muted text-text-secondary border border-gray-border'
                                                     }`}>
                                                     {order.estado}
                                                 </span>
@@ -160,10 +164,13 @@ const AdminDashboardPage = () => {
                                                     onChange={(e) => handleStatusChange(order.id_pedido, e.target.value)}
                                                     className="bg-surface border border-gray-border rounded-lg px-2 py-1.5 text-xs text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-medium"
                                                 >
-                                                    <option value="pendiente">Marcar Pendiente</option>
-                                                    <option value="pagado">Confirmar Pago</option>
-                                                    <option value="listo">Marcar como Listo</option>
-                                                    <option value="entregado">Marcar Entregado</option>
+                                                    <option value="Ingresado">Ingresado (Nuevo)</option>
+                                                    <option value="Pendiente de Pago">Pendiente de Pago</option>
+                                                    <option value="Pago Verificado">Pago Verificado</option>
+                                                    <option value="Producción">En Producción</option>
+                                                    <option value="Terminado">Terminado / Listo</option>
+                                                    <option value="Entregado">Entregado</option>
+                                                    <option value="Cancelado">Cancelado</option>
                                                 </select>
                                             </td>
                                         </tr>

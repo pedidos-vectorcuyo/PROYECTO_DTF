@@ -18,9 +18,12 @@ export const AuthProvider = ({ children }) => {
                 if (Array.isArray(parsed)) parsed = parsed[0];
                 if (parsed.json) parsed = parsed.json;
 
+                const userEmail = parsed.email?.toLowerCase();
+                const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+
                 setUser({
                     ...parsed,
-                    role: parsed.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                    role: isAdmin ? 'admin' : 'user'
                 });
             } catch (e) {
                 console.error("Session parse error", e);
@@ -53,9 +56,12 @@ export const AuthProvider = ({ children }) => {
             if (Array.isArray(userData)) cleanUser = userData[0];
             if (cleanUser.json) cleanUser = cleanUser.json;
 
+            const userEmail = cleanUser.email?.toLowerCase();
+            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: isAdmin ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
@@ -79,9 +85,12 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("El servidor no devolvió un ID de usuario válido.");
             }
 
+            const userEmail = cleanUser.email?.toLowerCase();
+            const isAdmin = userEmail === 'pedidos@vectorcuyo.com.ar' || userEmail === 'gabrieljjlopez@gmail.com';
+
             const userWithRole = {
                 ...cleanUser,
-                role: cleanUser.email?.toLowerCase() === 'pedidos@vectorcuyo.com.ar' ? 'admin' : 'user'
+                role: isAdmin ? 'admin' : 'user'
             };
             setUser(userWithRole);
             localStorage.setItem('dtf_user', JSON.stringify(userWithRole));
