@@ -235,6 +235,16 @@ const DashboardPage = () => {
                             <span className="material-symbols-outlined text-[20px]">settings</span>
                             Configuración
                         </button>
+
+                        {user?.role === 'admin' && (
+                            <Link
+                                to="/admin"
+                                className="w-full flex items-center gap-3 px-4 py-3 mt-4 rounded-card text-[14px] font-bold text-white bg-error hover:bg-danger transition-all shadow-md shadow-danger/20"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+                                Panel de Administrador
+                            </Link>
+                        )}
                     </div>
                 </div>
             </aside>
