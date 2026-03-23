@@ -399,7 +399,7 @@ const OrderPanelPage = () => {
         setSubmitting(false);
 
         if (failCount === 0) {
-            alert("✅ ¡Pedido Creado con Éxito!");
+            alert("✅ Pedido cargado correctamente, su pedido estará disponible en el historial en su perfil donde podrá realizar el seguimiento del mismo y en qué estado se encuentra.");
             setFiles(prev => prev.filter(f => f.productType !== productType));
             navigate('/dashboard');
         } else {
@@ -424,11 +424,12 @@ const OrderPanelPage = () => {
                 alert("No puedes enviarte un pedido a ti mismo usando tu propio token.");
                 return;
             }
-            if (window.confirm(`¿Confirmas que deseas enviar este pedido al cliente con Token [${clientData.tokenReceptor}]? El cliente deberá pagarlo desde su perfil.`)) {
+            if (window.confirm(`¿Confirmas que deseas enviar este pedido al cliente con Token [${clientData.tokenReceptor}]? El cliente podrá realizar el seguimiento del mismo y ver su estado.`)) {
                 performOrderSubmission();
             }
         } else {
-            setShowPaymentModal(true);
+            // Ya no llamamos a setShowPaymentModal(true)
+            performOrderSubmission();
         }
     }, [user, activeFiles, clientData, navigate, performOrderSubmission]);
 
@@ -597,7 +598,7 @@ const OrderPanelPage = () => {
                                 className={`w-full py-4 text-base shadow-lg ${productType === 'uv' ? 'shadow-warning/20' : 'shadow-primary/20'}`}
                                 disabled={activeFiles.length === 0 || activeFiles.some(f => !f.valid) || submitting}
                             >
-                                {submitting ? "Procesando..." : (clientData.tokenReceptor?.trim() ? "Enviar al Cliente" : "Confirmar e Ir al Pago")}
+                                {submitting ? "Procesando..." : (clientData.tokenReceptor?.trim() ? "Enviar al Cliente" : "Confirmar Pedido")}
                             </Button>
                         </div>
                     </div>

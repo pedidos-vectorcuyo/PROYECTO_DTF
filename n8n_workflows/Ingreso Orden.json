@@ -221,7 +221,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT IGNORE INTO ordenes_trabajo (\n    id_pedido_externo,\n    cliente_nombre,        /* <--- CORREGIDO: Coincide con tu tabla */\n    id_cliente,            /* <--- CORREGIDO: Usamos el ID de la tabla, no 'cliente_id' */\n    apertura,\n    estado,\n    tipo,\n    metros,\n    creado_en,\n    observaciones,\n    cantidad_archivos,\n    propiedades_visuales,\n    precio_final\n) VALUES (\n    '{{ $('Code in JavaScript').item.json[\"idPedido\"] }}',\n    'Pedido Web - {{ $('Code in JavaScript').item.json[\"cliente\"] }}',\n    {{ $json[\"id\"] }},     /* <--- Insertamos el ID numérico del cliente */\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    'Ingresada',\n    'DTF Textil',\n    {{ parseFloat($('Code in JavaScript').item.json[\"largoM\"]) }},\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    '{{ $('Code in JavaScript').item.json[\"observaciones\"] }}',\n    {{ $('Code in JavaScript').item.json[\"totalArchivos\"] }},\n    '{{ $('Code in JavaScript').item.json[\"propiedades\"] }}',\n    {{ parseFloat($('Webhook').item.json.body.precioCotizado.replace(/[$.]/g, '').replace(',', '.')) }}\n);",
+        "query": "INSERT IGNORE INTO ordenes_trabajo (\n    id_pedido_externo,\n    cliente_nombre,        /* <--- CORREGIDO: Coincide con tu tabla */\n    id_cliente,            /* <--- CORREGIDO: Usamos el ID de la tabla, no 'cliente_id' */\n    apertura,\n    estado,\n    tipo,\n    metros,\n    creado_en,\n    observaciones,\n    cantidad_archivos,\n    propiedades_visuales,\n    precio_final\n) VALUES (\n    '{{ $('Code in JavaScript').item.json[\"idPedido\"] }}',\n    'Pedido Web - {{ $('Code in JavaScript').item.json[\"cliente\"] }}',\n    {{ $json[\"id\"] }},     /* <--- Insertamos el ID numérico del cliente */\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    'Pendiente de Pago',\n    'DTF Textil',\n    {{ parseFloat($('Code in JavaScript').item.json[\"largoM\"]) }},\n    DATE_SUB(NOW(), INTERVAL 3 HOUR),\n    '{{ $('Code in JavaScript').item.json[\"observaciones\"] }}',\n    {{ $('Code in JavaScript').item.json[\"totalArchivos\"] }},\n    '{{ $('Code in JavaScript').item.json[\"propiedades\"] }}',\n    {{ parseFloat($('Webhook').item.json.body.precioCotizado.replace(/[$.]/g, '').replace(',', '.')) }}\n);",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -319,7 +319,7 @@
             },
             {
               "key": "Estado|status",
-              "statusValue": "=Ingresada"
+              "statusValue": "=Pendiente de Pago"
             },
             {
               "key": "Nombre de Archivo|rich_text",
