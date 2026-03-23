@@ -347,8 +347,8 @@ const OrderPanelPage = () => {
                 fd.append("idPedido", orderId);
                 fd.append("id_pedido_externo", orderId);
                 fd.append("cliente", nombreEmisor);
-                fd.append("email", user.correo || '');
-                fd.append("telefono", user.whatsapp || '');
+                fd.append("email", user.email || user.correo || '');
+                fd.append("telefono", user.telefono || user.whatsapp || '');
                 fd.append("observaciones", clientData.observaciones);
 
                 // Explicit fields for n8n body
