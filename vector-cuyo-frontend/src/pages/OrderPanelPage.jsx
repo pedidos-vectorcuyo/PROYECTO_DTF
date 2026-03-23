@@ -352,6 +352,7 @@ const OrderPanelPage = () => {
                 fd.append("observaciones", clientData.observaciones);
 
                 // Explicit fields for n8n body
+                fd.append("id_cliente", user.id_cliente || user.id || '');
                 fd.append("nombre_archivo", finalName);
                 fd.append("nombre_emisor", nombreEmisor);
 
